@@ -1,122 +1,212 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 
-const navLinks = [
-  { label: "Our Story", href: "#story" },
-  { label: "Our IPs", href: "#programmes" },
-  { label: "Events", href: "#events" },
-  { label: "Join Us", href: "#join" },
+const leftLinks = [
+  { label: "Home", href: "/" },
+  {
+    label: "About", href: "#about",
+    dropdown: [
+      { label: "About Inkpot", href: "#about" },
+      { label: "Leadership", href: "#leadership" },
+      { label: "Beliefs & Values", href: "#beliefs" },
+    ],
+  },
+  {
+    label: "Our Experiences", href: "#experiences",
+    dropdown: [
+      { label: "Songs of the Stone", href: "#experiences" },
+      { label: "Antarnaad (Summer IP)", href: "#experiences" },
+      { label: "Inkpot India Conclave", href: "#experiences" },
+      { label: "The Heritage Cleanliness Project", href: "#experiences" },
+      { label: "Echoes of Expression", href: "#experiences" },
+    ],
+  },
 ];
+
+const rightLinks = [
+  {
+    label: "Work With Us", href: "#work",
+    dropdown: [
+      { label: "Partner with Us", href: "#work" },
+      { label: "Perform with Us", href: "#work" },
+      { label: "Jobs / Careers", href: "#work" },
+    ],
+  },
+  { label: "Newsroom", href: "#press" },
+  { label: "Contact Us", href: "#contact" },
+];
+
+type NavLink = { label: string; href: string; dropdown?: { label: string; href: string }[] };
+
+function NavItem({ link }: { link: NavLink }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+      <a
+        href={link.href}
+        className="flex items-center gap-1 transition-colors duration-200 whitespace-nowrap"
+        style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--primary-black)" }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-mustard)")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--primary-black)")}
+      >
+        {link.dropdown && (
+          <svg width="7" height="5" viewBox="0 0 7 5" fill="none" style={{ flexShrink: 0, transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>
+            <path d="M1 1L3.5 4L6 1" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+          </svg>
+        )}
+        {link.label}
+      </a>
+
+      {link.dropdown && (
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.14 }}
+              className="absolute top-full mt-3 min-w-[220px]"
+              style={{ background: "var(--primary-white)", borderTop: "2px solid var(--primary-mustard)", boxShadow: "0 8px 32px rgba(72,45,24,0.12)", padding: "20px 0", left: "50%", transform: "translateX(-50%)" }}
+            >
+              {link.dropdown.map((item) => (
+                <a key={item.label} href={item.href}
+                  className="block px-5 py-2 transition-colors duration-150"
+                  style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--primary-brown)" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-mustard)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--primary-brown)")}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
+    </div>
+  );
+}
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const allLinks = [...leftLinks, ...rightLinks];
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-white/95 backdrop-blur-md border-b border-black/8 shadow-sm"
-          : "bg-transparent"
-      }`}
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      style={{
+        background: scrolled ? "rgba(255,255,255,0.98)" : "rgba(255,255,255,0.95)",
+        backdropFilter: "blur(10px)",
+        borderBottom: `1px solid rgba(211,163,81,0.18)`,
+      }}
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 flex items-center justify-between h-20">
-        {/* Logo */}
-        <a href="#" className="flex items-center">
+      {/* Desktop */}
+      <div
+        className="hidden lg:grid h-[96px] mx-auto px-8"
+        style={{ maxWidth: "1280px", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: "24px" }}
+      >
+        <div className="flex items-center gap-7 justify-end">
+          {leftLinks.map((l) => <NavItem key={l.label} link={l} />)}
+        </div>
+
+        <a href="/" className="flex items-center justify-center">
           <Image
-            src="/images/Inkpot/Inkpot_600x400%20px.svg"
+            src="/images/Inkpot/Inkpot_600x400 px.svg"
             alt="Inkpot India"
-            width={100}
-            height={67}
-            className="h-10 w-auto"
+            width={265} height={177}
+            className="object-contain"
+            style={{ height: "118px", width: "auto", filter: "contrast(1.15) saturate(1.1)" }}
             priority
           />
         </a>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-[#1A1A1A]/70 hover:text-[#1A1A1A] text-sm tracking-wide transition-colors duration-300"
-              style={{ fontFamily: "DM Sans, sans-serif" }}
-            >
-              {link.label}
-            </a>
-          ))}
-          <a
-            href="#join"
-            className="ml-4 bg-[#1A1A1A] text-white px-5 py-2 text-sm tracking-wide rounded-full hover:bg-[#333] transition-all duration-300"
-            style={{ fontFamily: "DM Sans, sans-serif" }}
-          >
-            Get Involved
-          </a>
+        <div className="flex items-center gap-7 justify-start">
+          {rightLinks.map((l) => <NavItem key={l.label} link={l} />)}
         </div>
+      </div>
 
-        {/* Mobile Hamburger */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden flex flex-col gap-1.5 p-2"
-          aria-label="Toggle menu"
-        >
-          <span
-            className={`block w-6 h-[1.5px] bg-[#1A1A1A] transition-transform duration-300 ${
-              mobileOpen ? "rotate-45 translate-y-[4.5px]" : ""
-            }`}
+      {/* Mobile header */}
+      <div className="lg:hidden flex items-center justify-between h-[64px] px-5">
+        <a href="/">
+          <Image src="/images/Inkpot/Inkpot_600x400 px.svg" alt="Inkpot India"
+            width={143} height={95} className="object-contain"
+            style={{ height: "67px", width: "auto", filter: "contrast(1.15) saturate(1.1)" }}
+            priority
           />
-          <span
-            className={`block w-6 h-[1.5px] bg-[#1A1A1A] transition-opacity duration-300 ${
-              mobileOpen ? "opacity-0" : ""
-            }`}
-          />
-          <span
-            className={`block w-6 h-[1.5px] bg-[#1A1A1A] transition-transform duration-300 ${
-              mobileOpen ? "-rotate-45 -translate-y-[4.5px]" : ""
-            }`}
-          />
+        </a>
+        <button onClick={() => setMobileOpen(!mobileOpen)} className="flex flex-col gap-[5px] p-2" aria-label="Toggle menu">
+          <span className="block w-6 h-px transition-transform duration-300 origin-center" style={{ background: "var(--primary-brown)", transform: mobileOpen ? "translateY(6px) rotate(45deg)" : "none" }} />
+          <span className="block w-6 h-px transition-opacity duration-300" style={{ background: "var(--primary-brown)", opacity: mobileOpen ? 0 : 1 }} />
+          <span className="block w-6 h-px transition-transform duration-300 origin-center" style={{ background: "var(--primary-brown)", transform: mobileOpen ? "translateY(-6px) rotate(-45deg)" : "none" }} />
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-white/98 backdrop-blur-lg border-t border-black/8 px-6 py-8 flex flex-col gap-6"
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className="text-[#1A1A1A]/80 hover:text-[#1A1A1A] text-lg tracking-wide transition-colors"
-              style={{ fontFamily: "EB Garamond, serif" }}
-            >
-              {link.label}
-            </a>
-          ))}
-          <a
-            href="#join"
-            onClick={() => setMobileOpen(false)}
-            className="bg-[#1A1A1A] text-white px-5 py-3 text-center text-sm tracking-wide rounded-full hover:bg-[#333] transition-all duration-300 mt-2"
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25 }}
+            className="lg:hidden overflow-hidden"
+            style={{ background: "#ffffff", borderTop: "1px solid rgba(0,0,0,0.08)" }}
           >
-            Get Involved
-          </a>
-        </motion.div>
-      )}
-    </motion.nav>
+            <div className="px-6 py-5 flex flex-col">
+              {allLinks.map((link) => (
+                <div key={link.label}>
+                  {link.dropdown ? (
+                    <>
+                      <button
+                        onClick={() => setMobileExpanded(mobileExpanded === link.label ? null : link.label)}
+                        className="w-full text-left py-3 flex items-center justify-between"
+                        style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--primary-brown)" }}
+                      >
+                        {link.label}
+                        <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{ transform: mobileExpanded === link.label ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>
+                          <path d="M1 1L4 4L7 1" stroke="var(--primary-mustard)" strokeWidth="1.2" strokeLinecap="round" />
+                        </svg>
+                      </button>
+                      <AnimatePresence>
+                        {mobileExpanded === link.label && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden pl-4"
+                            style={{ borderLeft: "2px solid rgba(211,163,81,0.35)" }}
+                          >
+                            {link.dropdown?.map((item) => (
+                              <a key={item.label} href={item.href} onClick={() => setMobileOpen(false)}
+                                className="block py-2"
+                                style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "var(--primary-olive)" }}
+                              >
+                                {item.label}
+                              </a>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </>
+                  ) : (
+                    <a href={link.href} onClick={() => setMobileOpen(false)}
+                      className="block py-3"
+                      style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--primary-brown)" }}
+                    >
+                      {link.label}
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
   );
 }

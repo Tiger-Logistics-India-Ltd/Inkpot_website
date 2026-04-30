@@ -34,21 +34,29 @@ export default function StatBar() {
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
-    <section ref={ref} className="py-20 md:py-28">
-      <div className="max-w-5xl mx-auto px-6">
+    <section ref={ref} className="bg-[#0A0A0A] py-20 md:py-24">
+      <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
-          className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-[#111111]/8"
+          className="grid grid-cols-2 md:grid-cols-4 gap-px"
         >
           {stats.map((stat, i) => (
             <div
               key={i}
-              className="flex flex-col items-center text-center py-10 px-6"
+              className={`flex flex-col items-center text-center py-8 px-4 ${
+                i < stats.length - 1
+                  ? "md:border-r md:border-[rgba(201,168,76,0.2)]"
+                  : ""
+              } ${
+                i < 2
+                  ? "border-b md:border-b-0 border-[rgba(201,168,76,0.2)]"
+                  : ""
+              }`}
             >
               <span
-                className="text-[#111111] text-5xl md:text-6xl mb-3"
+                className="text-[#C9A84C] text-5xl md:text-6xl lg:text-7xl mb-3"
                 style={{ fontFamily: "EB Garamond, serif" }}
               >
                 {stat.isNumber ? (
@@ -58,7 +66,7 @@ export default function StatBar() {
                 )}
               </span>
               <span
-                className="text-[#111111]/40 text-xs tracking-wide leading-snug max-w-[100px]"
+                className="text-[#F5F0E8]/50 text-xs md:text-sm tracking-wide"
                 style={{ fontFamily: "DM Sans, sans-serif" }}
               >
                 {stat.label}

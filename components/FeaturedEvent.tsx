@@ -9,44 +9,45 @@ export default function FeaturedEvent() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="events" className="py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+    <section id="events" className="bg-[#0A0A0A]">
+      <div className="max-w-7xl mx-auto">
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center"
+          transition={{ duration: 0.8 }}
+          className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]"
         >
-          {/* Image */}
-          <div className="relative h-[380px] lg:h-[520px] overflow-hidden rounded-2xl">
+          {/* Image — top on mobile */}
+          <div className="relative h-[350px] lg:h-auto lg:order-2 overflow-hidden">
             <Image
-              src="/images/Songs%20of%20the%20stone/SOTS-71.jpg"
-              alt="Songs of the Stone — heritage monument performance"
+              src="https://images.unsplash.com/photo-1587474260584-136574528ed5?w=900&q=80"
+              alt="Qutub Minar at dusk"
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
+            <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#0A0A0A] via-transparent to-transparent" />
           </div>
 
           {/* Text */}
-          <div>
+          <div className="flex flex-col justify-center px-6 md:px-12 lg:px-16 py-16 lg:py-24 lg:order-1">
             <p
-              className="text-[#111111]/40 text-xs tracking-[0.25em] uppercase mb-5"
+              className="text-[#C9A84C] text-xs tracking-[0.25em] uppercase mb-5"
               style={{ fontFamily: "DM Sans, sans-serif" }}
             >
-              Upcoming · Cleanliness Drive
+              Upcoming · Songs of the Stone
             </p>
             <h2
-              className="text-3xl md:text-4xl text-[#111111] leading-tight mb-5"
+              className="text-3xl md:text-5xl text-[#F5F0E8] leading-tight mb-6"
               style={{ fontFamily: "EB Garamond, serif" }}
             >
               An Evening at
               <br />
-              Rajaon Ki Baoli.
+              Qutub Minar.
             </h2>
             <p
-              className="text-[#111111]/50 text-sm leading-relaxed max-w-sm mb-7"
+              className="text-[#F5F0E8]/70 text-sm md:text-base leading-relaxed max-w-lg mb-8"
               style={{ fontFamily: "DM Sans, sans-serif" }}
             >
               Presented in association with the Delhi Government and the
@@ -54,16 +55,33 @@ export default function FeaturedEvent() {
               resonance. Stone becomes story.
             </p>
 
-            <div className="flex flex-wrap gap-6 mb-8 text-[#111111]/45 text-sm">
+            {/* Metadata */}
+            <div className="flex flex-wrap gap-6 mb-8 text-[#F5F0E8]/50 text-sm">
               <span className="flex items-center gap-2">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="text-[#C9A84C]"
+                >
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>
-                Mehrauli, New Delhi
+                Qutub Minar, New Delhi
               </span>
               <span className="flex items-center gap-2">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="text-[#C9A84C]"
+                >
                   <rect x="3" y="4" width="18" height="18" rx="2" />
                   <line x1="16" y1="2" x2="16" y2="6" />
                   <line x1="8" y1="2" x2="8" y2="6" />
@@ -75,11 +93,11 @@ export default function FeaturedEvent() {
 
             <a
               href="#"
-              className="inline-flex items-center gap-2 text-[#111111] text-sm font-medium tracking-wide hover:gap-3 transition-all duration-300"
+              className="inline-flex items-center gap-2 text-[#C9A84C] text-sm tracking-wide hover:gap-3 transition-all duration-300"
               style={{ fontFamily: "DM Sans, sans-serif" }}
             >
               Learn More
-              <span>&rarr;</span>
+              <span>→</span>
             </a>
           </div>
         </motion.div>

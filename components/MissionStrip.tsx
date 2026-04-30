@@ -10,18 +10,21 @@ export default function MissionStrip() {
   return (
     <section
       id="story"
-      className="py-20 md:py-28 px-6"
+      className="relative py-28 md:py-36 px-6"
+      style={{ background: "#0D0D0D" }}
     >
+      {/* Top gold rule */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[rgba(201,168,76,0.3)] to-transparent" />
+
       <motion.div
         ref={ref}
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 40 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.9, ease: "easeOut" }}
-        className="max-w-xl mx-auto text-center"
+        className="max-w-4xl mx-auto text-center"
       >
-        <div className="w-10 h-px bg-[#111111]/20 mx-auto mb-10" />
         <blockquote
-          className="text-xl md:text-2xl lg:text-3xl leading-[1.45] italic text-[#111111] mb-8"
+          className="text-2xl md:text-4xl lg:text-[2.75rem] leading-snug italic text-[#F5F0E8] mb-8"
           style={{ fontFamily: "EB Garamond, serif" }}
         >
           &ldquo;To bring our music, literature, architecture, and performance
@@ -29,13 +32,15 @@ export default function MissionStrip() {
           and imagination.&rdquo;
         </blockquote>
         <p
-          className="text-[#111111]/35 text-xs tracking-[0.35em] uppercase"
+          className="text-[#C9A84C] text-xs tracking-[0.3em] uppercase"
           style={{ fontFamily: "DM Sans, sans-serif" }}
         >
           — Inkpot India
         </p>
-        <div className="w-10 h-px bg-[#111111]/20 mx-auto mt-10" />
       </motion.div>
+
+      {/* Bottom gold rule */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[rgba(201,168,76,0.3)] to-transparent" />
     </section>
   );
 }

@@ -9,46 +9,46 @@ export default function ConclaveStrip() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section className="relative h-[440px] md:h-[540px] overflow-hidden rounded-3xl mx-4 lg:mx-10 my-6 md:my-10">
+    <section className="relative h-[600px] md:h-[700px] overflow-hidden">
       {/* Background Image */}
       <Image
-        src="/images/Inkpot%20India%20Conclave/saurav/224A3689.JPG"
-        alt="Inkpot India Conclave"
+        src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1920&q=80"
+        alt="Conference hall"
         fill
         className="object-cover"
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-[rgba(0,0,0,0.6)]" />
+      <div className="absolute inset-0 bg-[rgba(10,10,10,0.75)]" />
 
       {/* Content */}
       <motion.div
         ref={ref}
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 40 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.8 }}
         className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6"
       >
         <p
-          className="text-white/60 text-xs tracking-[0.3em] uppercase mb-5"
+          className="text-[#C9A84C] text-xs tracking-[0.3em] uppercase mb-6"
           style={{ fontFamily: "DM Sans, sans-serif" }}
         >
           Inkpot India Conclave
         </p>
         <h2
-          className="text-3xl md:text-5xl lg:text-6xl text-white mb-4 leading-tight"
+          className="text-4xl md:text-6xl lg:text-7xl text-[#F5F0E8] mb-5 leading-tight"
           style={{ fontFamily: "EB Garamond, serif" }}
         >
           Re-ink. Rebrand. Reassert.
         </h2>
         <p
-          className="text-white/60 text-base max-w-md mb-8"
+          className="text-[#F5F0E8]/60 text-base md:text-lg max-w-md mb-10"
           style={{ fontFamily: "DM Sans, sans-serif" }}
         >
           India&rsquo;s art and literature on the world stage.
         </p>
         <a
           href="#"
-          className="bg-white text-[#1A1A1A] px-7 py-3 text-sm font-medium tracking-wide rounded-full hover:bg-white/90 transition-all duration-300"
+          className="border border-[#F5F0E8]/40 text-[#F5F0E8] px-8 py-3.5 text-sm tracking-wide hover:border-[#C9A84C] hover:text-[#C9A84C] transition-all duration-300"
           style={{ fontFamily: "DM Sans, sans-serif" }}
         >
           Discover the Conclave

@@ -1,84 +1,91 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion } from "framer-motion";
+
+const cols = [
+  { label: "NAVIGATE", links: ["Home", "About", "Our Experiences", "Newsroom", "Contact Us", "Privacy Policy", "Terms & Conditions"] },
+  { label: "OUR EXPERIENCES", links: ["Songs of the Stone", "Antarnaad", "Inkpot India Conclave", "Heritage Cleanliness Project", "Echoes of Expression"] },
+  { label: "GET INVOLVED", links: ["Partner with Us", "Perform with Us", "Jobs", "Careers", "Contact Us"] },
+];
+
+const socials = [
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/inkpotindia_/",
+    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>,
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/inkpotindia/",
+    icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>,
+  },
+  {
+    label: "WhatsApp",
+    href: "#",
+    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.112 1.523 5.837L.057 23.857l6.197-1.624A11.93 11.93 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm5.894 16.582c-.248.698-1.458 1.371-1.99 1.415-.532.044-1.032.206-3.482-.726-2.92-1.1-4.794-4.077-4.94-4.267-.145-.19-1.184-1.578-1.184-3.006 0-1.428.748-2.132 1.013-2.423.265-.292.578-.365.77-.365l.554.01c.178.009.416-.067.651.497.248.59.844 2.046.916 2.195.073.15.121.325.025.525-.097.2-.145.325-.29.5-.144.175-.304.39-.434.524-.145.145-.296.302-.127.592.169.29.75 1.236 1.609 2 1.103.98 2.033 1.283 2.323 1.427.29.145.458.12.628-.073.17-.194.726-.846.92-1.136.193-.29.386-.242.65-.145.263.097 1.671.789 1.957.934.286.145.477.218.547.34.07.12.07.698-.178 1.382z"/></svg>,
+  },
+];
+
+const vp = { once: false, amount: 0.15 };
+const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping: 20, delay });
 
 export default function Footer() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-  const [email, setEmail] = useState("");
-
   return (
-    <footer id="join" className="relative">
-      {/* Curved top edge */}
-      <div className="relative -mb-px">
-        <svg
-          viewBox="0 0 1440 120"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-auto block"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0 120V60C0 60 320 0 720 0C1120 0 1440 60 1440 60V120H0Z"
-            fill="#1A1A1A"
-          />
-        </svg>
-      </div>
+    <footer style={{ background: "var(--bg-linen)", borderTop: "1px solid rgba(0,0,0,0.08)" }}>
+      <div className="mx-auto" style={{ maxWidth: "1280px", padding: "80px 48px 72px" }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4" style={{ gap: "48px" }}>
 
-      {/* Footer body */}
-      <div className="bg-[#1A1A1A] px-6 pb-10 pt-16 md:pt-24">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="max-w-2xl mx-auto text-center"
-        >
-          <h2
-            className="text-2xl md:text-3xl lg:text-4xl text-white mb-3 leading-snug"
-            style={{ fontFamily: "EB Garamond, serif" }}
+          {/* Brand col */}
+          <motion.div
+            initial={{ y: 50, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
+            viewport={vp} transition={spring(0)}
           >
-            India Is Our Home.
-            <br />The World Is Our Stage.
-          </h2>
-          <p
-            className="text-white/40 text-xs tracking-[0.2em] uppercase mb-10"
-            style={{ fontFamily: "DM Sans, sans-serif" }}
-          >
-            Inkpot India
-          </p>
+            <a href="/" className="flex flex-col leading-none mb-5 w-fit">
+              <span className="tracking-widest" style={{ fontFamily: "var(--font-heading)", fontSize: "20px", color: "#000000" }}>INKPOT</span>
+              <span className="uppercase tracking-[0.3em]" style={{ fontFamily: "var(--font-body)", fontSize: "8px", color: "var(--primary-mustard)" }}>INDIA</span>
+            </a>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "#000000", lineHeight: 1.75, marginTop: "20px", maxWidth: "280px" }}>
+              Reframing Indian art, music, and heritage for the contemporary global imagination.
+            </p>
+            <div className="flex items-center" style={{ gap: "12px", marginTop: "28px" }}>
+              {socials.map((s) => (
+                <a key={s.label} href={s.href} target={s.href !== "#" ? "_blank" : undefined} rel="noopener noreferrer" aria-label={s.label}
+                  className="flex items-center justify-center transition-all duration-300"
+                  style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid rgba(211,163,81,0.4)", color: "var(--primary-mustard)" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(211,163,81,0.12)"; e.currentTarget.style.borderColor = "var(--primary-mustard)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(211,163,81,0.4)"; }}
+                >
+                  {s.icon}
+                </a>
+              ))}
+            </div>
+          </motion.div>
 
-          {/* Email signup */}
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-16"
-          >
-            <input
-              type="email"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 bg-transparent border border-white/30 text-white px-5 py-3 text-sm rounded-lg placeholder:text-white/40 focus:outline-none focus:border-white transition-colors"
-              style={{ fontFamily: "DM Sans, sans-serif" }}
-            />
-            <button
-              type="submit"
-              className="bg-white text-[#1A1A1A] px-6 py-3 text-sm font-semibold tracking-wide uppercase rounded-lg hover:bg-white/90 transition-colors shrink-0"
-              style={{ fontFamily: "DM Sans, sans-serif" }}
+          {/* Link cols */}
+          {cols.map((col, ci) => (
+            <motion.div
+              key={col.label}
+              initial={{ y: 50, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
+              viewport={vp} transition={spring(0.08 * (ci + 1))}
             >
-              Sign Up
-            </button>
-          </form>
-
-          {/* Bottom line */}
-          <p
-            className="text-white/30 text-xs"
-            style={{ fontFamily: "DM Sans, sans-serif" }}
-          >
-            © 2026 Inkpot India. All rights reserved.
-          </p>
-        </motion.div>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--primary-mustard)", marginBottom: "20px" }}>
+                {col.label}
+              </p>
+              <nav className="flex flex-col">
+                {col.links.map((link) => (
+                  <a key={link} href="#"
+                    className="transition-colors duration-200"
+                    style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "#000000", lineHeight: "2.2" }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-mustard)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "#000000")}
+                  >
+                    {link}
+                  </a>
+                ))}
+              </nav>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </footer>
   );

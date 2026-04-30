@@ -1,17 +1,26 @@
-@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap");
 @import "tailwindcss";
 
-@theme inline {
-  --color-ink-bg: #FFFFFF;
-  --color-ink-surface: #F7F7F7;
-  --color-ink-black: #111111;
-  --color-ink-dark: #0D0D0D;
-  --color-ink-gold: #C9A84C;
-  --color-ink-terracotta: #8B3A2A;
-  --color-ink-muted: #888888;
-  --font-garamond: "EB Garamond", serif;
-  --font-body: "DM Sans", sans-serif;
+:root {
+  --primary-red: #901A1C;
+  --primary-olive: #3D3F21;
+  --primary-brown: #482D18;
+  --primary-mustard: #D3A351;
+  --primary-terracotta: #A4481C;
+  --primary-cream: #E2CBA3;
+  --primary-white: #FFFFFF;
+  --primary-black: #000000;
+  --bg-linen: #F5F5F0;
+
+  --font-heading: 'EB Garamond', serif;
+  --font-subheading: 'Montserrat', sans-serif;
+  --font-body: 'Montserrat', sans-serif;
+  --font-accent: 'Belleza', cursive;
 }
+
+.font-heading    { font-family: var(--font-heading); }
+.font-body       { font-family: var(--font-body); }
+.font-accent     { font-family: var(--font-accent); }
+.font-subheading { font-family: var(--font-subheading); }
 
 * {
   margin: 0;
@@ -24,32 +33,72 @@ html {
 }
 
 body {
-  background: #ffffff;
-  color: #111111;
-  font-family: "DM Sans", sans-serif;
+  background: var(--primary-white);
+  color: var(--primary-brown);
+  font-family: var(--font-body);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: rgba(17, 17, 17, 0.1);
-  color: #111111;
+  background: rgba(211,163,81,0.20);
+  color: var(--primary-brown);
 }
 
-::-webkit-scrollbar {
-  width: 6px;
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-linen); }
+::-webkit-scrollbar-thumb { background: rgba(211,163,81,0.30); }
+::-webkit-scrollbar-thumb:hover { background: rgba(211,163,81,0.55); }
+
+/* ── GSAP Parallax Foundation ── */
+.parallax-wrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
 }
 
-::-webkit-scrollbar-track {
-  background: #ffffff;
+.parallax-layer {
+  position: absolute;
+  inset: -15% 0;
+  will-change: transform;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(17, 17, 17, 0.15);
-  border-radius: 3px;
+.parallax-layer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(17, 17, 17, 0.3);
+.parallax-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.slide-content {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .parallax-layer {
+    inset: 0 !important;
+    transform: none !important;
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
