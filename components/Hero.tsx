@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { useGsapParallax } from "@/hooks/useGsapParallax";
 
 export default function Hero() {
@@ -9,14 +8,24 @@ export default function Hero() {
 
   return (
     <section className="relative w-full overflow-hidden" style={{ height: "100vh", minHeight: "700px" }}>
-      {/* Parallax image layer */}
+      {/* Parallax video layer */}
       <div className="parallax-wrapper" ref={wrapperRef}>
         <div className="parallax-layer" ref={layerRef}>
-          <Image
-            src="https://images.unsplash.com/photo-1477587458883-47145ed94245?w=1920&q=85"
-            alt="Inkpot India"
-            fill priority sizes="100vw"
-            style={{ objectFit: "cover", objectPosition: "center" }}
+          <video
+            src="/images/Homepage/HEROBANNER.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center"
+            }}
           />
         </div>
       </div>

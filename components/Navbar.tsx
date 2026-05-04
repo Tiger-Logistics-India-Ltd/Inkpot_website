@@ -119,7 +119,7 @@ export default function Navbar() {
 
         <a href="/" className="flex items-center justify-center">
           <Image
-            src="/images/Inkpot/Inkpot_600x400 px.svg"
+            src="/images/Inkpot/Inkpot Final logo-01.png"
             alt="Inkpot India"
             width={265} height={177}
             className="object-contain"

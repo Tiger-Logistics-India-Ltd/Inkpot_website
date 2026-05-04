@@ -10,8 +10,26 @@ export default function Newsletter() {
   const [email, setEmail] = useState("");
 
   return (
-    <section id="join" style={{ background: "#0A0A0A", padding: "120px 0" }}>
-      <div className="mx-auto px-6 text-center" style={{ maxWidth: "640px" }}>
+    <section id="join" style={{ position: "relative", overflow: "hidden", padding: "120px 0" }}>
+      <video
+        src="/images/Homepage/Newsletter/hero_second.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center",
+          zIndex: 0
+        }}
+      />
+      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1 }} />
+      <div className="mx-auto px-6 text-center" style={{ maxWidth: "640px", position: "relative", zIndex: 2 }}>
 
         <motion.p
           initial={{ y: 30, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
@@ -61,13 +79,13 @@ export default function Newsletter() {
           </button>
         </motion.form>
 
-        <motion.p
+        {/* <motion.p
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
           viewport={vp} transition={spring(0.4)}
           style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "rgba(226,203,163,0.40)", marginTop: "16px" }}
         >
           We respect your privacy. No spam, ever.
-        </motion.p>
+        </motion.p> */}
       </div>
     </section>
   );

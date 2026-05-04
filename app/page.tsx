@@ -3,7 +3,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import AboutBelief from "@/components/AboutBelief";
-import PromoBanner from "@/components/PromoBanner";
+import FeaturedEvent from "@/components/FeaturedEvent";
 import OurExperiences from "@/components/OurExperiences";
 import MediaCoverage from "@/components/MediaCoverage";
 import Testimonials from "@/components/Testimonials";
@@ -17,7 +17,7 @@ export default function Home() {
       <main className="w-full bg-[#FAF8F4]">
         <Hero />
         <AboutBelief />
-        <PromoBanner />
+        <FeaturedEvent />
         <OurExperiences />
         <MediaCoverage />
         <Testimonials />
