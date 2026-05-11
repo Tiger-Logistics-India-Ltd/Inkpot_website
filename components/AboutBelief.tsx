@@ -3,121 +3,103 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
+const categories = [
+  {
+    label: "About Inkpot",
+    href: "#about",
+    image: "/images/Homepage/about/big_square.png",
+    offset: "48px",   // starts lower
+  },
+  {
+    label: "Leadership",
+    href: "#leadership",
+    image: "/images/Homepage/about/TALL IMAGE 1.png",
+    offset: "0px",    // tallest, starts at top
+  },
+  {
+    label: "Beliefs & Values",
+    href: "#beliefs",
+    image: "/images/Homepage/about/TALL IMAGE 2.png",
+    offset: "28px",   // mid offset
+  },
+];
+
 export default function AboutBelief() {
   return (
-    <section id="about" className="bg-[#FAF8F4] overflow-hidden" style={{ paddingTop: "56px", paddingBottom: "56px" }}>
-      <div className="mx-auto px-6 lg:px-12" style={{ maxWidth: "1280px" }}>
+    <section id="about" style={{ background: "#FAF8F4", padding: "80px 0", overflow: "hidden" }}>
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 64px", display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "80px", alignItems: "center" }}>
 
-        {/* ── DESKTOP ── */}
-        <div
-          className="hidden lg:grid"
-          style={{ gridTemplateColumns: "0.9fr 1.1fr", gap: "64px", alignItems: "start" }}
+        {/* ── LEFT: Text ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.75, ease: "easeOut" }}
+          style={{ display: "flex", flexDirection: "column", gap: "0px" }}
         >
-          {/* TEXT */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.75, ease: "easeOut" }}
-            style={{ display: "flex", flexDirection: "column", gap: "16px", maxWidth: "360px", marginLeft: "10%" }}
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--primary-red)", marginBottom: "20px" }}>
+            About Inkpot India
+          </p>
+
+          <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(32px, 3.8vw, 54px)", lineHeight: 1.12, color: "#1a1a1a", marginBottom: "24px" }}>
+            Re-Inking Our<br />Cultural Heritage.
+          </h2>
+
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.8, color: "rgba(0,0,0,0.6)", maxWidth: "380px", marginBottom: "40px" }}>
+            Inkpot India is a community-driven platform that uncovers hidden stories, celebrates heritage, and captures the essence of India through words, walks and visuals.
+          </p>
+
+          <a
+            href="/about"
+            style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#1a1a1a", color: "#ffffff", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", padding: "16px 32px", textDecoration: "none", width: "fit-content", transition: "background 0.25s" }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "var(--primary-red)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "#1a1a1a")}
           >
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#000000" }}>
-              ABOUT INKPOT INDIA
-            </p>
+            Explore Inkpot
+          </a>
+        </motion.div>
 
-            <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(20px, 2.6vw, 36px)", lineHeight: 1.18,  color: "var(--primary-red)" }}>
-              Re-Inking Our Cultural Heritage
-            </h2>
+        {/* ── RIGHT: 3 staggered images ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.75, delay: 0.1, ease: "easeOut" }}
+          style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
+        >
+          {categories.map((cat, i) => (
+            <div key={cat.label} style={{ flex: 1, paddingTop: cat.offset }}>
+              {/* Image */}
+              <a
+                href={cat.href}
+                style={{ display: "block", position: "relative", width: "100%", height: "320px", overflow: "hidden", marginBottom: "14px" }}
+              >
+                <Image
+                  src={cat.image}
+                  alt={cat.label}
+                  fill
+                  style={{ objectFit: "cover", objectPosition: "center", transition: "transform 0.5s ease" }}
+                  sizes="(max-width: 1280px) 20vw, 240px"
+                  onMouseEnter={(e) => ((e.currentTarget as HTMLImageElement).style.transform = "scale(1.05)")}
+                  onMouseLeave={(e) => ((e.currentTarget as HTMLImageElement).style.transform = "scale(1)")}
+                />
+              </a>
 
-            
-
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", lineHeight: 1.7, color: "#000000" }}>
-              Inkpot India is a community-driven platform that uncovers hidden stories, celebrates heritage, and captures the essence of India through words, walks and visuals.
-            </p>
-
-            <a
-              href="/about"
-              style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#000000", display: "inline-flex", alignItems: "center", gap: "6px", borderBottom: "1px solid #D3A351", paddingBottom: "1px" }}
-            >
-              Know More About Us →
-            </a>
-          </motion.div>
-
-          {/* IMAGE COLLAGE */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.75, delay: 0.12, ease: "easeOut" }}
-          >
-            <div
-              className="grid"
-              style={{ gridTemplateColumns: "1.4fr 0.8fr 0.7fr 0.7fr", gap: "6px", height: "240px" }}
-            >
-              <div className="relative overflow-hidden">
-                <Image src="/images/Homepage/about/big_square.png" alt="Inkpot India" fill className="object-cover" sizes="18vw" />
-              </div>
-
-              <div className="grid" style={{ gridTemplateRows: "1.2fr 1fr", gap: "6px" }}>
-                <div className="relative overflow-hidden">
-                  <Image src="/images/Homepage/about/Top (slightly taller).png" alt="Inkpot India" fill className="object-cover" sizes="10vw" />
-                </div>
-                <div className="relative overflow-hidden">
-                  <Image src="/images/Homepage/about/Bottom.png" alt="Inkpot India" fill className="object-cover" sizes="10vw" />
-                </div>
-              </div>
-
-              <div className="relative overflow-hidden">
-                <Image src="/images/Homepage/about/TALL IMAGE 1.png" alt="Inkpot India" fill className="object-cover" sizes="9vw" />
-              </div>
-
-              <div className="relative overflow-hidden">
-                <Image src="/images/Homepage/about/TALL IMAGE 2.png" alt="Inkpot India" fill className="object-cover" sizes="9vw" />
-              </div>
+              {/* Label link */}
+              <a
+                href={cat.href}
+                style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "#1a1a1a", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "8px", transition: "color 0.2s" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-red)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#1a1a1a")}
+              >
+                {cat.label}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
             </div>
-          </motion.div>
-        </div>
-
-        {/* ── MOBILE ── */}
-        <div className="flex flex-col gap-8 lg:hidden">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.75, ease: "easeOut" }}
-            style={{ display: "flex", flexDirection: "column", gap: "14px", marginLeft: "10%" }}
-          >
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#000000" }}>
-              ABOUT INKPOT INDIA
-            </p>
-            <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "28px", lineHeight: 1.18, color: "#000000" }}>
-              Inkpot India
-            </h2>
-            <p style={{ fontFamily: "var(--font-subheading)", fontSize: "12px", fontWeight: 600, letterSpacing: "0.05em", color: "var(--primary-terracotta)" }}>
-              Re-Inking Our Cultural Heritage
-            </p>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", lineHeight: 1.7, color: "#000000" }}>
-              Inkpot India is a community-driven platform that uncovers hidden stories, celebrates heritage, and captures the essence of India through words, walks and visuals.
-            </p>
-            <a href="/about" style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#000000", display: "inline-flex", alignItems: "center", gap: "6px", borderBottom: "1px solid #D3A351", paddingBottom: "1px" }}>
-              Know More About Us →
-            </a>
-          </motion.div>
-
-          <div className="grid grid-cols-2" style={{ gap: "6px" }}>
-            <div className="relative overflow-hidden" style={{ aspectRatio: "3/4" }}>
-              <Image src="/images/Homepage/about/big_square.png" alt="Inkpot India" fill className="object-cover" sizes="46vw" />
-            </div>
-            <div className="flex flex-col" style={{ gap: "6px" }}>
-              <div className="relative overflow-hidden" style={{ aspectRatio: "1/1" }}>
-                <Image src="/images/Homepage/about/TALL IMAGE 1.png" alt="Inkpot India" fill className="object-cover" sizes="46vw" />
-              </div>
-              <div className="relative overflow-hidden" style={{ aspectRatio: "1/1" }}>
-                <Image src="/images/Homepage/about/TALL IMAGE 2.png" alt="Inkpot India" fill className="object-cover" sizes="46vw" />
-              </div>
-            </div>
-          </div>
-        </div>
+          ))}
+        </motion.div>
 
       </div>
     </section>

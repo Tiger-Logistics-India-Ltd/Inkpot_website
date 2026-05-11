@@ -1,225 +1,171 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import gsap from "gsap";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const testimonials = [
   {
-    quote: "Inkpot India creates spaces where heritage feels alive and urgent — not archived.",
-    name: "GAZAL",
-    image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1920&q=80",
+    quote: "From the moment I entered, it's been magical. A miraculous program full of art and joy.",
+    name: "Elena Barman",
+    title: "President, Indian Association of Russian Compatriots",
   },
   {
-    quote: "Every event feels like stepping into a living, breathing story. The curation is impeccable.",
-    name: "SHALU",
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&q=80",
+    quote: "The Qutub Minar is looking so beautiful, everything is lit up. The performance was phenomenal.",
+    name: "Sunhana Nanda",
+    title: "Attendee, Songs of the Stone",
   },
   {
-    quote: "They've managed to make India's cultural wealth feel contemporary and vital — not nostalgic.",
-    name: "ERIC",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80",
+    quote: "Mr. Niazi's sitar dazzled all of us. I can't wait for more of this to happen in India.",
+    name: "Suvir Saran",
+    title: "Master Chef",
   },
   {
-    quote: "A rare institution that honours tradition while boldly reimagining its future.",
-    name: "TUHINA",
-    image: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1920&q=80",
+    quote: "I was actually being a part of history — the first sitar concert at the Qutub Minar.",
+    name: "Ashmita Tewari",
+    title: "Attendee, Songs of the Stone",
   },
   {
-    quote: "What Inkpot does is profound: they make you feel like an insider to something sacred and beautiful.",
-    name: "IRADO",
-    image: "https://images.unsplash.com/photo-1519060825752-c4832f2685e3?w=1920&q=80",
+    quote: "Not of this scale or so well put together. Music that makes you experience your deeper emotions.",
+    name: "Tuhani Raj",
+    title: "Attendee, Songs of the Stone",
   },
   {
-    quote: "An experience that lingers — in memory, in conversation, in longing to return.",
-    name: "SIKKAWALA",
-    image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1920&q=80",
+    quote: "A surreal evening. It speaks so highly of our cultural heritage which we should all be proud of.",
+    name: "Sanjay Suchir",
+    title: "Attendee, Songs of the Stone",
   },
   {
-    quote: "For the first time, I felt Indian heritage wasn't being preserved — it was being celebrated.",
-    name: "SUHAVINI",
-    image: "https://images.unsplash.com/photo-1526711657229-e7e080ed7aa1?w=1920&q=80",
+    quote: "Inkpot is a very positive development to showcase our culture — our country's biggest asset. This showcasing of literature, music, art, theatre and design is what privileges India at its best.",
+    name: "Dr. Shashi Tharoor",
+    title: "Author, Politician & Former International Civil Servant",
+  },
+  {
+    quote: "Conferences like Inkpot are super important because they create platforms for all kinds of ideas. Without an idea you can't evolve as a human or as a society.",
+    name: "Sanjoy K. Roy",
+    title: "Festival Director, Jaipur Literature Festival",
+  },
+  {
+    quote: "We need festivals like Inkpot so that people and thinkers come together — where there is discussion, it always ignites interest and opens new doors and windows.",
+    name: "Shovana Narayan",
+    title: "National Award Winning Kathak Dancer",
   },
 ];
 
 export default function Testimonials() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const activePanelRef = useRef(0);
-  const [activePanel, setActivePanel] = useState(0);
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [paused, setPaused] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const go = useCallback((idx: number, dir: number) => {
+    setDirection(dir);
+    setCurrent(idx);
+  }, []);
 
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    panelRefs.current.forEach((el, i) => {
-      if (el) gsap.set(el, { y: i === 0 ? "0%" : "100%" });
-    });
-    layerRefs.current.forEach((el, i) => {
-      if (el) gsap.set(el, { y: i === 0 ? "0%" : "15%" });
-    });
-
-    const onScroll = () => {
-      const rect = section.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const totalScrollable = rect.height - vh;
-      if (totalScrollable <= 0) return;
-
-      const scrolled = -rect.top;
-      if (scrolled < 0 || scrolled > totalScrollable) return;
-
-      const progress = scrolled / totalScrollable;
-      const targetPanel = Math.min(
-        testimonials.length - 1,
-        Math.floor(progress * testimonials.length)
-      );
-
-      if (targetPanel !== activePanelRef.current) {
-        const prev = activePanelRef.current;
-        const dir = targetPanel > prev ? 1 : -1;
-
-        const prevPanel = panelRefs.current[prev];
-        const nextPanel = panelRefs.current[targetPanel];
-        const prevLayer = layerRefs.current[prev];
-        const nextLayer = layerRefs.current[targetPanel];
-
-        if (prevPanel) gsap.to(prevPanel, { y: dir > 0 ? "-100%" : "100%", duration: 0.85, ease: "power3.inOut" });
-        if (nextPanel) gsap.fromTo(nextPanel, { y: dir > 0 ? "100%" : "-100%" }, { y: "0%", duration: 0.85, ease: "power3.inOut" });
-
-        if (prevLayer) gsap.to(prevLayer, { y: dir > 0 ? "-15%" : "15%", duration: 0.85, ease: "power3.inOut" });
-        if (nextLayer) gsap.fromTo(nextLayer, { y: dir > 0 ? "15%" : "-15%" }, { y: "0%", duration: 0.85, ease: "power3.inOut" });
-
-        activePanelRef.current = targetPanel;
-        setActivePanel(targetPanel);
-      }
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    if (paused) return;
+    timer.current = setTimeout(() => {
+      setDirection(1);
+      setCurrent((c) => (c + 1) % testimonials.length);
+    }, 5000);
+    return () => { if (timer.current) clearTimeout(timer.current); };
+  }, [current, paused]);
 
   return (
     <section
-      ref={sectionRef}
-      style={{ height: `${testimonials.length * 100}vh` }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      style={{ background: "#ffffff", borderTop: "1px solid rgba(144,26,28,0.20)", borderBottom: "1px solid rgba(144,26,28,0.20)" }}
     >
-      <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "200px 1fr 200px", alignItems: "center", maxWidth: "1280px", margin: "0 auto", padding: "0 48px", minHeight: "175px" }}>
 
-        {/* Panels */}
-        {testimonials.map((t, i) => (
-          <TestimonialPanel
-            key={t.name}
-            item={t}
-            isActive={activePanel === i}
-            panelRef={(el) => { panelRefs.current[i] = el; }}
-            layerRef={(el) => { layerRefs.current[i] = el; }}
-          />
-        ))}
-
-        {/* Section label */}
-        <div
-          style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 20, padding: "28px 0", textAlign: "center", pointerEvents: "none" }}
-        >
-          <div className="flex items-center justify-center gap-3">
-            <div style={{ width: "32px", height: "1px", background: "var(--primary-mustard)" }} />
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--primary-mustard)" }}>
+        {/* Left: label */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px", borderRight: "1px solid rgba(0,0,0,0.08)", paddingRight: "40px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ width: "24px", height: "1px", background: "var(--primary-red)" }} />
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.28em", textTransform: "uppercase", color: "var(--primary-red)" }}>
               Voices
-            </p>
-            <div style={{ width: "32px", height: "1px", background: "var(--primary-mustard)" }} />
+            </span>
           </div>
-          <p style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(18px, 1.8vw, 24px)", color: "var(--primary-white)", marginTop: "6px", opacity: 0.85 }}>
-            What People Say.
+          <p style={{ fontFamily: "var(--font-heading)", fontSize: "18px", color: "#1a1a1a", fontWeight: 400, lineHeight: 1.2 }}>
+            What People Say
           </p>
         </div>
 
-        {/* Progress bar */}
-        <div
-          style={{ position: "absolute", bottom: "36px", left: "50%", transform: "translateX(-50%)", zIndex: 20, display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}
-        >
-          <div style={{ width: "220px", height: "2px", background: "rgba(211,163,81,0.22)", position: "relative" }}>
+        {/* Centre: quote */}
+        <div style={{ padding: "32px 48px", overflow: "hidden", position: "relative" }}>
+          <AnimatePresence mode="wait" custom={direction}>
             <motion.div
-              style={{ position: "absolute", left: 0, top: 0, height: "100%", background: "var(--primary-mustard)" }}
-              animate={{ width: `${((activePanel + 1) / testimonials.length) * 100}%` }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            />
+              key={current}
+              custom={direction}
+              initial={{ opacity: 0, y: direction > 0 ? 16 : -16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: direction > 0 ? -16 : 16 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+            >
+              <p style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(15px, 1.4vw, 19px)", color: "#1a1a1a", lineHeight: 1.6, fontWeight: 400, marginBottom: "12px" }}>
+                <span style={{ color: "var(--primary-red)", fontSize: "1.4em", lineHeight: 0, verticalAlign: "-0.15em", marginRight: "4px" }}>&ldquo;</span>
+                {testimonials[current].quote}
+                <span style={{ color: "var(--primary-red)", fontSize: "1.4em", lineHeight: 0, verticalAlign: "-0.15em", marginLeft: "4px" }}>&rdquo;</span>
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{ width: "20px", height: "1px", background: "var(--primary-red)" }} />
+                <span style={{ fontFamily: "var(--font-subheading)", fontSize: "11px", color: "#1a1a1a", letterSpacing: "0.06em" }}>
+                  {testimonials[current].name}
+                </span>
+                {testimonials[current].title && (
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.4)", letterSpacing: "0.08em" }}>
+                    · {testimonials[current].title}
+                  </span>
+                )}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Right: controls */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "16px", borderLeft: "1px solid rgba(0,0,0,0.08)", paddingLeft: "40px" }}>
+          {/* Dots */}
+          <div style={{ display: "flex", gap: "6px" }}>
+            {testimonials.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => go(i, i > current ? 1 : -1)}
+                aria-label={`Slide ${i + 1}`}
+                style={{ width: i === current ? "20px" : "6px", height: "2px", background: i === current ? "var(--primary-red)" : "rgba(0,0,0,0.15)", border: "none", cursor: "pointer", padding: 0, transition: "width 0.3s, background 0.3s" }}
+              />
+            ))}
           </div>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em", color: "rgba(211,163,81,0.55)" }}>
-            {String(activePanel + 1).padStart(2, "0")} / {String(testimonials.length).padStart(2, "0")}
-          </p>
+
+          {/* Arrows */}
+          <div style={{ display: "flex", gap: "8px" }}>
+            <button
+              onClick={() => go((current - 1 + testimonials.length) % testimonials.length, -1)}
+              aria-label="Previous"
+              style={{ width: "36px", height: "36px", border: "1px solid rgba(0,0,0,0.18)", background: "none", color: "#1a1a1a", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "border-color 0.2s" }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--primary-red)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(0,0,0,0.18)")}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6" /></svg>
+            </button>
+            <button
+              onClick={() => go((current + 1) % testimonials.length, 1)}
+              aria-label="Next"
+              style={{ width: "36px", height: "36px", border: "1px solid rgba(0,0,0,0.18)", background: "none", color: "#1a1a1a", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "border-color 0.2s" }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--primary-red)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(0,0,0,0.18)")}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M9 18l6-6-6-6" /></svg>
+            </button>
+          </div>
+
+          {/* Counter */}
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.16em", color: "rgba(0,0,0,0.35)" }}>
+            {String(current + 1).padStart(2, "0")} / {String(testimonials.length).padStart(2, "0")}
+          </span>
         </div>
 
       </div>
     </section>
-  );
-}
-
-function TestimonialPanel({
-  item, isActive, panelRef, layerRef,
-}: {
-  item: typeof testimonials[0];
-  isActive: boolean;
-  panelRef: (el: HTMLDivElement | null) => void;
-  layerRef: (el: HTMLDivElement | null) => void;
-}) {
-  return (
-    <div ref={panelRef} style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
-      {/* Parallax background */}
-      <div ref={layerRef} style={{ position: "absolute", inset: "-20% 0", willChange: "transform" }}>
-        <Image
-          src={item.image}
-          alt=""
-          fill
-          sizes="100vw"
-          style={{ objectFit: "cover", objectPosition: "center" }}
-        />
-      </div>
-
-      {/* Dark atmospheric overlay */}
-      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.76)" }} />
-
-      {/* Quote content — centered */}
-      <div
-        className="relative z-10 flex flex-col items-center justify-center h-full"
-        style={{ padding: "80px 10%", textAlign: "center" }}
-      >
-        {/* Opening quote mark */}
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isActive ? 0.45 : 0 }}
-          transition={{ duration: 0.5, delay: isActive ? 0.5 : 0 }}
-          style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(80px, 10vw, 120px)", color: "var(--primary-mustard)", lineHeight: 0.8, marginBottom: "16px", display: "block" }}
-        >
-          &ldquo;
-        </motion.span>
-
-        <motion.blockquote
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : 30 }}
-          transition={{ duration: 0.65, delay: isActive ? 0.65 : 0, ease: "easeOut" }}
-          style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(20px, 2.8vw, 36px)", color: "var(--primary-white)", lineHeight: 1.55, maxWidth: "820px" }}
-        >
-          {item.quote}
-        </motion.blockquote>
-
-        {/* Gold divider line */}
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: isActive ? 1 : 0 }}
-          transition={{ duration: 0.5, delay: isActive ? 0.95 : 0, ease: "easeOut" }}
-          style={{ height: "1px", background: "var(--primary-mustard)", width: "56px", margin: "28px auto 20px", transformOrigin: "center" }}
-        />
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isActive ? 1 : 0 }}
-          transition={{ duration: 0.5, delay: isActive ? 1.05 : 0 }}
-          style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--primary-mustard)" }}
-        >
-          {item.name}
-        </motion.p>
-      </div>
-    </div>
   );
 }

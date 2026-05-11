@@ -9,6 +9,7 @@ import MediaCoverage from "@/components/MediaCoverage";
 import Testimonials from "@/components/Testimonials";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
+import SectionWrapper from "@/components/SectionWrapper";
 
 export default function Home() {
   return (
@@ -16,12 +17,12 @@ export default function Home() {
       <Navbar />
       <main className="w-full bg-[#FAF8F4]">
         <Hero />
-        <AboutBelief />
-        <FeaturedEvent />
+        <SectionWrapper><AboutBelief /></SectionWrapper>
+        <SectionWrapper><FeaturedEvent /></SectionWrapper>
         <OurExperiences />
-        <MediaCoverage />
-        <Testimonials />
-        <Newsletter />
+        <SectionWrapper><MediaCoverage /></SectionWrapper>
+        <SectionWrapper><Testimonials /></SectionWrapper>
+        <SectionWrapper><Newsletter /></SectionWrapper>
       </main>
       <Footer />
     </>

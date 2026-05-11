@@ -51,9 +51,9 @@ export default function Footer() {
               {socials.map((s) => (
                 <a key={s.label} href={s.href} target={s.href !== "#" ? "_blank" : undefined} rel="noopener noreferrer" aria-label={s.label}
                   className="flex items-center justify-center transition-all duration-300"
-                  style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid rgba(211,163,81,0.4)", color: "var(--primary-mustard)" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(211,163,81,0.12)"; e.currentTarget.style.borderColor = "var(--primary-mustard)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(211,163,81,0.4)"; }}
+                  style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid rgba(144,26,28,0.4)", color: "var(--primary-mustard)" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(144,26,28,0.12)"; e.currentTarget.style.borderColor = "var(--primary-mustard)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(144,26,28,0.4)"; }}
                 >
                   {s.icon}
                 </a>

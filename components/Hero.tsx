@@ -65,7 +65,7 @@ export default function Hero() {
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
           className="flex flex-col items-center gap-2"
         >
-          <div style={{ width: "1px", height: "40px", background: "rgba(211,163,81,0.6)" }} />
+          <div style={{ width: "1px", height: "40px", background: "rgba(144,26,28,0.6)" }} />
           <svg width="12" height="8" viewBox="0 0 12 8" fill="none" style={{ color: "var(--primary-mustard)" }}>
             <path d="M1 1L6 6L11 1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

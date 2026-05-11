@@ -64,9 +64,9 @@ export default function Newsletter() {
           <input
             type="email" placeholder="Your email address"
             value={email} onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "360px", maxWidth: "100%", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(211,163,81,0.30)", borderRight: "none", color: "var(--primary-white)", padding: "16px 24px", fontFamily: "var(--font-body)", fontSize: "14px", outline: "none" }}
-            onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(211,163,81,0.7)"; }}
-            onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(211,163,81,0.30)"; }}
+            style={{ width: "360px", maxWidth: "100%", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(144,26,28,0.30)", borderRight: "none", color: "var(--primary-white)", padding: "16px 24px", fontFamily: "var(--font-body)", fontSize: "14px", outline: "none" }}
+            onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(144,26,28,0.7)"; }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(144,26,28,0.30)"; }}
             className="placeholder:text-[rgba(226,203,163,0.35)]"
           />
           <button

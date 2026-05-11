@@ -70,7 +70,7 @@ export default function PromoBanner() {
       >
         <div className="parallax-wrapper" ref={wrapperRef}>
           <div className="parallax-layer" ref={layerRef}>
-            <Image src="/images/experiences/NolitterLegacy.png" alt="Heritage Cleanliness Project" fill sizes="(max-width: 768px) 100vw, 55vw" style={{ objectFit: "cover" }} />
+            <Image src="/images/heritage cleaning/NolitterLegacy.png" alt="Heritage Cleanliness Project" fill sizes="(max-width: 768px) 100vw, 55vw" style={{ objectFit: "cover" }} />
           </div>
         </div>
       </motion.div>

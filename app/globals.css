@@ -4,7 +4,7 @@
   --primary-red: #901A1C;
   --primary-olive: #3D3F21;
   --primary-brown: #482D18;
-  --primary-mustard: #D3A351;
+  --primary-mustard: #901A1C;
   --primary-terracotta: #A4481C;
   --primary-cream: #E2CBA3;
   --primary-white: #FFFFFF;
@@ -42,14 +42,14 @@ body {
 }
 
 ::selection {
-  background: rgba(211,163,81,0.20);
+  background: rgba(144,26,28,0.20);
   color: var(--primary-brown);
 }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-linen); }
-::-webkit-scrollbar-thumb { background: rgba(211,163,81,0.30); }
-::-webkit-scrollbar-thumb:hover { background: rgba(211,163,81,0.55); }
+::-webkit-scrollbar-thumb { background: rgba(144,26,28,0.30); }
+::-webkit-scrollbar-thumb:hover { background: rgba(144,26,28,0.55); }
 
 /* ── GSAP Parallax Foundation ── */
 .parallax-wrapper {
