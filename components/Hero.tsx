@@ -13,7 +13,7 @@ export default function Hero() {
       <div className="parallax-wrapper" ref={wrapperRef}>
         <div className="parallax-layer" ref={layerRef}>
           <video
-            src="/images/Homepage/Hero_banner_3.mp4"
+            src="/images/Homepage/hero_banner_3.mp4"
             autoPlay
             loop
             muted
