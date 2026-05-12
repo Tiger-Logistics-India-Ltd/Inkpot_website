@@ -8,33 +8,27 @@ import Image from "next/image";
 const experiences = [
   {
     label: "Songs of the Stone",
-    href: "#experiences",
+    href: "https://www.songsofthestone.com/",
     image: "/images/Songs of the stone/SOTS-71.jpg",
-    links: [{ label: "Learn More", href: "#experiences" }],
+    links: [{ label: "Learn More", href: "https://www.songsofthestone.com/" }],
   },
   {
     label: "Antarnaad",
     href: "#experiences",
     image: "/images/experiences/224A3705.JPG",
-    links: [{ label: "Learn More", href: "#experiences" }],
+    links: [{ label: "Comming Soon", href: "#experiences" }],
   },
   {
     label: "Inkpot India Conclave",
-    href: "#experiences",
+    href: "https://www.inkpotindiaconclave.com/",
     image: "/images/Inkpot India Conclave/saurav/224A3689.JPG",
-    links: [{ label: "Learn More", href: "#experiences" }],
+    links: [{ label: "Learn More", href: "https://www.inkpotindiaconclave.com/" }],
   },
   {
     label: "Heritage Cleanliness Project",
     href: "/events/heritage-cleanliness",
     image: "/images/heritage cleaning/NolitterLegacy.png",
     links: [{ label: "Volunteer Now", href: "/events/heritage-cleanliness" }],
-  },
-  {
-    label: "Echoes of Expression",
-    href: "#experiences",
-    image: "/images/experiences/479A7421.JPG",
-    links: [{ label: "Learn More", href: "#experiences" }],
   },
 ];
 
@@ -101,7 +95,7 @@ function MegaMenu({ open }: { open: boolean }) {
           transition={{ duration: 0.18 }}
           style={{ position: "absolute", top: "96px", left: 0, right: 0, background: "#ffffff", borderTop: "2px solid var(--primary-red)", boxShadow: "0 12px 40px rgba(72,45,24,0.13)", padding: "36px 80px 40px", zIndex: 40 }}
         >
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "28px", maxWidth: "1280px", margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "32px", maxWidth: "1280px", margin: "0 auto" }}>
             {experiences.map((exp) => (
               <div key={exp.label}>
                 <a href={exp.href} style={{ display: "block", position: "relative", width: "100%", height: "150px", overflow: "hidden", marginBottom: "14px" }}>
@@ -127,6 +121,8 @@ function MegaMenu({ open }: { open: boolean }) {
                 <div style={{ borderTop: "1px solid rgba(0,0,0,0.10)", marginBottom: "12px" }} />
                 {exp.links.map((lnk) => (
                   <a key={lnk.label} href={lnk.href}
+                    target={lnk.href.startsWith("http") ? "_blank" : undefined}
+                    rel={lnk.href.startsWith("http") ? "noopener noreferrer" : undefined}
                     style={{ display: "flex", alignItems: "center", gap: "6px", fontFamily: "var(--font-body)", fontSize: "11px", color: "var(--primary-brown)", marginBottom: "8px", textDecoration: "none" }}
                     onMouseEnter={(e) => { e.currentTarget.style.color = "var(--primary-red)"; (e.currentTarget.querySelector("span") as HTMLElement).style.transform = "translateX(3px)"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.color = "var(--primary-brown)"; (e.currentTarget.querySelector("span") as HTMLElement).style.transform = "translateX(0)"; }}

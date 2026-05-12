@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 import AboutBelief from "@/components/AboutBelief";
 import FeaturedEvent from "@/components/FeaturedEvent";
 import OurExperiences from "@/components/OurExperiences";
+import OurExperiencesV2 from "@/components/OurExperiencesV2";
 import MediaCoverage from "@/components/MediaCoverage";
 import Testimonials from "@/components/Testimonials";
 import Newsletter from "@/components/Newsletter";
@@ -20,6 +21,7 @@ export default function Home() {
         <SectionWrapper><AboutBelief /></SectionWrapper>
         <SectionWrapper><FeaturedEvent /></SectionWrapper>
         <OurExperiences />
+        <OurExperiencesV2 />
         <SectionWrapper><MediaCoverage /></SectionWrapper>
         <SectionWrapper><Testimonials /></SectionWrapper>
         <SectionWrapper><Newsletter /></SectionWrapper>

@@ -8,11 +8,12 @@ export default function Hero() {
 
   return (
     <section className="relative w-full overflow-hidden" style={{ height: "100vh", minHeight: "700px" }}>
+
       {/* Parallax video layer */}
       <div className="parallax-wrapper" ref={wrapperRef}>
         <div className="parallax-layer" ref={layerRef}>
           <video
-            src="/images/Homepage/HEROBANNER.mp4"
+            src="/images/Homepage/Hero_banner_3.mp4"
             autoPlay
             loop
             muted
@@ -24,53 +25,133 @@ export default function Hero() {
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              objectPosition: "center"
+              objectPosition: "center",
             }}
           />
         </div>
       </div>
 
-      {/* Warm brown overlay — sibling, stays still */}
+      {/* Black gradient overlay */}
       <div
         className="parallax-overlay"
-        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.38) 50%, rgba(0,0,0,0.82) 100%)" }}
+        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.42) 45%, rgba(0,0,0,0.85) 100%)" }}
       />
 
-      {/* Single CTA — bottom left */}
+      {/* ── Centered headline ── */}
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, delay: 0.6, ease: "easeOut" }}
-        className="relative z-10 h-full flex flex-col justify-end px-8 md:px-14 lg:px-20"
-        style={{ paddingBottom: "80px", maxWidth: "1280px", margin: "0 auto", width: "100%" }}
+        transition={{ duration: 1.0, delay: 0.5, ease: "easeOut" }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+          padding: "0 24px",
+          zIndex: 10,
+          pointerEvents: "none",
+        }}
       >
-        <a
+        <p style={{
+          fontFamily: "var(--font-body)",
+          fontSize: "10px",
+          letterSpacing: "0.32em",
+          textTransform: "uppercase",
+          color: "rgba(255,255,255,0.55)",
+          marginBottom: "20px",
+        }}>
+          Inkpot India
+        </p>
+        <h1 style={{
+          fontFamily: "var(--font-heading)",
+          fontStyle: "italic",
+          fontWeight: 400,
+          fontSize: "clamp(36px, 5.5vw, 76px)",
+          lineHeight: 1.1,
+          color: "#ffffff",
+          maxWidth: "800px",
+        }}>
+          Can We protect<br />our heritage please!
+        </h1>
+        <div style={{ width: "40px", height: "1px", background: "rgba(255,255,255,0.3)", margin: "28px auto 0" }} />
+      </motion.div>
+
+      {/* ── Bottom row: location credit left, CTA center ── */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "48px",
+          left: 0,
+          right: 0,
+          zIndex: 10,
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "center",
+          padding: "0 48px",
+        }}
+      >
+        {/* Location credit — bottom left */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.6, duration: 0.8 }}
+          style={{
+            position: "absolute",
+            left: "48px",
+            fontFamily: "var(--font-body)",
+            fontSize: "10px",
+            letterSpacing: "0.14em",
+            color: "rgba(255,255,255,0.38)",
+          }}
+        >
+          — Agra Fort
+        </motion.p>
+
+        {/* CTA — center */}
+        <motion.a
           href="#experiences"
-          className="text-white transition-colors duration-300"
-          style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", background: "var(--primary-red)", padding: "14px 32px", width: "fit-content" }}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.7, ease: "easeOut" }}
+          className="text-white"
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "12px",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            background: "var(--primary-red)",
+            padding: "14px 36px",
+            textDecoration: "none",
+            transition: "background 0.25s",
+          }}
           onMouseEnter={(e) => (e.currentTarget.style.background = "#7a1517")}
           onMouseLeave={(e) => (e.currentTarget.style.background = "var(--primary-red)")}
         >
           Explore Experiences
-        </a>
-      </motion.div>
+        </motion.a>
+      </div>
 
       {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8, duration: 0.8 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+        style={{ bottom: "12px" }}
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
           className="flex flex-col items-center gap-2"
         >
-          <div style={{ width: "1px", height: "40px", background: "rgba(144,26,28,0.6)" }} />
-          <svg width="12" height="8" viewBox="0 0 12 8" fill="none" style={{ color: "var(--primary-mustard)" }}>
+          <div style={{ width: "1px", height: "32px", background: "rgba(255,255,255,0.25)" }} />
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none" style={{ color: "rgba(255,255,255,0.35)" }}>
             <path d="M1 1L6 6L11 1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </motion.div>
       </motion.div>
+
     </section>
   );
 }

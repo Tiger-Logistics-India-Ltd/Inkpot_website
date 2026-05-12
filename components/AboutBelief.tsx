@@ -7,19 +7,19 @@ const categories = [
   {
     label: "About Inkpot",
     href: "#about",
-    image: "/images/Homepage/about/big_square.png",
+    image: "/images/Homepage/about/extra.jpg",
     offset: "48px",   // starts lower
   },
   {
     label: "Leadership",
     href: "#leadership",
-    image: "/images/Homepage/about/TALL IMAGE 1.png",
+    image: "/images/Homepage/about/About_founder_image.svg",
     offset: "0px",    // tallest, starts at top
   },
   {
     label: "Beliefs & Values",
     href: "#beliefs",
-    image: "/images/Homepage/about/TALL IMAGE 2.png",
+    image: "/images/Homepage/about/Monuments.jpeg",
     offset: "28px",   // mid offset
   },
 ];
