@@ -3,9 +3,37 @@
 import { motion } from "framer-motion";
 
 const cols = [
-  { label: "NAVIGATE", links: ["Home", "About", "Our Experiences", "Newsroom", "Contact Us", "Privacy Policy", "Terms & Conditions"] },
-  { label: "OUR EXPERIENCES", links: ["Songs of the Stone", "Antarnaad", "Inkpot India Conclave", "Heritage Cleanliness Project", "Echoes of Expression"] },
-  { label: "GET INVOLVED", links: ["Partner with Us", "Perform with Us", "Jobs", "Careers", "Contact Us"] },
+  {
+    label: "NAVIGATE",
+    links: [
+      { label: "Home", href: "/" },
+      { label: "About", href: "/about" },
+      { label: "Our Experiences", href: "#experiences" },
+      { label: "Newsroom", href: "/newsroom" },
+      { label: "Contact Us", href: "/contact" },
+      { label: "Privacy Policy", href: "#" },
+      { label: "Terms & Conditions", href: "#" },
+    ],
+  },
+  {
+    label: "OUR EXPERIENCES",
+    links: [
+      { label: "Songs of the Stone", href: "https://www.songsofthestone.com/" },
+      { label: "Antarnaad", href: "#experiences" },
+      { label: "Inkpot India Conclave", href: "https://www.inkpotindiaconclave.com/" },
+      { label: "Heritage Cleanliness Project", href: "/events/heritage-cleanliness" },
+      { label: "Echoes of Expression", href: "#" },
+    ],
+  },
+  {
+    label: "GET INVOLVED",
+    links: [
+      { label: "Perform with Us", href: "/work-with-us/perform" },
+      { label: "Partner with Us", href: "/work-with-us/partner" },
+      { label: "Jobs & Internships", href: "/work-with-us/careers" },
+      { label: "Contact Us", href: "/contact" },
+    ],
+  },
 ];
 
 const socials = [
@@ -73,13 +101,15 @@ export default function Footer() {
               </p>
               <nav className="flex flex-col">
                 {col.links.map((link) => (
-                  <a key={link} href="#"
+                  <a key={link.label} href={link.href}
+                    target={link.href.startsWith("http") ? "_blank" : undefined}
+                    rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
                     className="transition-colors duration-200"
                     style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "#000000", lineHeight: "2.2" }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-mustard)")}
                     onMouseLeave={(e) => (e.currentTarget.style.color = "#000000")}
                   >
-                    {link}
+                    {link.label}
                   </a>
                 ))}
               </nav>

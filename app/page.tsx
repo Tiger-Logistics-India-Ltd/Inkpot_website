@@ -16,14 +16,15 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="w-full bg-[#FAF8F4]">
+      <main className="w-full bg-white">
         <Hero />
         <SectionWrapper><AboutBelief /></SectionWrapper>
         <SectionWrapper><FeaturedEvent /></SectionWrapper>
         <OurExperiences />
-        <OurExperiencesV2 />
+        
         <SectionWrapper><MediaCoverage /></SectionWrapper>
         <SectionWrapper><Testimonials /></SectionWrapper>
+        <div style={{ height: "56px" }} />
         <SectionWrapper><Newsletter /></SectionWrapper>
       </main>
       <Footer />

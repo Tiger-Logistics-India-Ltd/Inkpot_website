@@ -26,7 +26,7 @@ const categories = [
 
 export default function AboutBelief() {
   return (
-    <section id="about" style={{ background: "#FAF8F4", padding: "80px 0", overflow: "hidden" }}>
+    <section id="about" style={{ background: "#ffffff", padding: "80px 0", overflow: "hidden" }}>
       <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 64px", display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "80px", alignItems: "center" }}>
 
         {/* ── LEFT: Text ── */}

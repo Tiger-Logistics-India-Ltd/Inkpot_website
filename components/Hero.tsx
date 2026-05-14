@@ -100,11 +100,12 @@ export default function Hero() {
           transition={{ delay: 1.6, duration: 0.8 }}
           style={{
             position: "absolute",
-            left: "48px",
+            right: "48px",
             fontFamily: "var(--font-body)",
             fontSize: "10px",
             letterSpacing: "0.14em",
-            color: "rgba(255,255,255,0.38)",
+            color: "rgba(255,255,255,0.88)",
+            fontWeight: 700,
           }}
         >
           — Agra Fort

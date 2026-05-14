@@ -28,7 +28,7 @@ const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping
 
 export default function MediaCoverage() {
   return (
-    <section style={{ background: "var(--bg-linen)", padding: "100px 0" }}>
+    <section style={{ background: "#ffffff", padding: "100px 0" }}>
       <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 48px" }}>
 
         {/* Header */}

@@ -33,15 +33,15 @@ const experiences = [
 ];
 
 const aboutLinks = [
-  { label: "About Inkpot", href: "#about" },
-  { label: "Leadership", href: "#leadership" },
-  { label: "Beliefs & Values", href: "#beliefs" },
+  { label: "About Inkpot", href: "/about" },
+  { label: "Leadership", href: "/about#leadership" },
+  { label: "Beliefs & Values", href: "/about#beliefs" },
 ];
 
 const workLinks = [
-  { label: "Partner with Us", href: "#work" },
-  { label: "Perform with Us", href: "#work" },
-  { label: "Jobs / Careers", href: "#work" },
+  { label: "Perform with Us", href: "/work-with-us/perform" },
+  { label: "Partner with Us", href: "/work-with-us/partner" },
+  { label: "Jobs / Careers", href: "/work-with-us/careers" },
 ];
 
 /* ── Simple dropdown ── */
@@ -167,11 +167,11 @@ export default function Navbar() {
 
   const allMobileLinks = [
     { label: "Home", href: "/" },
-    { label: "About", href: "#about", dropdown: aboutLinks },
+    { label: "About", href: "/about", dropdown: aboutLinks },
     { label: "Our Experiences", href: "#experiences", dropdown: experiences.map((e) => ({ label: e.label, href: e.href })) },
-    { label: "Work With Us", href: "#work", dropdown: workLinks },
-    { label: "Newsroom", href: "#press" },
-    { label: "Contact Us", href: "#contact" },
+    { label: "Work With Us", href: "/work-with-us", dropdown: workLinks },
+    { label: "Newsroom", href: "/newsroom" },
+    { label: "Contact Us", href: "/contact" },
   ];
 
   return (
@@ -182,7 +182,7 @@ export default function Navbar() {
         <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 32px", height: "96px", display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: "24px" }}>
           {/* Left */}
           <div style={{ display: "flex", alignItems: "center", gap: "28px", justifyContent: "flex-end" }}>
-            <SimpleDropdown label="About" href="#about" links={aboutLinks} />
+            <SimpleDropdown label="About" href="/about" links={aboutLinks} />
             <div onMouseEnter={openMega} onMouseLeave={closeMega}>
               <a href="#experiences" style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: megaOpen ? "var(--primary-red)" : "var(--primary-black)", display: "flex", alignItems: "center", gap: "4px", whiteSpace: "nowrap", transition: "color 0.2s", textDecoration: "none" }}>
                 <svg width="7" height="5" viewBox="0 0 7 5" fill="none" style={{ flexShrink: 0, transform: megaOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>
@@ -201,8 +201,8 @@ export default function Navbar() {
 
           {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: "28px", justifyContent: "flex-start" }}>
-            <SimpleDropdown label="Work With Us" href="#work" links={workLinks} />
-            {[{ label: "Newsroom", href: "#press" }, { label: "Contact Us", href: "#contact" }].map((l) => (
+            <SimpleDropdown label="Work With Us" href="/work-with-us" links={workLinks} />
+            {[{ label: "Newsroom", href: "/newsroom" }, { label: "Contact Us", href: "/contact" }].map((l) => (
               <a key={l.label} href={l.href}
                 style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--primary-black)", whiteSpace: "nowrap", textDecoration: "none" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-red)")}
