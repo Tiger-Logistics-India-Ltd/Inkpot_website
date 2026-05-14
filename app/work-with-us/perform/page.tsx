@@ -133,8 +133,8 @@ export default function PerformPage() {
             <motion.div
               initial={{ opacity: 0, scaleX: 0 }}
               animate={{ opacity: 1, scaleX: 1 }}
-              transition={{ duration: 0.7, delay: 1.3, transformOrigin: "left" }}
-              style={{ width: "48px", height: "1px", background: "var(--primary-red)", margin: "32px 0 0" }}
+              transition={{ duration: 0.7, delay: 1.3 }}
+              style={{ width: "48px", height: "1px", background: "var(--primary-red)", margin: "32px 0 0", transformOrigin: "left" }}
             />
           </div>
 
