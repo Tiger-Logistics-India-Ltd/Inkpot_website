@@ -19,15 +19,20 @@ export default function Hero() {
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
+    v.setAttribute("muted", "");
+    v.setAttribute("playsinline", "");
     v.muted = true;
-    const tryPlay = () => v.play().catch(() => {});
-    if (v.readyState >= 3) {
-      tryPlay();
-    } else {
-      v.addEventListener("canplay", tryPlay, { once: true });
-      v.load();
-    }
-    return () => v.removeEventListener("canplay", tryPlay);
+    const tryPlay = () => { v.play().catch(() => {}); };
+    tryPlay();
+    v.addEventListener("loadedmetadata", tryPlay, { once: true });
+    v.addEventListener("canplay", tryPlay, { once: true });
+    const handleFirstTouch = () => tryPlay();
+    document.addEventListener("touchstart", handleFirstTouch, { once: true, passive: true });
+    return () => {
+      v.removeEventListener("loadedmetadata", tryPlay);
+      v.removeEventListener("canplay", tryPlay);
+      document.removeEventListener("touchstart", handleFirstTouch);
+    };
   }, []);
 
   return (
@@ -43,7 +48,6 @@ export default function Hero() {
             loop
             muted
             playsInline
-            preload="auto"
             style={{
               position: "absolute",
               top: 0,

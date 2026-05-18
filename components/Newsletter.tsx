@@ -19,15 +19,20 @@ export default function Newsletter() {
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
+    v.setAttribute("muted", "");
+    v.setAttribute("playsinline", "");
     v.muted = true;
-    const tryPlay = () => v.play().catch(() => {});
-    if (v.readyState >= 3) {
-      tryPlay();
-    } else {
-      v.addEventListener("canplay", tryPlay, { once: true });
-      v.load();
-    }
-    return () => v.removeEventListener("canplay", tryPlay);
+    const tryPlay = () => { v.play().catch(() => {}); };
+    tryPlay();
+    v.addEventListener("loadedmetadata", tryPlay, { once: true });
+    v.addEventListener("canplay", tryPlay, { once: true });
+    const handleFirstTouch = () => tryPlay();
+    document.addEventListener("touchstart", handleFirstTouch, { once: true, passive: true });
+    return () => {
+      v.removeEventListener("loadedmetadata", tryPlay);
+      v.removeEventListener("canplay", tryPlay);
+      document.removeEventListener("touchstart", handleFirstTouch);
+    };
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -54,7 +59,7 @@ export default function Newsletter() {
       <video
         ref={videoRef}
         src="/images/Homepage/Newsletter/hero_second.mp4"
-        autoPlay loop muted playsInline preload="auto"
+        autoPlay loop muted playsInline
         style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", zIndex: 0 }}
       />
       <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1 }} />
