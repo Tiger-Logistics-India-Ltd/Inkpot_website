@@ -35,17 +35,17 @@ const testimonials = [
     title: "Attendee, Songs of the Stone",
   },
   {
-    quote: "Inkpot is a very positive development to showcase our culture — our country's biggest asset. This showcasing of literature, music, art, theatre and design is what privileges India at its best.",
+    quote: "Inkpot is a very positive development to showcase our culture — our country's biggest asset.",
     name: "Dr. Shashi Tharoor",
     title: "Author, Politician & Former International Civil Servant",
   },
   {
-    quote: "Conferences like Inkpot are super important because they create platforms for all kinds of ideas. Without an idea you can't evolve as a human or as a society.",
+    quote: "Conferences like Inkpot are super important because they create platforms for all kinds of ideas.",
     name: "Sanjoy K. Roy",
     title: "Festival Director, Jaipur Literature Festival",
   },
   {
-    quote: "We need festivals like Inkpot so that people and thinkers come together — where there is discussion, it always ignites interest and opens new doors and windows.",
+    quote: "We need festivals like Inkpot so that people and thinkers come together — where there is discussion, it always ignites interest.",
     name: "Shovana Narayan",
     title: "National Award Winning Kathak Dancer",
   },
@@ -55,11 +55,19 @@ export default function Testimonials() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const go = useCallback((idx: number, dir: number) => {
     setDirection(dir);
     setCurrent(idx);
+  }, []);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
   useEffect(() => {
@@ -70,6 +78,81 @@ export default function Testimonials() {
     }, 5000);
     return () => { if (timer.current) clearTimeout(timer.current); };
   }, [current, paused]);
+
+  if (isMobile) {
+    return (
+      <section
+        onTouchStart={() => setPaused(true)}
+        onTouchEnd={() => setPaused(false)}
+        style={{ background: "var(--primary-red)", padding: "20px 20px 18px" }}
+      >
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+          <div style={{ width: "16px", height: "1px", background: "rgba(255,255,255,0.55)" }} />
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.26em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)" }}>Voices</span>
+          <span style={{ fontFamily: "var(--font-heading)", fontSize: "15px", color: "#ffffff", fontWeight: 400, marginLeft: "6px" }}>What People Say</span>
+        </div>
+
+        {/* Quote */}
+        <div style={{ overflow: "hidden", minHeight: "88px" }}>
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={current}
+              custom={direction}
+              initial={{ opacity: 0, x: direction > 0 ? 40 : -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction > 0 ? -40 : 40 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            >
+              <p style={{ fontFamily: "var(--font-heading)", fontSize: "15px", color: "#ffffff", lineHeight: 1.58, marginBottom: "10px", fontWeight: 400 }}>
+                <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "1.3em", lineHeight: 0, verticalAlign: "-0.12em", marginRight: "3px" }}>&ldquo;</span>
+                {testimonials[current].quote}
+                <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "1.3em", lineHeight: 0, verticalAlign: "-0.12em", marginLeft: "3px" }}>&rdquo;</span>
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                <div style={{ width: "14px", height: "1px", background: "rgba(255,255,255,0.5)" }} />
+                <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "#ffffff", letterSpacing: "0.04em" }}>
+                  {testimonials[current].name}
+                </span>
+                {testimonials[current].title && (
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", color: "rgba(255,255,255,0.48)" }}>
+                    {testimonials[current].title}
+                  </span>
+                )}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Controls */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "12px" }}>
+          <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
+            {testimonials.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => go(i, i > current ? 1 : -1)}
+                style={{ width: i === current ? "18px" : "5px", height: "2px", background: i === current ? "#ffffff" : "rgba(255,255,255,0.28)", border: "none", cursor: "pointer", padding: 0, transition: "all 0.3s" }}
+              />
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: "6px" }}>
+            <button
+              onClick={() => go((current - 1 + testimonials.length) % testimonials.length, -1)}
+              style={{ width: "30px", height: "30px", border: "1px solid rgba(255,255,255,0.3)", background: "none", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+            >
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M15 18l-6-6 6-6" /></svg>
+            </button>
+            <button
+              onClick={() => go((current + 1) % testimonials.length, 1)}
+              style={{ width: "30px", height: "30px", border: "1px solid rgba(255,255,255,0.3)", background: "none", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+            >
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 18l6-6-6-6" /></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -125,7 +208,6 @@ export default function Testimonials() {
 
         {/* Right: controls */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "16px", borderLeft: "1px solid rgba(255,255,255,0.2)", paddingLeft: "40px" }}>
-          {/* Dots */}
           <div style={{ display: "flex", gap: "6px" }}>
             {testimonials.map((_, i) => (
               <button
@@ -136,8 +218,6 @@ export default function Testimonials() {
               />
             ))}
           </div>
-
-          {/* Arrows */}
           <div style={{ display: "flex", gap: "8px" }}>
             <button
               onClick={() => go((current - 1 + testimonials.length) % testimonials.length, -1)}
@@ -158,8 +238,6 @@ export default function Testimonials() {
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M9 18l6-6-6-6" /></svg>
             </button>
           </div>
-
-          {/* Counter */}
           <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.16em", color: "rgba(255,255,255,0.55)" }}>
             {String(current + 1).padStart(2, "0")} / {String(testimonials.length).padStart(2, "0")}
           </span>

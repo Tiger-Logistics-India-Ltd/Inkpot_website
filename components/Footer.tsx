@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
@@ -59,67 +60,135 @@ const vp = { once: false, amount: 0.15 };
 const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping: 20, delay });
 
 export default function Footer() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   return (
     <footer style={{ background: "var(--bg-linen)", borderTop: "1px solid rgba(0,0,0,0.08)" }}>
-      <div className="mx-auto" style={{ maxWidth: "1280px", padding: "80px 48px 72px" }}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4" style={{ gap: "48px" }}>
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: isMobile ? "48px 20px 40px" : "80px 48px 72px" }}>
 
-          {/* Brand col */}
-          <motion.div
-            initial={{ y: 50, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
-            viewport={vp} transition={spring(0)}
-          >
-            <a href="/" className="mb-5 w-fit block">
-              <Image
-                src="/images/Inkpot/Inkpot_600x400 px.svg"
-                alt="Inkpot India"
-                width={115}
-                height={40}
-                style={{ height: "150px", width: "auto", objectFit: "contain" }}
-              />
-            </a>
-            
-            <div className="flex items-center" style={{ gap: "12px", marginTop: "28px" }}>
-              {socials.map((s) => (
-                <a key={s.label} href={s.href} target={s.href !== "#" ? "_blank" : undefined} rel="noopener noreferrer" aria-label={s.label}
-                  className="flex items-center justify-center transition-all duration-300"
-                  style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid rgba(144,26,28,0.4)", color: "var(--primary-mustard)" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(144,26,28,0.12)"; e.currentTarget.style.borderColor = "var(--primary-mustard)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(144,26,28,0.4)"; }}
-                >
-                  {s.icon}
-                </a>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Link cols */}
-          {cols.map((col, ci) => (
+        {isMobile ? (
+          /* ── Mobile layout ── */
+          <div>
+            {/* Brand row */}
             <motion.div
-              key={col.label}
-              initial={{ y: 50, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
-              viewport={vp} transition={spring(0.08 * (ci + 1))}
+              initial={{ y: 30, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
+              viewport={vp} transition={spring(0)}
+              style={{ marginBottom: "36px" }}
             >
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--primary-mustard)", marginBottom: "20px" }}>
-                {col.label}
+              <a href="/" style={{ display: "inline-block", marginBottom: "14px" }}>
+                <Image
+                  src="/images/Inkpot/Inkpot_600x400 px.svg"
+                  alt="Inkpot India"
+                  width={115} height={40} unoptimized
+                  style={{ height: "72px", width: "auto", objectFit: "contain" }}
+                />
+              </a>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.05em", color: "rgba(0,0,0,0.4)", marginBottom: "16px" }}>
+                Re-Inking Our Cultural Heritage
               </p>
-              <nav className="flex flex-col">
-                {col.links.map((link) => (
-                  <a key={link.label} href={link.href}
-                    target={link.href.startsWith("http") ? "_blank" : undefined}
-                    rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="transition-colors duration-200"
-                    style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "#000000", lineHeight: "2.2" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-mustard)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = "#000000")}
+              <div style={{ display: "flex", gap: "10px" }}>
+                {socials.map((s) => (
+                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
+                    style={{ width: "34px", height: "34px", borderRadius: "50%", border: "1px solid rgba(144,26,28,0.4)", color: "var(--primary-mustard)", display: "flex", alignItems: "center", justifyContent: "center" }}
                   >
-                    {link.label}
+                    {s.icon}
                   </a>
                 ))}
-              </nav>
+              </div>
             </motion.div>
-          ))}
-        </div>
+
+            {/* Link cols — 2 columns on mobile */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px 16px" }}>
+              {cols.map((col, ci) => (
+                <motion.div
+                  key={col.label}
+                  initial={{ y: 30, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
+                  viewport={vp} transition={spring(0.06 * (ci + 1))}
+                >
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--primary-mustard)", marginBottom: "12px" }}>
+                    {col.label}
+                  </p>
+                  <nav style={{ display: "flex", flexDirection: "column" }}>
+                    {col.links.map((link) => (
+                      <a key={link.label} href={link.href}
+                        target={link.href.startsWith("http") ? "_blank" : undefined}
+                        rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                        style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#000000", lineHeight: "2.0", textDecoration: "none" }}
+                        onTouchStart={(e) => (e.currentTarget.style.color = "var(--primary-mustard)")}
+                        onTouchEnd={(e) => (e.currentTarget.style.color = "#000000")}
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </nav>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          /* ── Desktop layout ── */
+          <div className="grid grid-cols-4" style={{ gap: "48px" }}>
+            {/* Brand col */}
+            <motion.div
+              initial={{ y: 50, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
+              viewport={vp} transition={spring(0)}
+            >
+              <a href="/" className="mb-5 w-fit block">
+                <Image
+                  src="/images/Inkpot/Inkpot_600x400 px.svg"
+                  alt="Inkpot India"
+                  width={115} height={40} unoptimized
+                  style={{ height: "150px", width: "auto", objectFit: "contain" }}
+                />
+              </a>
+              <div className="flex items-center" style={{ gap: "12px", marginTop: "28px" }}>
+                {socials.map((s) => (
+                  <a key={s.label} href={s.href} target={s.href !== "#" ? "_blank" : undefined} rel="noopener noreferrer" aria-label={s.label}
+                    className="flex items-center justify-center transition-all duration-300"
+                    style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid rgba(144,26,28,0.4)", color: "var(--primary-mustard)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(144,26,28,0.12)"; e.currentTarget.style.borderColor = "var(--primary-mustard)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(144,26,28,0.4)"; }}
+                  >
+                    {s.icon}
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Link cols */}
+            {cols.map((col, ci) => (
+              <motion.div
+                key={col.label}
+                initial={{ y: 50, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
+                viewport={vp} transition={spring(0.08 * (ci + 1))}
+              >
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--primary-mustard)", marginBottom: "20px" }}>
+                  {col.label}
+                </p>
+                <nav className="flex flex-col">
+                  {col.links.map((link) => (
+                    <a key={link.label} href={link.href}
+                      target={link.href.startsWith("http") ? "_blank" : undefined}
+                      rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      className="transition-colors duration-200"
+                      style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "#000000", lineHeight: "2.2", textDecoration: "none" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-mustard)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "#000000")}
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </nav>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </footer>
   );

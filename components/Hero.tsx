@@ -1,13 +1,21 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useGsapParallax } from "@/hooks/useGsapParallax";
 
 export default function Hero() {
   const { wrapperRef, layerRef } = useGsapParallax(0.4);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   return (
-    <section className="relative w-full overflow-hidden" style={{ height: "100vh", minHeight: "700px" }}>
+    <section className="relative w-full overflow-hidden" style={{ height: isMobile ? "60vh" : "100vh", minHeight: isMobile ? "420px" : "700px" }}>
 
       {/* Parallax video layer */}
       <div className="parallax-wrapper" ref={wrapperRef}>
@@ -79,39 +87,19 @@ export default function Hero() {
         <div style={{ width: "40px", height: "1px", background: "rgba(255,255,255,0.3)", margin: "28px auto 0" }} />
       </motion.div>
 
-      {/* ── Bottom row: location credit left, CTA center ── */}
+      {/* ── CTA — center ── */}
       <div
         style={{
           position: "absolute",
-          bottom: "48px",
+          bottom: isMobile ? "56px" : "64px",
           left: 0,
           right: 0,
           zIndex: 10,
           display: "flex",
-          alignItems: "flex-end",
           justifyContent: "center",
           padding: "0 48px",
         }}
       >
-        {/* Location credit — bottom left */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.6, duration: 0.8 }}
-          style={{
-            position: "absolute",
-            right: "48px",
-            fontFamily: "var(--font-body)",
-            fontSize: "10px",
-            letterSpacing: "0.14em",
-            color: "rgba(255,255,255,0.88)",
-            fontWeight: 700,
-          }}
-        >
-          — Agra Fort
-        </motion.p>
-
-        {/* CTA — center */}
         <motion.a
           href="#experiences"
           initial={{ opacity: 0, y: 12 }}
@@ -134,6 +122,26 @@ export default function Hero() {
           Explore Experiences
         </motion.a>
       </div>
+
+      {/* ── Location credit — bottom right, below CTA ── */}
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.6, duration: 0.8 }}
+        style={{
+          position: "absolute",
+          bottom: isMobile ? "20px" : "22px",
+          right: isMobile ? "20px" : "48px",
+          zIndex: 10,
+          fontFamily: "var(--font-body)",
+          fontSize: "10px",
+          letterSpacing: "0.14em",
+          color: "rgba(255,255,255,0.88)",
+          fontWeight: 700,
+        }}
+      >
+        — Agra Fort
+      </motion.p>
 
       {/* Scroll indicator */}
       <motion.div

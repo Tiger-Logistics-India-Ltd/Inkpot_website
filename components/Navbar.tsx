@@ -175,6 +175,7 @@ export default function Navbar() {
   ];
 
   return (
+    <>
     <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: scrolled ? "rgba(255,255,255,0.98)" : "rgba(255,255,255,0.95)", backdropFilter: "blur(10px)", borderBottom: "1px solid rgba(144,26,28,0.18)", transition: "background 0.3s" }}>
 
       {/* ── Desktop ── */}
@@ -222,71 +223,117 @@ export default function Navbar() {
 
       {/* ── Mobile header ── */}
       {!isDesktop && (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "64px", padding: "0 20px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "64px", padding: "0 24px" }}>
           <a href="/">
-            <Image src="/images/Inkpot/Inkpot_600x400 px.svg" alt="Inkpot India"
-              width={143} height={95} style={{ height: "67px", width: "auto", objectFit: "contain", filter: "contrast(1.15) saturate(1.1)" }} priority />
+            <Image src="/images/Inkpot/Inkpot Final logo-01.png" alt="Inkpot India"
+              width={265} height={177} style={{ height: "52px", width: "auto", objectFit: "contain", filter: "contrast(1.15) saturate(1.1)" }} priority />
           </a>
           <button onClick={() => setMobileOpen(!mobileOpen)}
-            style={{ display: "flex", flexDirection: "column", gap: "5px", padding: "8px", background: "none", border: "none", cursor: "pointer" }} aria-label="Toggle menu">
-            <span style={{ display: "block", width: "24px", height: "1px", background: "var(--primary-brown)", transform: mobileOpen ? "translateY(6px) rotate(45deg)" : "none", transition: "transform 0.3s" }} />
-            <span style={{ display: "block", width: "24px", height: "1px", background: "var(--primary-brown)", opacity: mobileOpen ? 0 : 1, transition: "opacity 0.3s" }} />
-            <span style={{ display: "block", width: "24px", height: "1px", background: "var(--primary-brown)", transform: mobileOpen ? "translateY(-6px) rotate(-45deg)" : "none", transition: "transform 0.3s" }} />
+            style={{ display: "flex", flexDirection: "column", gap: "6px", padding: "8px", background: "none", border: "none", cursor: "pointer" }} aria-label="Toggle menu">
+            <span style={{ display: "block", width: "22px", height: "1.5px", background: "#111111", transform: mobileOpen ? "translateY(7.5px) rotate(45deg)" : "none", transition: "transform 0.35s cubic-bezier(0.4,0,0.2,1)" }} />
+            <span style={{ display: "block", width: "22px", height: "1.5px", background: "#111111", opacity: mobileOpen ? 0 : 1, transition: "opacity 0.25s" }} />
+            <span style={{ display: "block", width: "22px", height: "1.5px", background: "#111111", transform: mobileOpen ? "translateY(-7.5px) rotate(-45deg)" : "none", transition: "transform 0.35s cubic-bezier(0.4,0,0.2,1)" }} />
           </button>
         </div>
       )}
 
-      {/* ── Mobile menu ── */}
-      {!isDesktop && (
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25 }}
-              style={{ background: "#ffffff", borderTop: "1px solid rgba(0,0,0,0.08)", overflow: "hidden" }}
-            >
-              <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column" }}>
-                {allMobileLinks.map((link) => (
-                  <div key={link.label}>
-                    {link.dropdown ? (
-                      <>
-                        <button
-                          onClick={() => setMobileExpanded(mobileExpanded === link.label ? null : link.label)}
-                          style={{ width: "100%", textAlign: "left", padding: "12px 0", display: "flex", alignItems: "center", justifyContent: "space-between", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--primary-brown)" }}
-                        >
-                          {link.label}
-                          <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{ transform: mobileExpanded === link.label ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>
-                            <path d="M1 1L4 4L7 1" stroke="var(--primary-red)" strokeWidth="1.2" strokeLinecap="round" />
-                          </svg>
-                        </button>
-                        <AnimatePresence>
-                          {mobileExpanded === link.label && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.2 }}
-                              style={{ overflow: "hidden", paddingLeft: "16px", borderLeft: "2px solid rgba(144,26,28,0.35)" }}
-                            >
-                              {link.dropdown.map((item) => (
-                                <a key={item.label} href={item.href} onClick={() => setMobileOpen(false)}
-                                  style={{ display: "block", padding: "8px 0", fontFamily: "var(--font-body)", fontSize: "13px", color: "var(--primary-olive)", textDecoration: "none" }}
-                                >{item.label}</a>
-                              ))}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </>
-                    ) : (
-                      <a href={link.href} onClick={() => setMobileOpen(false)}
-                        style={{ display: "block", padding: "12px 0", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--primary-brown)", textDecoration: "none" }}
-                      >{link.label}</a>
-                    )}
-                  </div>
+    </nav>
+
+    {/* ── Mobile menu — rendered OUTSIDE nav to avoid stacking context issues ── */}
+    {!isDesktop && (
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+            style={{
+              position: "fixed", top: "64px", left: 0, right: 0, bottom: 0,
+              background: "#ffffff", zIndex: 9999, overflowY: "auto",
+            }}
+          >
+            <div style={{ padding: "12px 28px 56px" }}>
+              {allMobileLinks.map((link) => (
+                <div key={link.label} style={{ borderBottom: "1px solid rgba(0,0,0,0.07)" }}>
+                  {link.dropdown ? (
+                    <>
+                      <button
+                        onClick={() => setMobileExpanded(mobileExpanded === link.label ? null : link.label)}
+                        style={{
+                          width: "100%", textAlign: "left", padding: "20px 0",
+                          display: "flex", alignItems: "center", justifyContent: "space-between",
+                          background: "none", border: "none", cursor: "pointer",
+                          fontFamily: "var(--font-heading)", fontStyle: "italic",
+                          fontSize: "22px", fontWeight: 400, color: "#111111",
+                        }}
+                      >
+                        {link.label}
+                        <svg width="12" height="7" viewBox="0 0 12 8" fill="none"
+                          style={{ transform: mobileExpanded === link.label ? "rotate(180deg)" : "none", transition: "transform 0.25s", flexShrink: 0 }}>
+                          <path d="M1 1L6 6L11 1" stroke="var(--primary-red)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                      <AnimatePresence>
+                        {mobileExpanded === link.label && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.22 }}
+                            style={{ overflow: "hidden", paddingBottom: "16px" }}
+                          >
+                            {link.dropdown.map((item) => (
+                              <a key={item.label} href={item.href} onClick={() => setMobileOpen(false)}
+                                style={{
+                                  display: "block", padding: "9px 0 9px 2px",
+                                  fontFamily: "var(--font-body)", fontSize: "13px",
+                                  letterSpacing: "0.06em", color: "rgba(0,0,0,0.45)",
+                                  textDecoration: "none", transition: "color 0.2s",
+                                }}
+                                onTouchStart={(e) => (e.currentTarget.style.color = "var(--primary-red)")}
+                                onTouchEnd={(e) => (e.currentTarget.style.color = "rgba(0,0,0,0.45)")}
+                              >
+                                {item.label}
+                              </a>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </>
+                  ) : (
+                    <a href={link.href} onClick={() => setMobileOpen(false)}
+                      style={{
+                        display: "block", padding: "20px 0",
+                        fontFamily: "var(--font-heading)", fontStyle: "italic",
+                        fontSize: "22px", fontWeight: 400, color: "#111111",
+                        textDecoration: "none",
+                      }}
+                    >
+                      {link.label}
+                    </a>
+                  )}
+                </div>
+              ))}
+
+              {/* Socials */}
+              <div style={{ marginTop: "48px", display: "flex", gap: "24px" }}>
+                {[
+                  { label: "Instagram", href: "https://www.instagram.com/inkpotindia_/" },
+                  { label: "LinkedIn", href: "https://www.linkedin.com/company/inkpotindia/posts/?feedView=all" },
+                  { label: "WhatsApp", href: "https://wa.me/919205304666" },
+                ].map((s) => (
+                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
+                    style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(0,0,0,0.35)", textDecoration: "none" }}>
+                    {s.label}
+                  </a>
                 ))}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      )}
-    </nav>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    )}
+  </>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface EventItem {
   num: string;
@@ -56,9 +56,29 @@ const events: EventItem[] = [
 const EASE: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
 
 export default function FeaturedEvent() {
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [direction, setDirection] = useState(1);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    const timer = setInterval(() => {
+      setDirection(1);
+      setActiveIdx((i) => (i + 1) % events.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [isMobile]);
+
   return (
-    <section id="events" style={{ background: "#ffffff", padding: "100px 0 128px" }}>
-      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 48px" }}>
+    <section id="events" style={{ background: "#ffffff", padding: isMobile ? "56px 0 64px" : "100px 0 128px" }}>
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: isMobile ? "0 20px" : "0 48px" }}>
 
         {/* ── Header ── */}
         <motion.div
@@ -66,7 +86,7 @@ export default function FeaturedEvent() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.65, ease: "easeOut" }}
-          style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "56px" }}
+          style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: isMobile ? "32px" : "56px" }}
         >
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
@@ -85,16 +105,58 @@ export default function FeaturedEvent() {
             onMouseEnter={(e) => { e.currentTarget.style.color = "var(--primary-red)"; e.currentTarget.style.borderBottomColor = "var(--primary-red)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(0,0,0,0.32)"; e.currentTarget.style.borderBottomColor = "rgba(0,0,0,0.14)"; }}
           >
-            View All Events →
+            View All →
           </a>
         </motion.div>
 
         {/* ── Cards ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.18fr 1fr", gap: "20px", alignItems: "end" }}>
-          {events.map((ev, i) => (
-            <EventCard key={ev.num} ev={ev} index={i} />
-          ))}
-        </div>
+        {isMobile ? (
+          <div>
+            {/* Overflow-clipped track — both cards slide simultaneously */}
+            <div style={{ position: "relative", height: "500px", overflow: "hidden" }}>
+              <AnimatePresence initial={false} custom={direction}>
+                <motion.div
+                  key={activeIdx}
+                  custom={direction}
+                  variants={{
+                    enter: (d: number) => ({ x: d > 0 ? "100%" : "-100%" }),
+                    center: { x: 0 },
+                    exit:  (d: number) => ({ x: d > 0 ? "-100%" : "100%" }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.72, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  style={{ position: "absolute", inset: 0 }}
+                >
+                  <EventCard ev={events[activeIdx]} index={0} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+            {/* Dot indicators */}
+            <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "20px" }}>
+              {events.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setDirection(i > activeIdx ? 1 : -1); setActiveIdx(i); }}
+                  style={{
+                    width: i === activeIdx ? "28px" : "8px",
+                    height: "8px", borderRadius: "4px",
+                    background: i === activeIdx ? "var(--primary-red)" : "rgba(0,0,0,0.15)",
+                    border: "none", cursor: "pointer", transition: "all 0.35s",
+                    padding: 0,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.18fr 1fr", gap: "20px", alignItems: "end" }}>
+            {events.map((ev, i) => (
+              <EventCard key={ev.num} ev={ev} index={i} />
+            ))}
+          </div>
+        )}
 
       </div>
     </section>

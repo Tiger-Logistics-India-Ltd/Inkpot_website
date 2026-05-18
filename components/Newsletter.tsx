@@ -63,9 +63,9 @@ export default function Newsletter() {
         <motion.p
           initial={{ y: 40, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
           viewport={vp} transition={spring(0.2)}
-          style={{ fontFamily: "var(--font-body)", fontSize: "16px", color: "var(--primary-cream)", lineHeight: 1.75, maxWidth: "480px", margin: "20px auto 0", opacity: 0.8 }}
+          style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "var(--primary-cream)", lineHeight: 1.7, maxWidth: "360px", margin: "16px auto 0", opacity: 0.75, padding: "0 16px" }}
         >
-          Upcoming experiences, stories from the field, and dispatches from India&apos;s cultural heart — straight to your inbox.
+          Dispatches from India&apos;s cultural heart — straight to your inbox.
         </motion.p>
 
         <AnimatePresence mode="wait">
