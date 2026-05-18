@@ -1,17 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useGsapParallax } from "@/hooks/useGsapParallax";
 
 export default function Hero() {
   const { wrapperRef, layerRef } = useGsapParallax(0.4);
   const [isMobile, setIsMobile] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.play().catch(() => {});
   }, []);
 
   return (
@@ -21,6 +30,7 @@ export default function Hero() {
       <div className="parallax-wrapper" ref={wrapperRef}>
         <div className="parallax-layer" ref={layerRef}>
           <video
+            ref={videoRef}
             src="/images/Homepage/hero_banner_3.mp4"
             autoPlay
             loop

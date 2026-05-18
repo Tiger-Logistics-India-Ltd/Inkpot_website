@@ -87,9 +87,17 @@ body {
 }
 
 @media (max-width: 768px) {
+  html {
+    scroll-behavior: auto;
+  }
+  body {
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: auto;
+  }
   .parallax-layer {
     inset: 0 !important;
     transform: none !important;
+    will-change: auto !important;
   }
 }
 

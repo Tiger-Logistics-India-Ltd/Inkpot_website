@@ -8,6 +8,7 @@ export function useGsapParallax(speed: number = 0.4) {
   const tweenRef = useRef<gsap.core.Tween | null>(null)
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return
     const wrapper = wrapperRef.current
     const layer = layerRef.current
     if (!wrapper || !layer) return

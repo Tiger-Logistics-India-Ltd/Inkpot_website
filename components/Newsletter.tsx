@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import emailjs from "@emailjs/browser";
 
@@ -14,6 +14,14 @@ const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping
 export default function Newsletter() {
   const [email, setEmail]     = useState("");
   const [status, setStatus]   = useState<"idle" | "loading" | "success" | "error">("idle");
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.play().catch(() => {});
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,6 +45,7 @@ export default function Newsletter() {
   return (
     <section id="join" style={{ position: "relative", overflow: "hidden", padding: "120px 0" }}>
       <video
+        ref={videoRef}
         src="/images/Homepage/Newsletter/hero_second.mp4"
         autoPlay loop muted playsInline
         style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", zIndex: 0 }}
