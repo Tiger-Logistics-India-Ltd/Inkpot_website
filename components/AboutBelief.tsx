@@ -46,7 +46,8 @@ export default function AboutBelief() {
           </h2>
 
           <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.8, color: "rgba(0,0,0,0.6)", maxWidth: "380px", marginBottom: "40px" }}>
-            Inkpot India is a community-driven platform that uncovers hidden stories, celebrates heritage, and captures the essence of India through words, walks and visuals.
+            Inkpot India was born out of a deep love for this country's stories. The ones etched into old walls, carried in music, and passed down through generations. We create experiences that bring people closer to that inheritance. Walks, conversations, gatherings — all designed to make culture feel like something you belong to, not something you visit.
+
           </p>
 
           <a

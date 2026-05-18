@@ -36,26 +36,6 @@ const stats = [
   { value: "4", label: "Cities" },
 ];
 
-const team = [
-  {
-    name: "Founder's Name",
-    title: "Founder & Artistic Director",
-    image: "/images/Homepage/about/About_founder_image.svg",
-    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. A visionary behind Inkpot India's cultural mission and the creative direction of every experience.",
-  },
-  {
-    name: "Co-Founder's Name",
-    title: "Co-Founder & Programme Director",
-    image: "/images/Homepage/about/extra.jpg",
-    bio: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem aperiam eaque ipsa.",
-  },
-  {
-    name: "Creative Director",
-    title: "Head of Design & Curation",
-    image: "/images/Homepage/about/Monuments.jpeg",
-    bio: "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos.",
-  },
-];
 
 export default function AboutPage() {
   return (
@@ -66,7 +46,7 @@ export default function AboutPage() {
         {/* ── HERO ── */}
         <section style={{ position: "relative", height: "100vh", minHeight: "700px", overflow: "hidden" }}>
           <Image
-            src="/images/Homepage/about/Monuments.jpeg"
+            src="/images/About/about_hero.jpg"
             alt="Indian heritage monument"
             fill
             priority
@@ -108,6 +88,21 @@ export default function AboutPage() {
             />
           </div>
 
+          {/* Location credit — bottom right */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.6, duration: 0.8 }}
+            style={{
+              position: "absolute", bottom: "48px", right: "48px", zIndex: 10,
+              fontFamily: "var(--font-body)", fontSize: "10px",
+              letterSpacing: "0.14em", color: "rgba(255,255,255,0.88)", fontWeight: 700,
+            }}
+          >
+            — Panna Meena ka Kund, Jaipur
+          </motion.p>
+
+          {/* Scroll indicator — bottom centre */}
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
             style={{ position: "absolute", bottom: "40px", left: "50%", transform: "translateX(-50%)", zIndex: 10 }}
@@ -137,16 +132,16 @@ export default function AboutPage() {
             >
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "32px" }}>
                 <div style={{ width: "24px", height: "1px", background: "var(--primary-red)" }} />
-                <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.28em", textTransform: "uppercase", color: "var(--primary-red)" }}>Our Story</span>
+                <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--primary-red)" }}>Our Story</span>
               </div>
               <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(30px, 3.5vw, 50px)", lineHeight: 1.15, color: "#1a1a1a", marginBottom: "32px" }}>
                 Born from a belief that India's greatest stories deserve a better stage.
               </h2>
               <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", lineHeight: 1.92, color: "rgba(0,0,0,0.6)", marginBottom: "22px" }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                Inkpot began as an attempt to bridge the distance between contemporary audiences and India&rsquo;s layered cultural landscape. What started with small gatherings and storytelling-led experiences gradually evolved into a wider platform for immersive cultural programming rooted in heritage, memory and place.
               </p>
               <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", lineHeight: 1.92, color: "rgba(0,0,0,0.6)" }}>
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                Over time, our work has expanded across concerts, exhibitions, workshops, heritage experiences and public initiatives that bring together artists, scholars, institutions and communities. At the heart of it all is a desire to make culture feel accessible, participatory and emotionally resonant — especially for younger generations seeking new ways to engage with tradition.
               </p>
             </motion.div>
 
@@ -169,22 +164,22 @@ export default function AboutPage() {
         </section>
 
         {/* ── MISSION STATEMENT ── */}
-        <section style={{ background: "#0D0D0D", padding: "148px 64px", textAlign: "center" }}>
+        <section style={{ background: "#ffffff", padding: "80px 64px" }}>
           <motion.div
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            style={{ maxWidth: "940px", margin: "0 auto" }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.75, ease: "easeOut" }}
+            style={{ maxWidth: "860px", margin: "0 auto", textAlign: "center" }}
           >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "14px", marginBottom: "48px" }}>
-              <div style={{ width: "32px", height: "1px", background: "var(--primary-red)" }} />
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.28em", textTransform: "uppercase", color: "var(--primary-red)" }}>Our Mission</span>
-              <div style={{ width: "32px", height: "1px", background: "var(--primary-red)" }} />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", marginBottom: "32px" }}>
+              <div style={{ width: "28px", height: "1px", background: "var(--primary-red)" }} />
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--primary-red)" }}>Our Mission</span>
+              <div style={{ width: "28px", height: "1px", background: "var(--primary-red)" }} />
             </div>
-            <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(26px, 3.8vw, 54px)", lineHeight: 1.28, color: "#ffffff" }}>
-              &ldquo;To bring India&rsquo;s music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.&rdquo;
-            </h2>
+            <p style={{ fontFamily: "var(--font-body)", fontWeight: 400, fontSize: "clamp(15px, 1.4vw, 18px)", lineHeight: 1.9, color: "#1a1a1a", margin: 0 }}>
+              <span style={{ color: "var(--primary-red)", fontSize: "1.4em", lineHeight: 0, verticalAlign: "-0.15em" }}>&ldquo;</span>To bring India&rsquo;s music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.<span style={{ color: "var(--primary-red)", fontSize: "1.4em", lineHeight: 0, verticalAlign: "-0.15em" }}>&rdquo;</span>
+            </p>
           </motion.div>
         </section>
 
@@ -200,7 +195,7 @@ export default function AboutPage() {
             >
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
                 <div style={{ width: "24px", height: "1px", background: "var(--primary-red)" }} />
-                <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.28em", textTransform: "uppercase", color: "var(--primary-red)" }}>Beliefs & Values</span>
+                <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--primary-red)" }}>Beliefs & Values</span>
               </div>
               <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(32px, 3.5vw, 50px)", lineHeight: 1.1, color: "#1a1a1a", maxWidth: "480px" }}>
                 What We Stand For.
@@ -233,7 +228,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── IMPACT NUMBERS ── */}
-        <section style={{ background: "var(--primary-red)", padding: "88px 64px" }}>
+        {/* <section style={{ background: "var(--primary-red)", padding: "88px 64px" }}>
           <div style={{ maxWidth: "1280px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "48px" }}>
             {stats.map((s, i) => (
               <motion.div
@@ -253,61 +248,7 @@ export default function AboutPage() {
               </motion.div>
             ))}
           </div>
-        </section>
-
-        {/* ── LEADERSHIP ── */}
-        <section id="leadership" style={{ background: "#ffffff", padding: "128px 0" }}>
-          <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 64px" }}>
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-              style={{ marginBottom: "72px" }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
-                <div style={{ width: "24px", height: "1px", background: "var(--primary-red)" }} />
-                <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.28em", textTransform: "uppercase", color: "var(--primary-red)" }}>The People</span>
-              </div>
-              <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(32px, 3.5vw, 50px)", lineHeight: 1.1, color: "#1a1a1a" }}>
-                Leadership.
-              </h2>
-            </motion.div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "40px" }}>
-              {team.map((m, i) => (
-                <motion.div
-                  key={m.name}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.15 }}
-                  transition={{ duration: 0.65, delay: i * 0.1, ease: "easeOut" }}
-                >
-                  <div style={{ position: "relative", height: "440px", overflow: "hidden", marginBottom: "24px" }}>
-                    <Image
-                      src={m.image}
-                      alt={m.name}
-                      fill
-                      sizes="(max-width: 1280px) 33vw, 400px"
-                      style={{ objectFit: "cover", objectPosition: "top center", transition: "transform 0.65s ease" }}
-                      onMouseEnter={(e) => ((e.currentTarget as HTMLImageElement).style.transform = "scale(1.04)")}
-                      onMouseLeave={(e) => ((e.currentTarget as HTMLImageElement).style.transform = "scale(1)")}
-                    />
-                  </div>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--primary-red)", marginBottom: "8px" }}>
-                    {m.title}
-                  </p>
-                  <h3 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "22px", color: "#1a1a1a", marginBottom: "12px", lineHeight: 1.2 }}>
-                    {m.name}
-                  </h3>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.82, color: "rgba(0,0,0,0.5)" }}>
-                    {m.bio}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+        </section> */}
 
         {/* ── NEWSLETTER ── */}
         <Newsletter />

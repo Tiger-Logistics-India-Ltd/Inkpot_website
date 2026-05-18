@@ -74,7 +74,7 @@ export default function Hero() {
           color: "#ffffff",
           maxWidth: "800px",
         }}>
-          Can We protect<br />our heritage please!
+          Culture is how we<br />find each other
         </h1>
         <div style={{ width: "40px", height: "1px", background: "rgba(255,255,255,0.3)", margin: "28px auto 0" }} />
       </motion.div>

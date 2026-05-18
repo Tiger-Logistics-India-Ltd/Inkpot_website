@@ -34,7 +34,7 @@ const events: EventItem[] = [
     title: "The Heritage Cleanliness Project",
     chapter: null,
     body: "Every last Sunday, we gather at a heritage site — not just to clean, but to listen. To the stories that stone remembers.",
-    image: "/images/heritage cleaning/NolitterLegacy.png",
+    image: "/images/heritage cleaning/image_2.png",
     status: "active",
     location: "Mehrauli Archaeological Park",
     cta: { label: "Volunteer Now", href: "/events/heritage-cleanliness" },
@@ -45,7 +45,7 @@ const events: EventItem[] = [
     title: "Songs of the Stone",
     chapter: "Chapter 3",
     body: "After-hours cultural evenings at Delhi's heritage monuments. Space becomes stage. Arches become resonance. Stone becomes story.",
-    image: "/images/experiences/SOTS-76.jpg",
+    image: "/images/Songs of the stone/songsofthestone.png",
     status: "coming-soon",
     location: "Delhi Heritage Monuments",
     cta: null,
@@ -141,23 +141,6 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
           willChange: "transform",
         }}
       />
-
-      {/* ── Top vignette for num readability ── */}
-      <div style={{
-        position: "absolute", top: 0, left: 0, right: 0, height: "110px",
-        background: "linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 100%)",
-        pointerEvents: "none",
-      }} />
-
-      {/* ── Event number watermark ── */}
-      <span style={{
-        position: "absolute", top: "16px", left: "20px", zIndex: 5,
-        fontFamily: "var(--font-heading)", fontSize: "72px", fontWeight: 400,
-        color: "rgba(255,255,255,0.15)", lineHeight: 1,
-        userSelect: "none", pointerEvents: "none",
-      }}>
-        {ev.num}
-      </span>
 
       {/* ── Coming-soon chip ── */}
       {!isActive && (
