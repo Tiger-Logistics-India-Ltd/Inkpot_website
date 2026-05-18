@@ -76,7 +76,7 @@ export default function FeaturedEvent() {
               </p>
             </div>
             <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(34px, 4vw, 52px)", color: "#111111", lineHeight: 1.08, margin: 0 }}>
-              Upcoming Events.
+              Upcoming Events
             </h2>
           </div>
           <a
@@ -105,9 +105,9 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
   const [hovered, setHovered] = useState(false);
   const isActive = ev.status === "active";
 
-  const cardH  = isActive ? 600 : 500;
+  const cardH  = 500;
   const panelD = 116;
-  const panelE = isActive ? 352 : 268;
+  const panelE = 268;
 
   return (
     <motion.div
@@ -241,7 +241,7 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
           <p style={{
             fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.75,
             color: "rgba(255,255,255,0.74)",
-            marginBottom: isActive ? "22px" : "14px",
+            marginBottom: "14px",
           }}>
             {ev.body}
           </p>

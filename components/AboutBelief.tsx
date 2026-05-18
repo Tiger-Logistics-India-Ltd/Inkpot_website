@@ -6,21 +6,21 @@ import Image from "next/image";
 const categories = [
   {
     label: "About Inkpot",
-    href: "#about",
+    href: "/about#our-story",
     image: "/images/Homepage/about/extra.jpg",
-    offset: "48px",   // starts lower
+    offset: "48px",
   },
   {
     label: "Leadership",
-    href: "#leadership",
+    href: "/about#leadership",
     image: "/images/Homepage/about/About_founder_image.svg",
-    offset: "0px",    // tallest, starts at top
+    offset: "0px",
   },
   {
     label: "Beliefs & Values",
-    href: "#beliefs",
+    href: "/about#beliefs",
     image: "/images/Homepage/about/Monuments.jpeg",
-    offset: "28px",   // mid offset
+    offset: "28px",
   },
 ];
 

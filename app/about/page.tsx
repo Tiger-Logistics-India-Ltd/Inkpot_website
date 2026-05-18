@@ -78,7 +78,7 @@ export default function AboutPage() {
               transition={{ duration: 1.0, delay: 0.6 }}
               style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(44px, 6.5vw, 92px)", lineHeight: 1.05, color: "#ffffff", maxWidth: "960px" }}
             >
-              Re-Inking Our<br />Cultural Heritage.
+              Re-Inking Our<br />Cultural Heritage
             </motion.h1>
             <motion.div
               initial={{ opacity: 0 }}
@@ -224,6 +224,63 @@ export default function AboutPage() {
                 </motion.div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ── FOUNDER ── */}
+        <section id="leadership" style={{ background: "#F7F4EF", padding: "128px 0" }}>
+          <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 64px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "100px", alignItems: "center" }}>
+
+            {/* Photo */}
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.75, ease: "easeOut" }}
+              style={{ position: "relative", height: "600px", overflow: "hidden" }}
+            >
+              <Image
+                src="/images/Homepage/about/About_founder_image.svg"
+                alt="Simar Malhotra — Founder, Inkpot India"
+                fill
+                sizes="50vw"
+                style={{ objectFit: "cover", objectPosition: "center top" }}
+              />
+            </motion.div>
+
+            {/* Text */}
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.75, delay: 0.12, ease: "easeOut" }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "32px" }}>
+                <div style={{ width: "24px", height: "1px", background: "var(--primary-red)" }} />
+                <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--primary-red)" }}>About the Founder</span>
+              </div>
+
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", lineHeight: 1.92, color: "rgba(0,0,0,0.65)", marginBottom: "22px" }}>
+                Art has always been essential. From cave paintings, resistance poetry to the music of the freedom movement, creative expression has shaped our identity and resilience.
+              </p>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", lineHeight: 1.92, color: "rgba(0,0,0,0.65)", marginBottom: "22px" }}>
+                Today, reconnecting with that instinct is not nostalgia. It is power.
+              </p>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", lineHeight: 1.92, color: "rgba(0,0,0,0.65)", marginBottom: "48px" }}>
+                Inkpot produces experiences that are at once scholarly and sensorial, rooted yet experimental. Through new experiences like Songs of the Stone, we aim to build a cultural ecosystem where India&rsquo;s traditions are remembered not as archives, but reimagined as living art.
+              </p>
+
+              <div style={{ borderTop: "1px solid rgba(0,0,0,0.1)", paddingTop: "28px" }}>
+                <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "22px", color: "#1a1a1a", marginBottom: "8px" }}>
+                  Simar Malhotra
+                </p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.08em", color: "rgba(0,0,0,0.5)", lineHeight: 1.7 }}>
+                  Author &amp; Founder, Inkpot India<br />
+                  Alumnus – Stanford University &amp; Columbia University
+                </p>
+              </div>
+            </motion.div>
+
           </div>
         </section>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const cols = [
   {
@@ -68,13 +69,16 @@ export default function Footer() {
             initial={{ y: 50, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
             viewport={vp} transition={spring(0)}
           >
-            <a href="/" className="flex flex-col leading-none mb-5 w-fit">
-              <span className="tracking-widest" style={{ fontFamily: "var(--font-heading)", fontSize: "20px", color: "#000000" }}>INKPOT</span>
-              <span className="uppercase tracking-[0.3em]" style={{ fontFamily: "var(--font-body)", fontSize: "8px", color: "var(--primary-mustard)" }}>INDIA</span>
+            <a href="/" className="mb-5 w-fit block">
+              <Image
+                src="/images/Inkpot/Inkpot_600x400 px.svg"
+                alt="Inkpot India"
+                width={115}
+                height={40}
+                style={{ height: "150px", width: "auto", objectFit: "contain" }}
+              />
             </a>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "#000000", lineHeight: 1.75, marginTop: "20px", maxWidth: "280px" }}>
-              Reframing Indian art, music, and heritage for the contemporary global imagination.
-            </p>
+            
             <div className="flex items-center" style={{ gap: "12px", marginTop: "28px" }}>
               {socials.map((s) => (
                 <a key={s.label} href={s.href} target={s.href !== "#" ? "_blank" : undefined} rel="noopener noreferrer" aria-label={s.label}

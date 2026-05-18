@@ -1,59 +1,34 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 
 /* ─────────────────────────────────────────────────────────
-   Scroll-driven overlay — slides up from 100% to 0%
-   as the user scrolls through [range[0], range[1]] progress
-──────────────────────────────────────────────────────────*/
-function OverlayPanel({
-  progress,
-  range,
-  zIndex,
-  children,
-}: {
-  progress: MotionValue<number>;
-  range: [number, number];
-  zIndex: number;
-  children: React.ReactNode;
-}) {
-  const y = useTransform(progress, range, ["100%", "0%"]);
-  return (
-    <motion.div
-      style={{
-        position: "absolute",
-        inset: 0,
-        zIndex,
-        overflow: "hidden",
-        y,
-        willChange: "transform",
-      }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
    Panel 1 — Songs of the Stone
-   Dark · cinematic · image bleeds right
+   Dark · cinematic · image right · bright white text · zoom parallax
 ──────────────────────────────────────────────────────────*/
 function PanelSOTS() {
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", background: "#0D0B09", overflow: "hidden" }}>
+    <section style={{ position: "relative", width: "100%", height: "100vh", background: "#0D0B09", overflow: "hidden" }}>
 
-      {/* Full-bleed image right 58% */}
-      <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "58%", zIndex: 0 }}>
-        <Image
-          src="/images/Songs of the stone/songsofthestone.png"
-          alt="Songs of the Stone — heritage performance"
-          fill
-          priority
-          sizes="58vw"
-          style={{ objectFit: "cover", objectPosition: "center 20%" }}
-        />
+      {/* Image right 58% — zoom-in parallax as section enters view */}
+      <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "58%", overflow: "hidden" }}>
+        <motion.div
+          initial={{ scale: 1.12 }}
+          whileInView={{ scale: 1.0 }}
+          viewport={{ once: false, amount: 0.2 }}
+          transition={{ duration: 1.8, ease: "easeOut" }}
+          style={{ position: "absolute", inset: 0 }}
+        >
+          <Image
+            src="/images/Songs of the stone/songsofthestone.png"
+            alt="Songs of the Stone — heritage performance"
+            fill
+            priority
+            sizes="58vw"
+            style={{ objectFit: "cover", objectPosition: "center 20%" }}
+          />
+        </motion.div>
       </div>
 
       {/* Text — vertically centred on left */}
@@ -63,8 +38,8 @@ function PanelSOTS() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "22px" }}>
           <div style={{ width: "20px", height: "1px", background: "var(--primary-red)" }} />
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(255,255,255,0.38)" }}>
-            Music &amp; Heritage · Ongoing
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.88)" }}>
+            Music &amp; Heritage 
           </span>
         </div>
 
@@ -79,16 +54,16 @@ function PanelSOTS() {
 
         <p style={{
           fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.85,
-          color: "rgba(255,255,255,0.44)", marginBottom: "14px",
+          color: "rgba(255,255,255,0.85)", marginBottom: "14px",
         }}>
           After-hours cultural evenings at Delhi&rsquo;s heritage monuments. Space becomes stage. Stone becomes story.
         </p>
 
         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "38px" }}>
           <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
-            <path d="M4.5 0C2.567 0 1 1.567 1 3.5c0 2.625 3.5 7.5 3.5 7.5S8 6.125 8 3.5C8 1.567 6.433 0 4.5 0zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="rgba(255,255,255,0.25)" />
+            <path d="M4.5 0C2.567 0 1 1.567 1 3.5c0 2.625 3.5 7.5 3.5 7.5S8 6.125 8 3.5C8 1.567 6.433 0 4.5 0zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="rgba(255,255,255,0.75)" />
           </svg>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(255,255,255,0.28)", letterSpacing: "0.08em" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(255,255,255,0.78)", letterSpacing: "0.08em" }}>
             Heritage Monuments, Delhi
           </span>
         </div>
@@ -99,11 +74,11 @@ function PanelSOTS() {
           style={{
             display: "inline-flex", alignItems: "center", gap: "10px",
             fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em",
-            textTransform: "uppercase", color: "rgba(255,255,255,0.55)", textDecoration: "none",
+            textTransform: "uppercase", color: "rgba(255,255,255,0.9)", textDecoration: "none",
             transition: "color 0.25s",
           }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.9)")}
         >
           Explore Experience
           <svg width="14" height="10" viewBox="0 0 16 10" fill="none">
@@ -111,7 +86,7 @@ function PanelSOTS() {
           </svg>
         </a>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -121,7 +96,7 @@ function PanelSOTS() {
 ──────────────────────────────────────────────────────────*/
 function PanelAntarnaad() {
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", background: "#F4EFE6", overflow: "hidden" }}>
+    <section style={{ position: "relative", width: "100%", height: "100vh", background: "#F4EFE6", overflow: "hidden" }}>
 
       {/* Image left 54% */}
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "54%", zIndex: 0 }}>
@@ -151,14 +126,14 @@ function PanelAntarnaad() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "22px" }}>
           <div style={{ width: "20px", height: "1px", background: "var(--primary-red)" }} />
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.28em", textTransform: "uppercase", color: "#000000" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(0,0,0,0.55)" }}>
             Summer Programme
           </span>
         </div>
 
         <h2 style={{
           fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400,
-          fontSize: "clamp(42px, 5vw, 76px)", lineHeight: 1.03, color: "#000000", marginBottom: "24px",
+          fontSize: "clamp(42px, 5vw, 76px)", lineHeight: 1.03, color: "#1a1a1a", marginBottom: "24px",
         }}>
           Antarnaad
         </h2>
@@ -167,28 +142,39 @@ function PanelAntarnaad() {
 
         <p style={{
           fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.85,
-          color: "#000000", marginBottom: "14px",
+          color: "rgba(0,0,0,0.48)", marginBottom: "14px",
         }}>
           A summer immersion into Indian music, storytelling, and the performing arts — for the next generation of cultural thinkers.
         </p>
 
         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "38px" }}>
           <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
-            <path d="M4.5 0C2.567 0 1 1.567 1 3.5c0 2.625 3.5 7.5 3.5 7.5S8 6.125 8 3.5C8 1.567 6.433 0 4.5 0zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="#000000" />
+            <path d="M4.5 0C2.567 0 1 1.567 1 3.5c0 2.625 3.5 7.5 3.5 7.5S8 6.125 8 3.5C8 1.567 6.433 0 4.5 0zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="rgba(0,0,0,0.2)" />
           </svg>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "#000000", letterSpacing: "0.08em" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.28)", letterSpacing: "0.08em" }}>
             New Delhi
           </span>
         </div>
 
-        <span style={{
-          fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em",
-          textTransform: "uppercase", color: "#000000", cursor: "default",
-        }}>
+        <a
+          href="#join"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: "10px",
+            fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em",
+            textTransform: "uppercase", color: "#1a1a1a", textDecoration: "none",
+            fontWeight: 700, borderBottom: "1px solid rgba(0,0,0,0.4)",
+            paddingBottom: "3px", transition: "color 0.25s, border-color 0.25s",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--primary-red)"; e.currentTarget.style.borderBottomColor = "var(--primary-red)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "#1a1a1a"; e.currentTarget.style.borderBottomColor = "rgba(0,0,0,0.4)"; }}
+        >
           Notify Me When Live
-        </span>
+          <svg width="12" height="8" viewBox="0 0 14 10" fill="none">
+            <path d="M1 5h12M8 1l5 4-5 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </a>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -198,9 +184,8 @@ function PanelAntarnaad() {
 ──────────────────────────────────────────────────────────*/
 function PanelHCP() {
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", background: "#8B1E20", overflow: "hidden" }}>
+    <section style={{ position: "relative", width: "100%", height: "100vh", background: "#8B1E20", overflow: "hidden" }}>
 
-      {/* Subtle radial highlight */}
       <div style={{
         position: "absolute", inset: 0,
         background: "radial-gradient(ellipse at 72% 50%, rgba(255,255,255,0.05) 0%, transparent 58%)",
@@ -210,7 +195,7 @@ function PanelHCP() {
       {/* Image right 50% */}
       <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "50%", zIndex: 1 }}>
         <Image
-          src="/images/heritage cleaning/NolitterLegacy.png"
+          src="/images/heritage cleaning/image_2.png"
           alt="Heritage Cleanliness Project"
           fill
           sizes="50vw"
@@ -238,7 +223,7 @@ function PanelHCP() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "22px" }}>
           <div style={{ width: "20px", height: "1px", background: "rgba(255,255,255,0.42)" }} />
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(255,255,255,0.42)" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.72)" }}>
             Community Initiative
           </span>
         </div>
@@ -269,7 +254,7 @@ function PanelHCP() {
         </div>
 
         <a
-          href="/events/heritage-cleanliness"
+          href="#join"
           style={{
             display: "inline-flex", alignItems: "center", gap: "10px",
             background: "#ffffff", color: "#8B1E20",
@@ -287,7 +272,7 @@ function PanelHCP() {
           </svg>
         </a>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -297,12 +282,12 @@ function PanelHCP() {
 ──────────────────────────────────────────────────────────*/
 function PanelConclave() {
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", background: "#d6c2ff", overflow: "hidden" }}>
+    <section style={{ position: "relative", width: "100%", height: "100vh", background: "#111010", overflow: "hidden" }}>
 
       {/* Image left 50% */}
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "50%", zIndex: 0 }}>
         <Image
-          src="/images/experiences/image (2).jpeg"
+          src="/images/Inkpot India Conclave/saurav/224A3689.JPG"
           alt="Inkpot India Conclave"
           fill
           sizes="50vw"
@@ -330,14 +315,14 @@ function PanelConclave() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "22px" }}>
           <div style={{ width: "20px", height: "1px", background: "var(--primary-red)" }} />
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.28em", textTransform: "uppercase", color: "#000000" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)" }}>
             Thought Leadership · Annual
           </span>
         </div>
 
         <h2 style={{
           fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400,
-          fontSize: "clamp(40px, 5.5vw, 80px)", lineHeight: 1.03, color: "#000000", marginBottom: "24px",
+          fontSize: "clamp(40px, 5.5vw, 80px)", lineHeight: 1.03, color: "#ffffff", marginBottom: "24px",
         }}>
           Inkpot India<br />Conclave
         </h2>
@@ -346,16 +331,16 @@ function PanelConclave() {
 
         <p style={{
           fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.85,
-          color: "#000000", marginBottom: "14px",
+          color: "rgba(255,255,255,0.42)", marginBottom: "14px",
         }}>
           Writers, artists, thinkers — convening to re-ink, reassert and reimagine Indian culture on the world stage.
         </p>
 
         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "38px" }}>
           <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
-            <path d="M4.5 0C2.567 0 1 1.567 1 3.5c0 2.625 3.5 7.5 3.5 7.5S8 6.125 8 3.5C8 1.567 6.433 0 4.5 0zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="#000000" />
+            <path d="M4.5 0C2.567 0 1 1.567 1 3.5c0 2.625 3.5 7.5 3.5 7.5S8 6.125 8 3.5C8 1.567 6.433 0 4.5 0zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="rgba(255,255,255,0.28)" />
           </svg>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "#000000", letterSpacing: "0.08em" }}>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(255,255,255,0.28)", letterSpacing: "0.08em" }}>
             New Delhi
           </span>
         </div>
@@ -366,7 +351,7 @@ function PanelConclave() {
           style={{
             display: "inline-flex", alignItems: "center", gap: "10px",
             fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em",
-            textTransform: "uppercase", color: "#901a1c", textDecoration: "none",
+            textTransform: "uppercase", color: "rgba(255,255,255,0.55)", textDecoration: "none",
             transition: "color 0.25s",
           }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
@@ -378,7 +363,7 @@ function PanelConclave() {
           </svg>
         </a>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -386,30 +371,15 @@ function PanelConclave() {
    Root export
 ──────────────────────────────────────────────────────────*/
 export default function OurExperiences() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
-
   return (
     <div id="experiences">
 
       {/* ── Clean banner heading ── */}
-      <section style={{
-        background: "#ffffff",
-        padding: "72px 72px 64px",
-        position: "relative",
-        zIndex: 1,
-      }}>
+      <section style={{ background: "#ffffff", padding: "72px 72px 64px", position: "relative", zIndex: 1 }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "18px" }}>
             <div style={{ width: "20px", height: "1px", background: "var(--primary-red)" }} />
-            <span style={{
-              fontFamily: "var(--font-body)", fontSize: "9px",
-              letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--primary-red)",
-            }}>
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--primary-red)" }}>
               What We Do
             </span>
           </div>
@@ -422,39 +392,11 @@ export default function OurExperiences() {
         </div>
       </section>
 
-      {/* ── Scroll-driven cinematic panel stack ──
-          500vh container → 400vh of scroll distance
-          Ranges place each transition at ~1 viewport of scroll:
-            Panel 2 covers panel 1 at [0.10 → 0.34]
-            Panel 3 covers panel 2 at [0.44 → 0.68]
-            Panel 4 covers panel 3 at [0.78 → 1.00]
-      ── */}
-      <div ref={containerRef} style={{ height: "500vh", position: "relative" }}>
-        <div style={{
-          position: "sticky", top: 0,
-          height: "100vh", overflow: "hidden",
-        }}>
-          {/* Base layer — SOTS always visible behind */}
-          <div style={{ position: "absolute", inset: 0, zIndex: 1, overflow: "hidden" }}>
-            <PanelSOTS />
-          </div>
-
-          {/* Layer 2 — Antarnaad slides over SOTS */}
-          <OverlayPanel progress={scrollYProgress} range={[0.10, 0.34]} zIndex={2}>
-            <PanelAntarnaad />
-          </OverlayPanel>
-
-          {/* Layer 3 — HCP slides over Antarnaad */}
-          <OverlayPanel progress={scrollYProgress} range={[0.44, 0.68]} zIndex={3}>
-            <PanelHCP />
-          </OverlayPanel>
-
-          {/* Layer 4 — Conclave slides over HCP */}
-          <OverlayPanel progress={scrollYProgress} range={[0.78, 1.00]} zIndex={4}>
-            <PanelConclave />
-          </OverlayPanel>
-        </div>
-      </div>
+      {/* ── Four panels stacked normally ── */}
+      <PanelSOTS />
+      <PanelAntarnaad />
+      <PanelHCP />
+      <PanelConclave />
 
     </div>
   );
