@@ -37,7 +37,7 @@ const events: EventItem[] = [
     image: "/images/heritage cleaning/image_2.png",
     status: "active",
     location: "Mehrauli Archaeological Park",
-    cta: { label: "Volunteer Now", href: "/events/heritage-cleanliness" },
+    cta: { label: "Volunteer Now", href: "#join" },
   },
   {
     num: "03",
