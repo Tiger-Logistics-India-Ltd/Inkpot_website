@@ -8,7 +8,7 @@ const EMAILJS_SERVICE  = "service_kc85ggl";
 const EMAILJS_TEMPLATE = "template_0haei3c";
 const EMAILJS_PUBLIC   = "hU7gdDpwzNyOeHzah";
 
-const vp = { once: false, amount: 0.25 };
+const vp = { once: true, amount: 0.25 };
 const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping: 20, delay });
 
 export default function Newsletter() {
@@ -20,7 +20,14 @@ export default function Newsletter() {
     const v = videoRef.current;
     if (!v) return;
     v.muted = true;
-    v.play().catch(() => {});
+    const tryPlay = () => v.play().catch(() => {});
+    if (v.readyState >= 3) {
+      tryPlay();
+    } else {
+      v.addEventListener("canplay", tryPlay, { once: true });
+      v.load();
+    }
+    return () => v.removeEventListener("canplay", tryPlay);
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -47,7 +54,7 @@ export default function Newsletter() {
       <video
         ref={videoRef}
         src="/images/Homepage/Newsletter/hero_second.mp4"
-        autoPlay loop muted playsInline
+        autoPlay loop muted playsInline preload="auto"
         style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", zIndex: 0 }}
       />
       <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1 }} />

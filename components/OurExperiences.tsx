@@ -22,7 +22,7 @@ function PanelSOTS({ isMobile }: { isMobile: boolean }) {
         <div style={{ padding: "20px 20px 0" }}>
           <motion.div
             initial={{ scale: 1.06 }} whileInView={{ scale: 1.0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.4, ease: "easeOut" }}
             style={{ position: "relative", width: "100%", height: "210px", overflow: "hidden" }}
           >
@@ -66,7 +66,7 @@ function PanelSOTS({ isMobile }: { isMobile: boolean }) {
       <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "58%", overflow: "hidden" }}>
         <motion.div
           initial={{ scale: 1.12 }} whileInView={{ scale: 1.0 }}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 1.8, ease: "easeOut" }}
           style={{ position: "absolute", inset: 0 }}
         >

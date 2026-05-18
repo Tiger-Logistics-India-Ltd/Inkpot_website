@@ -20,7 +20,14 @@ export default function Hero() {
     const v = videoRef.current;
     if (!v) return;
     v.muted = true;
-    v.play().catch(() => {});
+    const tryPlay = () => v.play().catch(() => {});
+    if (v.readyState >= 3) {
+      tryPlay();
+    } else {
+      v.addEventListener("canplay", tryPlay, { once: true });
+      v.load();
+    }
+    return () => v.removeEventListener("canplay", tryPlay);
   }, []);
 
   return (
@@ -36,6 +43,7 @@ export default function Hero() {
             loop
             muted
             playsInline
+            preload="auto"
             style={{
               position: "absolute",
               top: 0,

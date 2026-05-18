@@ -24,7 +24,7 @@ const pressItems = [
   },
 ];
 
-const vp = { once: false, amount: 0.2 };
+const vp = { once: true, amount: 0.2 };
 const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping: 20, delay });
 
 export default function MediaCoverage() {
