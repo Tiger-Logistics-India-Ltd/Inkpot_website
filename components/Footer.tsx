@@ -83,9 +83,9 @@ export default function Footer() {
             >
               <a href="/" style={{ display: "inline-block", marginBottom: "14px" }}>
                 <Image
-                  src="/images/Inkpot/Inkpot_600x400 px.svg"
+                  src="/images/Inkpot/Inkpot Final logo-01.png"
                   alt="Inkpot India"
-                  width={115} height={40} unoptimized
+                  width={265} height={177}
                   style={{ height: "72px", width: "auto", objectFit: "contain" }}
                 />
               </a>
