@@ -121,7 +121,7 @@ function PanelAntarnaad({ isMobile }: { isMobile: boolean }) {
             <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 10, background: "rgba(144,26,28,0.9)", padding: "4px 12px", fontFamily: "var(--font-body)", fontSize: "7px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#ffffff" }}>
               Coming Soon
             </div>
-            <Image src="/images/Homepage/antarnaad.png" alt="Antarnaad" fill sizes="calc(100vw - 40px)" style={{ objectFit: "cover", objectPosition: "center" }} />
+            <Image src="/images/Homepage/anatarnaad_landscpae_real.svg" alt="Antarnaad" fill unoptimized sizes="calc(100vw - 40px)" style={{ objectFit: "cover", objectPosition: "center" }} />
           </div>
         </div>
         <motion.div {...fadeUp} style={{ padding: "28px 24px 40px" }}>
@@ -158,8 +158,8 @@ function PanelAntarnaad({ isMobile }: { isMobile: boolean }) {
   return (
     <section style={{ position: "relative", width: "100%", height: "100vh", background: "#F4EFE6", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "54%", zIndex: 0 }}>
-        <Image src="/images/Homepage/antarnaad.png" alt="Antarnaad — summer programme"
-          fill sizes="54vw" style={{ objectFit: "cover", objectPosition: "center" }} />
+        <Image src="/images/Homepage/anatarnaad_landscpae_real.svg" alt="Antarnaad — summer programme"
+          fill unoptimized sizes="54vw" style={{ objectFit: "cover", objectPosition: "center" }} />
       </div>
       <div style={{ position: "absolute", top: "28px", left: "28px", zIndex: 10, background: "rgba(144,26,28,0.9)", padding: "5px 14px", fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#ffffff" }}>
         Coming Soon

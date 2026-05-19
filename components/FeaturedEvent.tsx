@@ -45,7 +45,7 @@ const events: EventItem[] = [
     title: "Songs of the Stone",
     chapter: "Chapter 3",
     body: "After-hours cultural evenings at Delhi's heritage monuments. Space becomes stage. Arches become resonance. Stone becomes story.",
-    image: "/images/Songs of the stone/songsofthestone.png",
+    image: "/images/Songs of the stone/third_chapter.png",
     status: "coming-soon",
     location: "Delhi Heritage Monuments",
     cta: null,
