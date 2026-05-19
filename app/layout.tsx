@@ -1,6 +1,29 @@
 import type { Metadata } from "next";
+import { EB_Garamond, Montserrat, Belleza } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+
+const ebGaramond = EB_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  variable: "--font-heading",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const belleza = Belleza({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-accent",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://inkpotindia.com"),
@@ -60,15 +83,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&family=Belleza&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html
+      lang="en"
+      className={`${ebGaramond.variable} ${montserrat.variable} ${belleza.variable}`}
+    >
       <body>
         <SmoothScroll>{children}</SmoothScroll>
       </body>

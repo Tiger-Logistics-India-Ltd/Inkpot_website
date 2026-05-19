@@ -11,16 +11,13 @@
   --primary-black: #000000;
   --bg-linen: #F5F5F0;
 
-  --font-heading: 'EB Garamond', serif;
-  --font-subheading: 'Montserrat', sans-serif;
-  --font-body: 'Montserrat', sans-serif;
-  --font-accent: 'Belleza', cursive;
+  /* font vars injected by next/font — see layout.tsx */
 }
 
 .font-heading    { font-family: var(--font-heading); }
 .font-body       { font-family: var(--font-body); }
 .font-accent     { font-family: var(--font-accent); }
-.font-subheading { font-family: var(--font-subheading); }
+.font-subheading { font-family: var(--font-body); }
 
 * {
   margin: 0;

@@ -9,6 +9,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    // iOS/Android native momentum scroll is better — Lenis fights with it
+    const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    if (isTouchDevice) return;
+
     const lenis = new Lenis({
       /* Allen Brau uses 1.2 — tighter than 1.4, gives that
          "heavy but responsive" weighted feel.                */
