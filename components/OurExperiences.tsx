@@ -121,21 +121,21 @@ function PanelAntarnaad({ isMobile }: { isMobile: boolean }) {
             <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 10, background: "rgba(144,26,28,0.9)", padding: "4px 12px", fontFamily: "var(--font-body)", fontSize: "7px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#ffffff" }}>
               Coming Soon
             </div>
-            <Image src="/images/Homepage/antarnaad_lanscape.png" alt="Antarnaad" fill sizes="calc(100vw - 40px)" style={{ objectFit: "cover", objectPosition: "center" }} />
+            <Image src="/images/Homepage/antarnaad.png" alt="Antarnaad" fill sizes="calc(100vw - 40px)" style={{ objectFit: "cover", objectPosition: "center" }} />
           </div>
         </div>
         <motion.div {...fadeUp} style={{ padding: "28px 24px 40px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
             <div style={{ width: "16px", height: "1px", background: "var(--primary-red)" }} />
             <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(0,0,0,0.45)" }}>
-              Summer Programme
+              7 Art Forms · 4 Spaces · One Journey
             </span>
           </div>
           <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "36px", lineHeight: 1.08, color: "#1a1a1a", marginBottom: "14px" }}>
             Antarnaad
           </h2>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.78, color: "rgba(0,0,0,0.5)", marginBottom: "8px" }}>
-            A summer immersion into Indian music, storytelling, and the performing arts — for the next generation of cultural thinkers.
+            Arrive fully into the moment, where the noise of elsewhere begins to dissolve. In this state, we do not rush to interpret or define; instead, we allow ourselves to linger, to feel, and to notice what unfolds naturally.
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "24px" }}>
             <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
@@ -158,7 +158,7 @@ function PanelAntarnaad({ isMobile }: { isMobile: boolean }) {
   return (
     <section style={{ position: "relative", width: "100%", height: "100vh", background: "#F4EFE6", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "54%", zIndex: 0 }}>
-        <Image src="/images/Homepage/antarnaad_lanscape.png" alt="Antarnaad — summer programme"
+        <Image src="/images/Homepage/antarnaad.png" alt="Antarnaad — summer programme"
           fill sizes="54vw" style={{ objectFit: "cover", objectPosition: "center" }} />
       </div>
       <div style={{ position: "absolute", top: "28px", left: "28px", zIndex: 10, background: "rgba(144,26,28,0.9)", padding: "5px 14px", fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#ffffff" }}>
@@ -167,14 +167,14 @@ function PanelAntarnaad({ isMobile }: { isMobile: boolean }) {
       <div style={{ position: "absolute", right: "8%", top: "50%", transform: "translateY(-50%)", zIndex: 2, maxWidth: "370px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "22px" }}>
           <div style={{ width: "20px", height: "1px", background: "var(--primary-red)" }} />
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(0,0,0,0.55)" }}>Summer Programme</span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(0,0,0,0.55)" }}>7 Art Forms · 4 Spaces · One Journey</span>
         </div>
         <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(42px, 5vw, 76px)", lineHeight: 1.03, color: "#1a1a1a", marginBottom: "24px" }}>
           Antarnaad
         </h2>
         <div style={{ width: "28px", height: "1px", background: "var(--primary-red)", marginBottom: "24px" }} />
         <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.85, color: "rgba(0,0,0,0.48)", marginBottom: "14px" }}>
-          A summer immersion into Indian music, storytelling, and the performing arts — for the next generation of cultural thinkers.
+          Arrive fully into the moment, where the noise of elsewhere begins to dissolve. In this state, we do not rush to interpret or define; instead, we allow ourselves to linger, to feel, and to notice what unfolds naturally.
         </p>
         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "38px" }}>
           <svg width="8" height="11" viewBox="0 0 9 12" fill="none">

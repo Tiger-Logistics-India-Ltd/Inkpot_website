@@ -15,7 +15,7 @@ const experiences = [
   {
     label: "Antarnaad",
     href: "#experiences",
-    image: "/images/experiences/224A3705.JPG",
+    image: "/images/Homepage/antarnaad_lanscape.png",
     links: [{ label: "Comming Soon", href: "#experiences" }],
   },
   {

@@ -19,11 +19,11 @@ interface EventItem {
 const events: EventItem[] = [
   {
     num: "01",
-    tag: "Summer Programme",
+    tag: "7 Art Forms · 4 Spaces · One Journey",
     title: "Antarnaad",
     chapter: null,
-    body: "A summer immersion into Indian music, storytelling, and the performing arts — designed for the next generation of cultural thinkers.",
-    image: "/images/Homepage/antarnaad.png",
+    body: "Arrive fully into the moment, where the noise of elsewhere begins to dissolve. In this state, we do not rush to interpret or define; instead, we allow ourselves to linger, to feel, and to notice what unfolds naturally.",
+    image: "/images/Homepage/antarnaad_lanscape.png",
     status: "coming-soon",
     location: "New Delhi",
     cta: null,
