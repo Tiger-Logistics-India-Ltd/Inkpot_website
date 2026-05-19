@@ -30,9 +30,9 @@ const cols = [
   {
     label: "GET INVOLVED",
     links: [
-      { label: "Perform with Us", href: "/work-with-us/perform" },
-      { label: "Partner with Us", href: "/work-with-us/partner" },
-      { label: "Jobs & Internships", href: "/work-with-us/careers" },
+      { label: "Perform with Us", href: "#" },
+      { label: "Partner with Us", href: "#" },
+      { label: "Jobs & Internships", href: "#" },
       { label: "Contact Us", href: "/contact" },
     ],
   },

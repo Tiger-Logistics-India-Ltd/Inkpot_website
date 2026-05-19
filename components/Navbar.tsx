@@ -39,9 +39,9 @@ const aboutLinks = [
 ];
 
 const workLinks = [
-  { label: "Perform with Us", href: "/work-with-us/perform" },
-  { label: "Partner with Us", href: "/work-with-us/partner" },
-  { label: "Jobs / Careers", href: "/work-with-us/careers" },
+  { label: "Perform with Us", href: "#" },
+  { label: "Partner with Us", href: "#" },
+  { label: "Jobs / Careers", href: "#" },
 ];
 
 /* ── Simple dropdown ── */
@@ -169,7 +169,7 @@ export default function Navbar() {
     { label: "Home", href: "/" },
     { label: "About", href: "/about", dropdown: aboutLinks },
     { label: "Our Experiences", href: "#experiences", dropdown: experiences.map((e) => ({ label: e.label, href: e.href })) },
-    { label: "Work With Us", href: "/work-with-us", dropdown: workLinks },
+    { label: "Work With Us", href: "#", dropdown: workLinks },
     { label: "Newsroom", href: "/newsroom" },
     { label: "Contact Us", href: "/contact" },
   ];
@@ -202,7 +202,7 @@ export default function Navbar() {
 
           {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: "28px", justifyContent: "flex-start" }}>
-            <SimpleDropdown label="Work With Us" href="/work-with-us" links={workLinks} />
+            <SimpleDropdown label="Work With Us" href="#" links={workLinks} />
             {[{ label: "Newsroom", href: "/newsroom" }, { label: "Contact Us", href: "/contact" }].map((l) => (
               <a key={l.label} href={l.href}
                 style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--primary-black)", whiteSpace: "nowrap", textDecoration: "none" }}

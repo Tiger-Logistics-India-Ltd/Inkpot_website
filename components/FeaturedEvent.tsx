@@ -23,7 +23,7 @@ const events: EventItem[] = [
     title: "Antarnaad",
     chapter: null,
     body: "A summer immersion into Indian music, storytelling, and the performing arts — designed for the next generation of cultural thinkers.",
-    image: "/images/experiences/224A3705.JPG",
+    image: "/images/Homepage/antarnaad.png",
     status: "coming-soon",
     location: "New Delhi",
     cta: null,
