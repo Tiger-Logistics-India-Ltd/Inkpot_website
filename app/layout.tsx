@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     canonical: "https://inkpotindia.com",
   },
   verification: {
-    google: "f45a4b1359c090fb",
+    google: "LQH8vAq0nSU5algX4s87wYYv9DFQPbkT_C81lM7EmYE",
   },
   icons: {
     icon: "/fav%20icon.svg",
