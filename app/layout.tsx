@@ -3,10 +3,25 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://inkpotindia.com"),
   title: "Inkpot India — Culture, Reimagined",
   description:
     "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
-  keywords: ["Inkpot India"],
+  keywords: [
+    "Inkpot India",
+    "Indian culture",
+    "heritage experiences Delhi",
+    "Songs of the Stone",
+    "Antarnaad",
+    "Inkpot India Conclave",
+    "Heritage Cleanliness Project",
+    "cultural events India",
+    "Indian performing arts",
+    "Delhi heritage monuments",
+  ],
+  alternates: {
+    canonical: "https://inkpotindia.com",
+  },
   icons: {
     icon: "/fav%20icon.svg",
     apple: "/fav%20icon.svg",
@@ -16,13 +31,18 @@ export const metadata: Metadata = {
     title: "Inkpot India — Culture, Reimagined",
     description:
       "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
+    url: "https://inkpotindia.com",
+    siteName: "Inkpot India",
     images: [
       {
         url: "/images/preview_real.jpg",
-        alt: "Inkpot India preview image",
+        width: 1200,
+        height: 630,
+        alt: "Inkpot India — Re-Inking Our Cultural Heritage",
         type: "image/jpeg",
       },
     ],
+    locale: "en_IN",
     type: "website",
   },
   twitter: {
@@ -31,6 +51,7 @@ export const metadata: Metadata = {
     description:
       "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
     images: ["/images/preview_real.jpg"],
+    site: "@inkpotindia_",
   },
 };
 
