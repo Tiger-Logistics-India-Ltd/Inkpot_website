@@ -117,8 +117,8 @@ export default function Footer() {
                   <nav style={{ display: "flex", flexDirection: "column" }}>
                     {col.links.map((link) => (
                       <a key={link.label} href={link.href}
-                        target={link.href.startsWith("http") ? "_blank" : undefined}
-                        rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                        target={link.href !== "#" && link.href !== "/" ? "_blank" : undefined}
+                        rel={link.href !== "#" && link.href !== "/" ? "noopener noreferrer" : undefined}
                         style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#000000", lineHeight: "2.0", textDecoration: "none" }}
                         onTouchStart={(e) => (e.currentTarget.style.color = "var(--primary-mustard)")}
                         onTouchEnd={(e) => (e.currentTarget.style.color = "#000000")}
@@ -174,8 +174,8 @@ export default function Footer() {
                 <nav className="flex flex-col">
                   {col.links.map((link) => (
                     <a key={link.label} href={link.href}
-                      target={link.href.startsWith("http") ? "_blank" : undefined}
-                      rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      target={link.href !== "#" && link.href !== "/" ? "_blank" : undefined}
+                      rel={link.href !== "#" && link.href !== "/" ? "noopener noreferrer" : undefined}
                       className="transition-colors duration-200"
                       style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "#000000", lineHeight: "2.2", textDecoration: "none" }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-mustard)")}

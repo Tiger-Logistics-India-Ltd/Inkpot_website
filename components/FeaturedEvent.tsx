@@ -23,7 +23,7 @@ const events: EventItem[] = [
     title: "Antarnaad",
     chapter: null,
     body: "Arrive fully into the moment, where the noise of elsewhere begins to dissolve. In this state, we do not rush to interpret or define; instead, we allow ourselves to linger, to feel, and to notice what unfolds naturally.",
-    image: "/images/Homepage/antarnaad_lanscape.png",
+    image: "/images/Homepage/antarnaad_feature_image.png",
     status: "coming-soon",
     location: "New Delhi",
     cta: null,
@@ -101,6 +101,7 @@ export default function FeaturedEvent() {
           </div>
           <a
             href="/events"
+            target="_blank" rel="noopener noreferrer"
             style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(0,0,0,0.32)", textDecoration: "none", paddingBottom: "3px", borderBottom: "1px solid rgba(0,0,0,0.14)", transition: "color 0.22s, border-color 0.22s" }}
             onMouseEnter={(e) => { e.currentTarget.style.color = "var(--primary-red)"; e.currentTarget.style.borderBottomColor = "var(--primary-red)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(0,0,0,0.32)"; e.currentTarget.style.borderBottomColor = "rgba(0,0,0,0.14)"; }}

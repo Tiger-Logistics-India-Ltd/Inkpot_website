@@ -51,6 +51,8 @@ function SimpleDropdown({ label, href, links }: { label: string; href: string; l
     <div style={{ position: "relative" }} onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <a
         href={href}
+        target={href !== "#" && href !== "/" ? "_blank" : undefined}
+        rel={href !== "#" && href !== "/" ? "noopener noreferrer" : undefined}
         style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--primary-black)", display: "flex", alignItems: "center", gap: "4px", whiteSpace: "nowrap", textDecoration: "none" }}
         onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-red)")}
         onMouseLeave={(e) => (e.currentTarget.style.color = "var(--primary-black)")}
@@ -69,6 +71,8 @@ function SimpleDropdown({ label, href, links }: { label: string; href: string; l
           >
             {links.map((item) => (
               <a key={item.label} href={item.href}
+                target={item.href !== "#" && item.href !== "/" ? "_blank" : undefined}
+                rel={item.href !== "#" && item.href !== "/" ? "noopener noreferrer" : undefined}
                 style={{ display: "block", padding: "8px 20px", fontFamily: "var(--font-body)", fontSize: "12px", color: "var(--primary-brown)", textDecoration: "none" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-red)")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "var(--primary-brown)")}
@@ -98,7 +102,10 @@ function MegaMenu({ open }: { open: boolean }) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "32px", maxWidth: "1280px", margin: "0 auto" }}>
             {experiences.map((exp) => (
               <div key={exp.label}>
-                <a href={exp.href} style={{ display: "block", position: "relative", width: "100%", height: "150px", overflow: "hidden", marginBottom: "14px" }}>
+                <a href={exp.href}
+                  target={exp.href !== "#" && exp.href !== "/" ? "_blank" : undefined}
+                  rel={exp.href !== "#" && exp.href !== "/" ? "noopener noreferrer" : undefined}
+                  style={{ display: "block", position: "relative", width: "100%", height: "150px", overflow: "hidden", marginBottom: "14px" }}>
                   <Image
                     src={exp.image}
                     alt={exp.label}
@@ -112,6 +119,8 @@ function MegaMenu({ open }: { open: boolean }) {
                 {/* Name — no italic */}
                 <a
                   href={exp.href}
+                  target={exp.href !== "#" && exp.href !== "/" ? "_blank" : undefined}
+                  rel={exp.href !== "#" && exp.href !== "/" ? "noopener noreferrer" : undefined}
                   style={{ fontFamily: "var(--font-heading)", fontStyle: "normal", fontWeight: 500, fontSize: "15px", color: "var(--primary-brown)", display: "block", marginBottom: "10px", lineHeight: 1.3, textDecoration: "none" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-red)")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--primary-brown)")}
@@ -205,6 +214,7 @@ export default function Navbar() {
             <SimpleDropdown label="Work With Us" href="#" links={workLinks} />
             {[{ label: "Newsroom", href: "/newsroom" }, { label: "Contact Us", href: "/contact" }].map((l) => (
               <a key={l.label} href={l.href}
+                target="_blank" rel="noopener noreferrer"
                 style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--primary-black)", whiteSpace: "nowrap", textDecoration: "none" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-red)")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "var(--primary-black)")}
@@ -285,6 +295,8 @@ export default function Navbar() {
                           >
                             {link.dropdown.map((item) => (
                               <a key={item.label} href={item.href} onClick={() => setMobileOpen(false)}
+                                target={item.href !== "#" && item.href !== "/" ? "_blank" : undefined}
+                                rel={item.href !== "#" && item.href !== "/" ? "noopener noreferrer" : undefined}
                                 style={{
                                   display: "block", padding: "9px 0 9px 2px",
                                   fontFamily: "var(--font-body)", fontSize: "13px",
@@ -303,6 +315,8 @@ export default function Navbar() {
                     </>
                   ) : (
                     <a href={link.href} onClick={() => setMobileOpen(false)}
+                      target={link.href !== "#" && link.href !== "/" ? "_blank" : undefined}
+                      rel={link.href !== "#" && link.href !== "/" ? "noopener noreferrer" : undefined}
                       style={{
                         display: "block", padding: "20px 0",
                         fontFamily: "var(--font-heading)", fontStyle: "italic",
