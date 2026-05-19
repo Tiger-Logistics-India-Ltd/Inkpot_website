@@ -6,8 +6,25 @@ export const metadata: Metadata = {
   title: "Inkpot India — Culture, Reimagined",
   description:
     "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
+  keywords: ["Inkpot India"],
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='65' r='28' fill='%23901A1C'/><ellipse cx='50' cy='35' rx='6' ry='30' fill='%23901A1C'/><circle cx='50' cy='8' r='4' fill='%23901A1C'/></svg>",
+    icon: "/fav%20icon.svg",
+    apple: "/fav%20icon.svg",
+    shortcut: "/fav%20icon.svg",
+  },
+  openGraph: {
+    title: "Inkpot India — Culture, Reimagined",
+    description:
+      "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
+    images: "/preview_image.svg",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Inkpot India — Culture, Reimagined",
+    description:
+      "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
+    images: ["/preview_image.svg"],
   },
 };
 
