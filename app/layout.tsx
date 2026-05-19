@@ -16,7 +16,13 @@ export const metadata: Metadata = {
     title: "Inkpot India — Culture, Reimagined",
     description:
       "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
-    images: "/preview_image.svg",
+    images: [
+      {
+        url: "/images/preview_real.jpg",
+        alt: "Inkpot India preview image",
+        type: "image/jpeg",
+      },
+    ],
     type: "website",
   },
   twitter: {
@@ -24,7 +30,7 @@ export const metadata: Metadata = {
     title: "Inkpot India — Culture, Reimagined",
     description:
       "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
-    images: ["/preview_image.svg"],
+    images: ["/images/preview_real.jpg"],
   },
 };
 
