@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Montserrat, Belleza } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 
@@ -89,6 +90,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body>
         <SmoothScroll>{children}</SmoothScroll>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-B2CM1HZXB0" strategy="afterInteractive" />
+        <Script id="ga4-init" strategy="afterInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-B2CM1HZXB0');
+        `}</Script>
       </body>
     </html>
   );
