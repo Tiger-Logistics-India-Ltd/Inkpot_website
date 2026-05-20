@@ -3,6 +3,10 @@
 import { useState, useRef } from "react";
 import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
+
+const EMAILJS_SERVICE  = "service_kc85ggl";
+const EMAILJS_TEMPLATE = "template_0haei3c";
+const EMAILJS_PUBLIC   = "hU7gdDpwzNyOeHzah";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -85,10 +89,10 @@ export default function ContactPage() {
     setError("");
     try {
       await emailjs.sendForm(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        EMAILJS_SERVICE,
+        EMAILJS_TEMPLATE,
         formRef.current!,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+        EMAILJS_PUBLIC
       );
       setSubmitted(true);
     } catch {
@@ -231,7 +235,7 @@ export default function ContactPage() {
                   <Field label="First Name" name="first_name" placeholder="First name" />
                   <Field label="Last Name" name="last_name" placeholder="Last name" />
                 </div>
-                <Field label="Email Address" name="reply_to" type="email" placeholder="your@email.com" />
+                <Field label="Email Address" name="from_email" type="email" placeholder="your@email.com" />
                 <Field label="Comment" name="subject" placeholder="Write your comment here..." />
                 <Field label="Message" name="message" as="textarea" placeholder="Your message…" />
 
