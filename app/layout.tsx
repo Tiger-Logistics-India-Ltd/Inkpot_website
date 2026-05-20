@@ -26,7 +26,7 @@ const belleza = Belleza({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://inkpotindia.com"),
+  metadataBase: new URL("https://www.inkpotindia.com"),
   title: "Inkpot India — Culture, Reimagined",
   description:
     "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     "Delhi heritage monuments",
   ],
   alternates: {
-    canonical: "https://inkpotindia.com",
+    canonical: "https://www.inkpotindia.com",
   },
   verification: {
     google: "LQH8vAq0nSU5algX4s87wYYv9DFQPbkT_C81lM7EmYE",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     title: "Inkpot India — Culture, Reimagined",
     description:
       "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
-    url: "https://inkpotindia.com",
+    url: "https://www.inkpotindia.com",
     siteName: "Inkpot India",
     images: [
       {

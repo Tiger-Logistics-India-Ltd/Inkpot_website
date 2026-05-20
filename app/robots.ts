@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/signin", "/work-with-us"],
       },
     ],
-    sitemap: "https://inkpotindia.com/sitemap.xml",
+    sitemap: "https://www.inkpotindia.com/sitemap.xml",
   };
 }
