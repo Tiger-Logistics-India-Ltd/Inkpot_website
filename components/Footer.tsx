@@ -13,8 +13,8 @@ const cols = [
       { label: "Our Experiences", href: "#experiences" },
       { label: "Newsroom", href: "/newsroom" },
       { label: "Contact Us", href: "/contact" },
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms & Conditions", href: "#" },
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms & Conditions", href: "/terms" },
     ],
   },
   {
