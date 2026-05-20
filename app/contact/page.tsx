@@ -1,17 +1,20 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 function Field({
   label,
+  name,
   type = "text",
   placeholder,
   as = "input",
 }: {
   label: string;
+  name: string;
   type?: string;
   placeholder?: string;
   as?: "input" | "textarea";
@@ -39,9 +42,9 @@ function Field({
         {label}
       </label>
       {as === "textarea" ? (
-        <textarea rows={5} placeholder={placeholder} style={base} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />
+        <textarea name={name} rows={5} placeholder={placeholder} style={base} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />
       ) : (
-        <input type={type} placeholder={placeholder} style={base} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />
+        <input name={name} type={type} placeholder={placeholder} style={base} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />
       )}
     </div>
   );
@@ -72,6 +75,28 @@ const socials = [
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      await emailjs.sendForm(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        formRef.current!,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+      );
+      setSubmitted(true);
+    } catch {
+      setError("Something went wrong. Please email us at info@inkpotindia.com");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -94,7 +119,7 @@ export default function ContactPage() {
             transition={{ duration: 1.0, delay: 0.5 }}
             style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(44px, 6vw, 88px)", lineHeight: 1.05, color: "#ffffff" }}
           >
-            Let&rsquo;s Connect.
+            Let&rsquo;s Connect
           </motion.h1>
         </section>
 
@@ -124,8 +149,8 @@ export default function ContactPage() {
               {[
                 {
                   label: "Email",
-                  value: "hello@inkpotindia.com",
-                  href: "mailto:hello@inkpotindia.com",
+                  value: "info@inkpotindia.com",
+                  href: "mailto:info@inkpotindia.com",
                 },
                 {
                   label: "Location",
@@ -201,22 +226,29 @@ export default function ContactPage() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+              <form ref={formRef} onSubmit={handleSubmit}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 40px" }}>
-                  <Field label="First Name" placeholder="First name" />
-                  <Field label="Last Name" placeholder="Last name" />
+                  <Field label="First Name" name="first_name" placeholder="First name" />
+                  <Field label="Last Name" name="last_name" placeholder="Last name" />
                 </div>
-                <Field label="Email Address" type="email" placeholder="your@email.com" />
-                <Field label="Subject" placeholder="What is this regarding?" />
-                <Field label="Message" as="textarea" placeholder="Your message…" />
+                <Field label="Email Address" name="reply_to" type="email" placeholder="your@email.com" />
+                <Field label="Comment" name="subject" placeholder="Write your comment here..." />
+                <Field label="Message" name="message" as="textarea" placeholder="Your message…" />
+
+                {error && (
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "var(--primary-red)", marginBottom: "20px" }}>
+                    {error}
+                  </p>
+                )}
 
                 <button
                   type="submit"
-                  style={{ background: "var(--primary-red)", color: "#ffffff", padding: "16px 44px", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.18em", textTransform: "uppercase", border: "none", cursor: "pointer", transition: "background 0.25s" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#7a1517")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "var(--primary-red)")}
+                  disabled={loading}
+                  style={{ background: loading ? "rgba(144,26,28,0.5)" : "var(--primary-red)", color: "#ffffff", padding: "16px 44px", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.18em", textTransform: "uppercase", border: "none", cursor: loading ? "default" : "pointer", transition: "background 0.25s" }}
+                  onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "#7a1517"; }}
+                  onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = "var(--primary-red)"; }}
                 >
-                  Send Message
+                  {loading ? "Sending…" : "Send Message"}
                 </button>
               </form>
             )}
