@@ -24,7 +24,6 @@ const cols = [
       { label: "Antarnaad", href: "#experiences" },
       { label: "Inkpot India Conclave", href: "https://www.inkpotindiaconclave.com/" },
       { label: "Heritage Cleanliness Project", href: "/events/heritage-cleanliness" },
-      { label: "Echoes of Expression", href: "#" },
     ],
   },
   {
@@ -117,8 +116,8 @@ export default function Footer() {
                   <nav style={{ display: "flex", flexDirection: "column" }}>
                     {col.links.map((link) => (
                       <a key={link.label} href={link.href}
-                        target={link.href !== "#" && link.href !== "/" ? "_blank" : undefined}
-                        rel={link.href !== "#" && link.href !== "/" ? "noopener noreferrer" : undefined}
+                        target={link.href.startsWith("http") ? "_blank" : undefined}
+                        rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
                         style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#000000", lineHeight: "2.0", textDecoration: "none" }}
                         onTouchStart={(e) => (e.currentTarget.style.color = "var(--primary-mustard)")}
                         onTouchEnd={(e) => (e.currentTarget.style.color = "#000000")}
