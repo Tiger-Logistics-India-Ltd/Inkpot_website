@@ -23,7 +23,7 @@ const cols = [
       { label: "Songs of the Stone", href: "https://www.songsofthestone.com/" },
       { label: "Antarnaad", href: "#experiences" },
       { label: "Inkpot India Conclave", href: "https://www.inkpotindiaconclave.com/" },
-      { label: "Heritage Cleanliness Project", href: "/events/heritage-cleanliness" },
+      { label: "Heritage Cleanliness Project", href: "/#experiences" },
     ],
   },
   {

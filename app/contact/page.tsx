@@ -236,6 +236,7 @@ export default function ContactPage() {
                   <Field label="Last Name" name="last_name" placeholder="Last name" />
                 </div>
                 <Field label="Email Address" name="from_email" type="email" placeholder="your@email.com" />
+                <Field label="Phone Number" name="phone" type="tel" placeholder="+91 98765 43210" />
                 <Field label="Comment" name="subject" placeholder="Write your comment here..." />
                 <Field label="Message" name="message" as="textarea" placeholder="Your message…" />
 
