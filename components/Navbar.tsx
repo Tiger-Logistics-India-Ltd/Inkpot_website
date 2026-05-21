@@ -38,11 +38,12 @@ const aboutLinks = [
   { label: "Beliefs & Values", href: "/about#beliefs" },
 ];
 
-const workLinks = [
-  { label: "Perform with Us", href: "#" },
-  { label: "Partner with Us", href: "#" },
-  { label: "Jobs / Careers", href: "#" },
-];
+// TODO: Work With Us — develop later
+// const workLinks = [
+//   { label: "Perform with Us", href: "#" },
+//   { label: "Partner with Us", href: "#" },
+//   { label: "Jobs / Careers", href: "#" },
+// ];
 
 /* ── Simple dropdown ── */
 function SimpleDropdown({ label, href, links }: { label: string; href: string; links: { label: string; href: string }[] }) {
@@ -178,8 +179,8 @@ export default function Navbar() {
     { label: "Home", href: "/" },
     { label: "About", href: "/about", dropdown: aboutLinks },
     { label: "Our Experiences", href: "#experiences", dropdown: experiences.map((e) => ({ label: e.label, href: e.href })) },
-    { label: "Work With Us", href: "#", dropdown: workLinks },
-    { label: "Newsroom", href: "/newsroom" },
+    // { label: "Work With Us", href: "#", dropdown: workLinks }, // TODO: develop later
+    // { label: "Newsroom", href: "/newsroom" }, // TODO: develop later
     { label: "Contact Us", href: "/contact" },
   ];
 
@@ -211,8 +212,8 @@ export default function Navbar() {
 
           {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: "28px", justifyContent: "flex-start" }}>
-            <SimpleDropdown label="Work With Us" href="#" links={workLinks} />
-            {[{ label: "Newsroom", href: "/newsroom" }, { label: "Contact Us", href: "/contact" }].map((l) => (
+            {/* <SimpleDropdown label="Work With Us" href="#" links={workLinks} /> */}{/* TODO: develop later */}
+            {[{ label: "Contact Us", href: "/contact" }/* , { label: "Newsroom", href: "/newsroom" } // TODO: develop later */].map((l) => (
               <a key={l.label} href={l.href}
                 style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--primary-black)", whiteSpace: "nowrap", textDecoration: "none" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-red)")}

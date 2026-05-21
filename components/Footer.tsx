@@ -11,7 +11,7 @@ const cols = [
       { label: "Home", href: "/" },
       { label: "About", href: "/about" },
       { label: "Our Experiences", href: "#experiences" },
-      { label: "Newsroom", href: "/newsroom" },
+      // { label: "Newsroom", href: "/newsroom" }, // TODO: develop later
       { label: "Contact Us", href: "/contact" },
       { label: "Privacy Policy", href: "/privacy-policy" },
       { label: "Terms & Conditions", href: "/terms" },
@@ -26,15 +26,16 @@ const cols = [
       { label: "Heritage Cleanliness Project", href: "/#experiences" },
     ],
   },
-  {
-    label: "GET INVOLVED",
-    links: [
-      { label: "Perform with Us", href: "#" },
-      { label: "Partner with Us", href: "#" },
-      { label: "Jobs & Internships", href: "#" },
-      { label: "Contact Us", href: "/contact" },
-    ],
-  },
+  // TODO: Work With Us (GET INVOLVED) — develop later
+  // {
+  //   label: "GET INVOLVED",
+  //   links: [
+  //     { label: "Perform with Us", href: "#" },
+  //     { label: "Partner with Us", href: "#" },
+  //     { label: "Jobs & Internships", href: "#" },
+  //     { label: "Contact Us", href: "/contact" },
+  //   ],
+  // },
 ];
 
 const socials = [
