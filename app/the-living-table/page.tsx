@@ -176,7 +176,7 @@ export default function LivingTablePage() {
             .tlt-gallery         { grid-template-columns: 1fr !important; }
             .tlt-gallery-item    { height: 260px !important; }
             .tlt-booking         { grid-template-columns: 1fr !important; }
-            .tlt-booking-img     { display: none !important; }
+            .tlt-booking-img     { min-height: unset !important; padding: 40px 24px !important; }
             .tlt-venue-desktop   { display: none !important; }
             .tlt-venue-mobile    { display: block !important; }
           }
