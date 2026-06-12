@@ -144,6 +144,39 @@ export async function sendTicketConfirmation({
             </td>
           </tr>
 
+          <!-- Programme -->
+          <tr>
+            <td style="padding:32px 48px 0;">
+              <p style="margin:0 0 20px;font-size:9px;letter-spacing:0.26em;text-transform:uppercase;color:rgba(0,0,0,0.38);">The Evening</p>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
+                    <span style="font-size:10px;color:rgba(0,0,0,0.38);letter-spacing:0.06em;font-weight:600;">6:30 PM</span>
+                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">Arrival &amp; Welcome</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
+                    <span style="font-size:10px;color:rgba(0,0,0,0.38);letter-spacing:0.06em;font-weight:600;">7:00 PM</span>
+                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">A conversation on the history of food at Kathika Cultural Centre, featuring Monish Gujral, Sadaf Hussain, and Salma Husain, moderated by Simar Malhotra.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
+                    <span style="font-size:10px;color:rgba(0,0,0,0.38);letter-spacing:0.06em;font-weight:600;">8:00 PM</span>
+                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">The bar opens and the dining experience begins at Neem Ki Haveli, accompanied by narratives on the dishes, cultural storytelling, and immersive musical performances.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 0;">
+                    <span style="font-size:10px;color:rgba(0,0,0,0.38);letter-spacing:0.06em;font-weight:600;">10:00 PM</span>
+                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">The evening concludes.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
           <!-- Divider -->
           <tr>
             <td style="padding:40px 48px 0;">

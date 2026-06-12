@@ -20,10 +20,9 @@ interface TicketInfo {
 
 const PROGRAMME = [
   { time: "6:30 PM", label: "Arrival & Welcome" },
-  { time: "7:00 PM", label: "First Course" },
-  { time: "7:30 PM", label: "Stories of Old Delhi" },
-  { time: "8:00 PM", label: "Musical Interlude" },
-  { time: "8:30 PM", label: "Shared Table Experience" },
+  { time: "7:00 PM", label: "Conversations on Food & Memory" },
+  { time: "8:00 PM", label: "Dining, Stories & Music" },
+  { time: "10:00 PM", label: "The Evening Concludes" },
 ];
 
 
@@ -167,13 +166,20 @@ export default function LivingTablePage() {
       <main style={{ background: "#0A0806" }}>
         <style>{`
           @media (max-width: 768px) {
-            .tlt-experience   { grid-template-columns: 1fr !important; min-height: unset !important; }
-            .tlt-why-grid     { grid-template-columns: 1fr !important; min-height: unset !important; }
-            .tlt-why-video    { height: 260px !important; }
-            .tlt-gallery      { grid-template-columns: 1fr !important; }
-            .tlt-gallery-item { height: 260px !important; }
-            .tlt-booking      { grid-template-columns: 1fr !important; }
-            .tlt-booking-img  { display: none !important; }
+            .tlt-experience      { grid-template-columns: 1fr !important; min-height: unset !important; }
+            .tlt-why-grid        { grid-template-columns: 1fr !important; min-height: unset !important; }
+            .tlt-why-video       { height: 75vw !important; max-height: 480px !important; margin: 0 16px !important; border-radius: 12px !important; overflow: hidden !important; }
+            .tlt-gallery         { padding: 0 16px !important; }
+            .tlt-gallery-item    { height: 52vw !important; }
+            .tlt-gallery         { grid-template-columns: 1fr !important; }
+            .tlt-gallery-item    { height: 260px !important; }
+            .tlt-booking         { grid-template-columns: 1fr !important; }
+            .tlt-booking-img     { display: none !important; }
+            .tlt-venue-desktop   { display: none !important; }
+            .tlt-venue-mobile    { display: block !important; }
+          }
+          @media (min-width: 769px) {
+            .tlt-venue-mobile    { display: none !important; }
           }
         `}</style>
 
@@ -364,6 +370,9 @@ export default function LivingTablePage() {
           </div>
         </section>
 
+        {/* white space */}
+        <div style={{ height: "clamp(48px, 6vw, 96px)", background: "#ffffff" }} />
+
         {/* ── 4. WHY THIS EVENING EXISTS — auto-rotate images ── */}
         <div>
           <div className="tlt-why-grid" style={{
@@ -415,14 +424,20 @@ export default function LivingTablePage() {
           </div>
         </div>
 
-        {/* spacing after section 4 */}
-
         {/* ── 5. VENUE ── */}
         <section style={{ position: "relative", height: "clamp(240px, 38vh, 440px)", overflow: "hidden" }}>
           <Image
             src="/images/thelivingtable/banner_1.png"
             alt="Kathika Cultural Centre"
             fill
+            className="tlt-venue-desktop"
+            style={{ objectFit: "cover", objectPosition: "center" }}
+          />
+          <Image
+            src="/images/thelivingtable/landscape.png"
+            alt="Kathika Cultural Centre"
+            fill
+            className="tlt-venue-mobile"
             style={{ objectFit: "cover", objectPosition: "center" }}
           />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,8,6,0.88) 0%, rgba(10,8,6,0.2) 50%, rgba(10,8,6,0.04) 100%)" }} />
@@ -446,10 +461,11 @@ export default function LivingTablePage() {
           </motion.div>
         </section>
 
-        {/* spacing after venue banner */}
+        {/* white space */}
+        <div style={{ height: "clamp(64px, 8vw, 120px)", background: "#ffffff" }} />
 
         {/* ── 6. GALLERY ── */}
-        <section className="tlt-gallery" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3px", background: "#0A0806" }}>
+        <section className="tlt-gallery" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(16px, 2vw, 32px)", background: "#ffffff", padding: "0 clamp(24px, 5vw, 100px)" }}>
           {["45", "47"].map((src, i) => (
             <motion.div
               key={src}
@@ -462,21 +478,80 @@ export default function LivingTablePage() {
           ))}
         </section>
 
-        {/* ── 7. BOOKING SECTION — two column ── */}
-        <section ref={formRef} className="tlt-booking" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "auto", background: "#0A0806" }}>
+        {/* white space */}
+        <div style={{ height: "clamp(64px, 8vw, 120px)", background: "#ffffff" }} />
 
-          {/* LEFT: still image */}
-          <div className="tlt-booking-img" style={{ position: "relative", overflow: "hidden", minHeight: "600px" }}>
-            <Image
-              src="/images/thelivingtable/46.png"
-              alt="The Living Table"
-              fill
-              style={{ objectFit: "cover", objectPosition: "center" }}
-            />
+        {/* ── 7. BOOKING SECTION — two column ── */}
+        <section ref={formRef} className="tlt-booking" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "auto", background: "#ffffff" }}>
+
+          {/* LEFT: decorative event-details panel */}
+          <div className="tlt-booking-img" style={{ position: "relative", overflow: "hidden", background: "#F4EFE6", minHeight: "520px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "clamp(36px, 4vw, 60px) clamp(32px, 5vw, 64px)" }}>
+
+            {/* White card */}
+            <div style={{
+              position: "relative", zIndex: 2, width: "100%", maxWidth: "360px",
+              background: "#ffffff",
+              border: "1px solid rgba(0,0,0,0.07)",
+              boxShadow: "0 2px 24px rgba(0,0,0,0.06)",
+              padding: "clamp(28px, 3.5vw, 44px) clamp(24px, 3vw, 36px)",
+              overflow: "hidden",
+            }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.32em", textTransform: "uppercase", color: "#901A1C", margin: "0 0 28px" }}>
+                The Living Table
+              </p>
+
+              {[
+                {
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>,
+                  label: "28 June 2026",
+                  sub: "Saturday",
+                },
+                {
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>,
+                  label: "7:30 PM Onwards",
+                  sub: "",
+                },
+                {
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round"><path d="M12 21s-8-6.5-8-12a8 8 0 1 1 16 0c0 5.5-8 12-8 12z"/><circle cx="12" cy="9" r="2.5"/></svg>,
+                  label: "Kathika Cultural Centre",
+                  sub: "Gali Khatikan, Kucha Pati Ram\nSitaram Bazar, Delhi",
+                },
+              ].map((item, i) => (
+                <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start", paddingBottom: i < 2 ? "20px" : 0, marginBottom: i < 2 ? "20px" : "28px", borderBottom: i < 2 ? "1px solid rgba(0,0,0,0.07)" : "none" }}>
+                  <div style={{ marginTop: "1px", flexShrink: 0 }}>{item.icon}</div>
+                  <div>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "#1a1a1a", margin: "0 0 3px", letterSpacing: "0.02em" }}>{item.label}</p>
+                    {item.sub && item.sub.split("\n").map((line, j) => (
+                      <p key={j} style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "rgba(0,0,0,0.4)", margin: "1px 0 0", lineHeight: 1.6 }}>{line}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {/* Kathika sketch — inside card, bottom, faded */}
+              <div style={{ pointerEvents: "none", marginTop: "4px", opacity: 1 }}>
+                <Image
+                  src="/images/thelivingtable/kathika.png"
+                  alt=""
+                  width={280} height={130}
+                  style={{ width: "85%", height: "auto", margin: "0 auto", display: "block" }}
+                />
+              </div>
+            </div>
+
+            {/* Flower — outside card, bottom-left of panel */}
+            <div style={{ position: "absolute", bottom: "-10px", left: "-8px", zIndex: 3, pointerEvents: "none" }}>
+              <Image
+                src="/images/thelivingtable/flower.png"
+                alt=""
+                width={190} height={230}
+                style={{ width: "clamp(130px, 14vw, 190px)", height: "auto" }}
+              />
+            </div>
           </div>
 
           {/* RIGHT: booking form */}
-          <div style={{ background: "#F4EFE6", padding: "clamp(40px, 4vw, 64px) clamp(24px, 3.5vw, 56px)", display: "flex", alignItems: "flex-start" }}>
+          <div style={{ background: "#F4EFE6", padding: "clamp(28px, 3vw, 48px) clamp(28px, 4vw, 60px)", display: "flex", alignItems: "center" }}>
             <div style={{ width: "100%", maxWidth: "480px" }}>
               <AnimatePresence mode="wait">
 
@@ -540,26 +615,12 @@ export default function LivingTablePage() {
                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }} transition={{ duration: 0.65 }}
                   >
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: "#901A1C", marginBottom: "14px" }}>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: "#901A1C", marginBottom: "8px" }}>
                       Reserve Your Seats
                     </p>
-                    <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(28px, 3.5vw, 44px)", lineHeight: 1.05, color: "#1a1a1a", marginBottom: "32px" }}>
+                    <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(24px, 2.8vw, 36px)", lineHeight: 1.05, color: "#1a1a1a", marginBottom: "20px" }}>
                       Join us at the table.
                     </h2>
-
-                    <div style={{ background: "#1a1a1a", padding: "18px 24px", marginBottom: "36px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px 24px" }}>
-                      {[
-                        ["Event",       "The Living Table"],
-                        ["Date & Time", "28 June · 7:30 PM"],
-                        ["Venue",       "Kathika Cultural Centre"],
-                        ["Per Seat",    "₹6,500"],
-                      ].map(([label, val]) => (
-                        <div key={label}>
-                          <p style={{ fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.26em", textTransform: "uppercase", color: "#C9A84C", margin: "0 0 4px" }}>{label}</p>
-                          <p style={{ fontFamily: label === "Event" ? "var(--font-heading)" : "var(--font-body)", fontStyle: label === "Event" ? "italic" : "normal", fontSize: "13px", color: "#F4EFE6", margin: 0, fontWeight: 400 }}>{val}</p>
-                        </div>
-                      ))}
-                    </div>
 
                     {available === 0 ? (
                       <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "rgba(0,0,0,0.5)", lineHeight: 1.9 }}>
@@ -579,8 +640,8 @@ export default function LivingTablePage() {
                           <Field key={f.label} label={f.label} value={f.value} onChange={f.set} type={f.type} placeholder={f.ph} />
                         ))}
 
-                        <div style={{ marginBottom: "32px" }}>
-                          <label style={{ fontFamily: "var(--font-body)", fontSize: "8.5px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", display: "block", marginBottom: "14px" }}>
+                        <div style={{ marginBottom: "20px" }}>
+                          <label style={{ fontFamily: "var(--font-body)", fontSize: "8.5px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", display: "block", marginBottom: "10px" }}>
                             Number of Seats
                           </label>
                           <div style={{ display: "flex", alignItems: "center" }}>
@@ -589,7 +650,7 @@ export default function LivingTablePage() {
                               onClick={() => setQty(q => Math.max(1, q - 1))}
                               disabled={qty <= 1}
                               style={{
-                                width: "44px", height: "44px", background: "transparent",
+                                width: "36px", height: "36px", background: "transparent",
                                 border: "1px solid rgba(0,0,0,0.18)", cursor: qty <= 1 ? "default" : "pointer",
                                 fontSize: "18px", color: qty <= 1 ? "rgba(0,0,0,0.2)" : "#1a1a1a",
                                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -597,7 +658,7 @@ export default function LivingTablePage() {
                               }}
                             >−</button>
                             <div style={{
-                              width: "64px", height: "44px",
+                              width: "52px", height: "36px",
                               borderTop: "1px solid rgba(0,0,0,0.18)", borderBottom: "1px solid rgba(0,0,0,0.18)",
                               display: "flex", alignItems: "center", justifyContent: "center",
                               fontFamily: "var(--font-heading)", fontSize: "20px", color: "#1a1a1a", fontWeight: 400,
@@ -609,7 +670,7 @@ export default function LivingTablePage() {
                               onClick={() => setQty(q => Math.min(maxQty, q + 1))}
                               disabled={qty >= maxQty}
                               style={{
-                                width: "44px", height: "44px", background: "transparent",
+                                width: "36px", height: "36px", background: "transparent",
                                 border: "1px solid rgba(0,0,0,0.18)", cursor: qty >= maxQty ? "default" : "pointer",
                                 fontSize: "18px", color: qty >= maxQty ? "rgba(0,0,0,0.2)" : "#1a1a1a",
                                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -620,7 +681,7 @@ export default function LivingTablePage() {
                         </div>
 
                         {/* Meal preferences */}
-                        <div style={{ marginBottom: "32px" }}>
+                        <div style={{ marginBottom: "20px" }}>
                           <label style={{ fontFamily: "var(--font-body)", fontSize: "8.5px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", display: "block", marginBottom: "14px" }}>
                             Meal Preference{qty > 1 ? "s" : ""}
                           </label>
@@ -647,7 +708,7 @@ export default function LivingTablePage() {
                                         return next;
                                       })}
                                       style={{
-                                        padding: "8px 16px",
+                                        padding: "6px 14px",
                                         border: `1px solid ${active ? opt.borderColor : "rgba(0,0,0,0.18)"}`,
                                         background: active ? opt.activeBg : "transparent",
                                         color: active ? opt.activeColor : "rgba(0,0,0,0.45)",
@@ -669,7 +730,7 @@ export default function LivingTablePage() {
                         </div>
 
                         {/* Coupon code */}
-                        <div style={{ marginBottom: "24px" }}>
+                        <div style={{ marginBottom: "16px" }}>
                           <label style={{ fontFamily: "var(--font-body)", fontSize: "8.5px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", display: "block", marginBottom: "10px" }}>
                             Coupon Code (optional)
                           </label>
@@ -679,7 +740,7 @@ export default function LivingTablePage() {
                               value={coupon}
                               onChange={e => { setCoupon(e.target.value.toUpperCase()); setCouponStatus(null); setDiscount(0); }}
                               placeholder="ENTER CODE"
-                              style={{ flex: 1, border: "1px solid rgba(0,0,0,0.15)", padding: "10px 14px", fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.1em", color: "#1a1a1a", outline: "none", background: "transparent" }}
+                              style={{ flex: 1, border: "none", borderBottom: "1px solid rgba(0,0,0,0.18)", padding: "10px 0", fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.1em", color: "#1a1a1a", outline: "none", background: "transparent", width: "100%" }}
                             />
                           </div>
                           {couponStatus && (
@@ -689,7 +750,7 @@ export default function LivingTablePage() {
                           )}
                         </div>
 
-                        <div style={{ borderTop: "1px solid rgba(0,0,0,0.1)", borderBottom: "1px solid rgba(0,0,0,0.1)", padding: "18px 0", marginBottom: "28px" }}>
+                        <div style={{ borderTop: "1px solid rgba(0,0,0,0.1)", borderBottom: "1px solid rgba(0,0,0,0.1)", padding: "14px 0", marginBottom: "20px" }}>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             <div>
                               <p style={{ fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.26em", textTransform: "uppercase", color: "rgba(0,0,0,0.35)", margin: "0 0 4px" }}>Subtotal</p>
@@ -768,8 +829,8 @@ function Field({ label, value, onChange, type, placeholder }: {
 }) {
   const [focused, setFocused] = useState(false);
   return (
-    <div style={{ marginBottom: "28px" }}>
-      <label style={{ fontFamily: "var(--font-body)", fontSize: "8.5px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", display: "block", marginBottom: "10px" }}>
+    <div style={{ marginBottom: "16px" }}>
+      <label style={{ fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", display: "block", marginBottom: "6px" }}>
         {label}
       </label>
       <input
@@ -781,7 +842,7 @@ function Field({ label, value, onChange, type, placeholder }: {
         style={{
           display: "block", width: "100%", background: "transparent",
           border: "none", borderBottom: `1px solid ${focused ? "#901A1C" : "rgba(0,0,0,0.18)"}`,
-          padding: "10px 0", fontFamily: "var(--font-body)", fontSize: "15px",
+          padding: "7px 0", fontFamily: "var(--font-body)", fontSize: "14px",
           color: "#1a1a1a", outline: "none", transition: "border-color 0.2s",
           boxSizing: "border-box",
         }}
