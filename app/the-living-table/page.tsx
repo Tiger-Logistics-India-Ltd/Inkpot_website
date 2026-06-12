@@ -167,7 +167,7 @@ export default function LivingTablePage() {
       <main style={{ background: "#0A0806" }}>
 
         {/* ── 1. HERO ── */}
-        <section style={{ position: "relative", height: "100dvh", minHeight: "640px", overflow: "hidden" }}>
+        <section style={{ position: "relative", height: "clamp(480px, 75vh, 100dvh)", overflow: "hidden" }}>
           <video
             autoPlay muted loop playsInline
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
@@ -186,13 +186,13 @@ export default function LivingTablePage() {
             <motion.div
               initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, delay: 0.5 }}
-              style={{ marginBottom: "20px" }}
+              style={{ marginBottom: "16px" }}
             >
               <Image
                 src="/images/thelivingtable/logo_the_right_one_1.svg"
                 alt="The Living Table"
                 width={380} height={380}
-                style={{ width: "clamp(220px, 44vw, 400px)", height: "auto", filter: "brightness(0) invert(1)", opacity: 0.92 }}
+                style={{ width: "clamp(180px, 52vw, 380px)", height: "auto", filter: "brightness(0) invert(1)", opacity: 0.92 }}
                 priority
               />
             </motion.div>
@@ -202,8 +202,8 @@ export default function LivingTablePage() {
               transition={{ duration: 0.9, delay: 1.0 }}
               style={{
                 fontFamily: "var(--font-heading)", fontStyle: "italic",
-                fontSize: "clamp(14px, 1.8vw, 20px)",
-                color: "rgba(244,239,230,0.62)", letterSpacing: "0.02em", marginBottom: "48px",
+                fontSize: "clamp(13px, 3.5vw, 20px)",
+                color: "rgba(244,239,230,0.62)", letterSpacing: "0.02em", marginBottom: "32px",
               }}
             >
               Where stories find their way onto the plate
@@ -212,12 +212,12 @@ export default function LivingTablePage() {
             <motion.div
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.3 }}
-              style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}
             >
               <button
                 onClick={scrollToForm}
                 style={{
-                  background: "#901A1C", color: "#ffffff", padding: "16px 52px",
+                  background: "#901A1C", color: "#ffffff", padding: "14px 44px",
                   fontFamily: "var(--font-body)", fontSize: "10px",
                   letterSpacing: "0.24em", textTransform: "uppercase",
                   border: "none", cursor: "pointer", transition: "background 0.25s",
