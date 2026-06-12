@@ -1,0 +1,222 @@
+export const dynamic = "force-dynamic";
+
+import { NextResponse } from "next/server";
+import Razorpay from "razorpay";
+import crypto from "crypto";
+import QRCode from "qrcode";
+
+const PRICE_PAISE = 650000; // ₹6,500
+const MAX_TICKETS = 100;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.inkpotindia.com";
+
+const dbEnabled = () =>
+  !!(process.env.SUPABASE_URL?.trim() && process.env.SUPABASE_SERVICE_ROLE_KEY?.trim());
+
+const emailEnabled = () => !!process.env.RESEND_API_KEY?.trim();
+
+export async function POST(req: Request) {
+  try {
+    const { name, email, phone, qty = 1, coupon_code, meals = [] } = await req.json();
+
+    if (!name?.trim() || !email?.trim() || !phone?.trim()) {
+      return NextResponse.json({ error: "All fields are required." }, { status: 400 });
+    }
+    const seats = Math.min(Math.max(1, parseInt(qty) || 1), 4);
+    let totalPaise = PRICE_PAISE * seats;
+    let discountPaise = 0;
+    let appliedCoupon: string | null = null;
+    let couponId: string | null = null;
+    let couponUsesCount = 0;
+
+    // ── Coupon validation (no increment yet) ─────────────────────────────────
+    if (coupon_code?.trim() && dbEnabled()) {
+      const { getSupabase } = await import("@/lib/supabase");
+      const supabase = getSupabase();
+      const { data: coupon } = await supabase
+        .from("living_table_coupons")
+        .select("*")
+        .eq("code", coupon_code.trim().toUpperCase())
+        .eq("active", true)
+        .single();
+
+      if (!coupon) {
+        return NextResponse.json({ error: "Invalid coupon code." }, { status: 400 });
+      }
+      if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) {
+        return NextResponse.json({ error: "This coupon has expired." }, { status: 400 });
+      }
+      if (coupon.uses_count >= coupon.max_uses) {
+        return NextResponse.json({ error: "This coupon has already been used." }, { status: 400 });
+      }
+
+      discountPaise = coupon.discount_type === "percent"
+        ? Math.round(totalPaise * coupon.discount_value / 100)
+        : coupon.discount_value * 100;
+
+      totalPaise = Math.max(0, totalPaise - discountPaise);
+      appliedCoupon = coupon.code;
+      couponId = coupon.id;
+      couponUsesCount = coupon.uses_count;
+    }
+
+    // ── Availability check ───────────────────────────────────────────────────
+    if (dbEnabled()) {
+      const { getSupabase } = await import("@/lib/supabase");
+      const supabase = getSupabase();
+      const { count, error: countError } = await supabase
+        .from("living_table_tickets")
+        .select("*", { count: "exact", head: true })
+        .eq("payment_status", "paid");
+      if (countError) throw countError;
+      if ((count ?? 0) + seats > MAX_TICKETS) {
+        return NextResponse.json({ error: "Not enough seats remaining." }, { status: 400 });
+      }
+    }
+
+    // ── FREE BOOKING (100% coupon — skip Razorpay entirely) ──────────────────
+    if (totalPaise === 0 && dbEnabled()) {
+      const { getSupabase } = await import("@/lib/supabase");
+      const supabase = getSupabase();
+
+      // Assign seat block
+      const { data: existing } = await supabase
+        .from("living_table_tickets")
+        .select("seat_numbers")
+        .in("payment_status", ["paid", "pending"]);
+
+      const allAssigned: number[] = (existing ?? [])
+        .flatMap((r: { seat_numbers: number[] }) => r.seat_numbers ?? []);
+      const nextSeat = allAssigned.length > 0 ? Math.max(...allAssigned) + 1 : 1;
+      const ticketNumber = nextSeat;
+      const seatNumbers = Array.from({ length: seats }, (_, i) => nextSeat + i);
+      const qrToken = crypto.randomUUID();
+
+      // Insert ticket as paid directly
+      const { data: ticket, error: insertError } = await supabase
+        .from("living_table_tickets")
+        .insert({
+          buyer_name: name.trim(),
+          buyer_email: email.trim().toLowerCase(),
+          buyer_phone: phone.trim(),
+          razorpay_order_id: `free_${Date.now()}`,
+          payment_status: "paid",
+          amount: 0,
+          qty: seats,
+          coupon_code: appliedCoupon,
+          discount_amount: discountPaise,
+          ticket_number: ticketNumber,
+          seat_numbers: seatNumbers,
+          qr_token: qrToken,
+          meal_preferences: meals,
+        })
+        .select("id")
+        .single();
+
+      if (insertError) throw insertError;
+
+      // Increment coupon only after successful insert
+      if (couponId) {
+        await supabase
+          .from("living_table_coupons")
+          .update({ uses_count: couponUsesCount + 1 })
+          .eq("id", couponId);
+      }
+
+      // Generate QR
+      const qrContent = `${SITE_URL}/ticket/${ticket.id}`;
+      const qrDataUrl = await QRCode.toDataURL(qrContent, {
+        width: 400, margin: 2,
+        color: { dark: "#1a1a1a", light: "#ffffff" },
+      });
+
+      // Send confirmation email
+      if (emailEnabled()) {
+        const { sendTicketConfirmation } = await import("@/lib/email");
+        sendTicketConfirmation({
+          to: email.trim().toLowerCase(),
+          buyerName: name.trim(),
+          ticketNumber,
+          seatNumbers,
+          qty: seats,
+          qrDataUrl,
+          ticketId: ticket.id,
+          amount: 0,
+          siteUrl: SITE_URL,
+        }).catch(e => console.error("[email]", e));
+      }
+
+      return NextResponse.json({
+        free: true,
+        ticket: {
+          ticketId: ticket.id,
+          ticketNumber,
+          seatNumbers,
+          qty: seats,
+          buyerName: name.trim(),
+          buyerEmail: email.trim().toLowerCase(),
+        },
+      });
+    }
+
+    // ── PAID BOOKING — create Razorpay order ─────────────────────────────────
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    if (!keyId || !keySecret) {
+      return NextResponse.json({ error: "Payment service not configured." }, { status: 503 });
+    }
+
+    const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
+    const order = await razorpay.orders.create({
+      amount: totalPaise,
+      currency: "INR",
+      receipt: `tlt_${Date.now()}`,
+    });
+
+    // ── Create pending ticket ─────────────────────────────────────────────────
+    let ticketId = `tmp_${Date.now()}`;
+    if (dbEnabled()) {
+      const { getSupabase } = await import("@/lib/supabase");
+      const supabase = getSupabase();
+      const { data: ticket, error: insertError } = await supabase
+        .from("living_table_tickets")
+        .insert({
+          buyer_name: name.trim(),
+          buyer_email: email.trim().toLowerCase(),
+          buyer_phone: phone.trim(),
+          razorpay_order_id: order.id,
+          payment_status: "pending",
+          amount: totalPaise,
+          qty: seats,
+          coupon_code: appliedCoupon,
+          discount_amount: discountPaise,
+          meal_preferences: meals,
+        })
+        .select("id")
+        .single();
+      if (insertError) throw insertError;
+      ticketId = ticket.id;
+
+      // Increment coupon only after order + ticket both succeed
+      if (couponId) {
+        await supabase
+          .from("living_table_coupons")
+          .update({ uses_count: couponUsesCount + 1 })
+          .eq("id", couponId);
+      }
+    }
+
+    return NextResponse.json({
+      order_id: order.id,
+      amount: totalPaise,
+      key_id: keyId,
+      ticket_id: ticketId,
+      discount_paise: discountPaise,
+      coupon_applied: appliedCoupon,
+    });
+
+  } catch (err: any) {
+    console.error("[create-order]", err);
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  }
+}

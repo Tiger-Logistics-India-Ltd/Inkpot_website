@@ -123,25 +123,29 @@ export default function Hero() {
         }}
       >
         <motion.a
-          href="#experiences"
+          href="/the-living-table"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.7, ease: "easeOut" }}
-          className="text-white"
           style={{
-            fontFamily: "var(--font-body)",
-            fontSize: "12px",
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
+            display: "inline-flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "4px",
             background: "var(--primary-red)",
-            padding: "14px 36px",
+            padding: "16px 40px",
             textDecoration: "none",
             transition: "background 0.25s",
           }}
           onMouseEnter={(e) => (e.currentTarget.style.background = "#7a1517")}
           onMouseLeave={(e) => (e.currentTarget.style.background = "var(--primary-red)")}
         >
-          Explore Experiences
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.65)" }}>
+            Reserve Your Experience
+          </span>
+          <span style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "18px", color: "#ffffff", letterSpacing: "0.02em" }}>
+            The Living Table →
+          </span>
         </motion.a>
       </div>
 

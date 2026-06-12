@@ -19,14 +19,14 @@ interface EventItem {
 const events: EventItem[] = [
   {
     num: "01",
-    tag: "7 Art Forms · 4 Spaces · One Journey",
-    title: "Antarnaad",
+    tag: "Food · Culture · Memory",
+    title: "The Living Table",
     chapter: null,
-    body: "Arrive fully into the moment, where the noise of elsewhere begins to dissolve. In this state, we do not rush to interpret or define; instead, we allow ourselves to linger, to feel, and to notice what unfolds naturally.",
-    image: "/images/Homepage/antarnaad_feature_image.png",
-    status: "coming-soon",
+    body: "Long before culture found its way into galleries, it lived around tables — where food, conversation, and long dinners became vessels for memory and tradition. On 28th June, we set the table for the first time.",
+    image: "/images/thelivingtable/Thelivingtable_1.png",
+    status: "active",
     location: "New Delhi",
-    cta: null,
+    cta: { label: "Reserve Your Seat", href: "/the-living-table" },
   },
   {
     num: "02",
@@ -67,14 +67,6 @@ export default function FeaturedEvent() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  useEffect(() => {
-    if (!isMobile) return;
-    const timer = setInterval(() => {
-      setDirection(1);
-      setActiveIdx((i) => (i + 1) % events.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [isMobile]);
 
   return (
     <section id="events" style={{ background: "#ffffff", padding: isMobile ? "56px 0 64px" : "100px 0 128px" }}>
@@ -170,7 +162,7 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
 
   const cardH  = 500;
   const panelD = 116;
-  const panelE = 268;
+  const panelE = 320;
 
   return (
     <motion.div

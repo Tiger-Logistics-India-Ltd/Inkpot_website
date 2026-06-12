@@ -13,10 +13,10 @@ const experiences = [
     links: [{ label: "Learn More", href: "https://www.songsofthestone.com/" }],
   },
   {
-    label: "Antarnaad",
-    href: "#experiences",
-    image: "/images/Homepage/antarnaad_lanscape.png",
-    links: [{ label: "Comming Soon", href: "#experiences" }],
+    label: "The Living Table",
+    href: "/the-living-table",
+    image: "/images/thelivingtable/navbar.png",
+    links: [{ label: "Reserve Your Seat", href: "/the-living-table" }],
   },
   {
     label: "Inkpot India Conclave",

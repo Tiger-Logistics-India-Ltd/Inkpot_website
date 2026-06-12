@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     "Indian culture",
     "heritage experiences Delhi",
     "Songs of the Stone",
-    "Antarnaad",
+    "The Living Table",
     "Inkpot India Conclave",
     "Heritage Cleanliness Project",
     "cultural events India",
