@@ -168,7 +168,7 @@ export default function LivingTablePage() {
           @media (max-width: 768px) {
             .tlt-experience      { grid-template-columns: 1fr !important; min-height: unset !important; }
             .tlt-why-grid        { grid-template-columns: 1fr !important; min-height: unset !important; }
-            .tlt-why-video       { height: 75vw !important; max-height: 480px !important; margin: 0 16px !important; border-radius: 12px !important; overflow: hidden !important; }
+            .tlt-why-video       { height: 56vw !important; margin: 0 16px !important; border-radius: 12px !important; overflow: hidden !important; }
             .tlt-gallery         { padding: 0 16px !important; }
             .tlt-gallery-item    { height: 52vw !important; }
             .tlt-gallery         { grid-template-columns: 1fr !important; }
@@ -423,6 +423,9 @@ export default function LivingTablePage() {
             </div>
           </div>
         </div>
+
+        {/* white space before venue */}
+        <div style={{ height: "clamp(64px, 8vw, 120px)", background: "#ffffff" }} />
 
         {/* ── 5. VENUE ── */}
         <section style={{ position: "relative", height: "clamp(240px, 38vh, 440px)", overflow: "hidden" }}>
