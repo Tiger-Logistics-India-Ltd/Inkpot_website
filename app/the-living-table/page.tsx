@@ -186,7 +186,7 @@ export default function LivingTablePage() {
         `}</style>
 
         {/* ── 1. HERO ── */}
-        <section style={{ position: "relative", height: "clamp(480px, 75vh, 100dvh)", overflow: "hidden" }}>
+        <section style={{ position: "relative", height: "100dvh", minHeight: "480px", overflow: "hidden" }}>
           <video
             autoPlay muted loop playsInline
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
