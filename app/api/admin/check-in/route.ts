@@ -4,8 +4,7 @@ import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 
 function auth(req: Request): boolean {
-  const url = new URL(req.url);
-  const pw = url.searchParams.get("pw") ?? req.headers.get("x-admin-password");
+  const pw = req.headers.get("x-admin-password");
   return pw === process.env.ADMIN_PASSWORD;
 }
 

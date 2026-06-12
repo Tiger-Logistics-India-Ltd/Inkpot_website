@@ -29,7 +29,7 @@ export default function TicketPage() {
       .then(data => {
         setTicket(data);
         return import("qrcode").then(QRCode =>
-          QRCode.toDataURL(`INKPOT-TLT-${id}`, {
+          QRCode.toDataURL(`${window.location.origin}/ticket/${id}`, {
             width: 220,
             margin: 2,
             color: { dark: "#111111", light: "#F4EFE6" },
