@@ -165,6 +165,17 @@ export default function LivingTablePage() {
     <>
       <Navbar />
       <main style={{ background: "#0A0806" }}>
+        <style>{`
+          @media (max-width: 768px) {
+            .tlt-experience   { grid-template-columns: 1fr !important; min-height: unset !important; }
+            .tlt-why-grid     { grid-template-columns: 1fr !important; min-height: unset !important; }
+            .tlt-why-video    { height: 260px !important; }
+            .tlt-gallery      { grid-template-columns: 1fr !important; }
+            .tlt-gallery-item { height: 260px !important; }
+            .tlt-booking      { grid-template-columns: 1fr !important; }
+            .tlt-booking-img  { display: none !important; }
+          }
+        `}</style>
 
         {/* ── 1. HERO ── */}
         <section style={{ position: "relative", height: "clamp(480px, 75vh, 100dvh)", overflow: "hidden" }}>
@@ -237,7 +248,7 @@ export default function LivingTablePage() {
         </section>
 
         {/* ── 2. THE EXPERIENCE ── */}
-        <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", background: "#ffffff", minHeight: "clamp(380px, 48vw, 600px)" }}>
+        <section className="tlt-experience" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", background: "#ffffff", minHeight: "clamp(380px, 48vw, 600px)" }}>
 
           {/* Left — editorial text */}
           <motion.div
@@ -355,13 +366,13 @@ export default function LivingTablePage() {
 
         {/* ── 4. WHY THIS EVENING EXISTS — auto-rotate images ── */}
         <div>
-          <div style={{
+          <div className="tlt-why-grid" style={{
             display: "grid", gridTemplateColumns: "1fr 1fr",
             background: "#0A0806", minHeight: "clamp(380px, 48vw, 600px)",
             overflow: "hidden",
           }}>
             {/* Left — venue video */}
-            <div style={{ position: "relative", overflow: "hidden" }}>
+            <div className="tlt-why-video" style={{ position: "relative", overflow: "hidden" }}>
               <video
                 autoPlay muted loop playsInline
                 style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
@@ -438,13 +449,13 @@ export default function LivingTablePage() {
         {/* spacing after venue banner */}
 
         {/* ── 6. GALLERY ── */}
-        <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3px", background: "#0A0806" }}>
+        <section className="tlt-gallery" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3px", background: "#0A0806" }}>
           {["45", "47"].map((src, i) => (
             <motion.div
               key={src}
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
               viewport={{ once: true, amount: 0.1 }} transition={{ duration: 1, delay: i * 0.12 }}
-              style={{ position: "relative", height: "clamp(200px, 28vw, 380px)" }}
+              className="tlt-gallery-item" style={{ position: "relative", height: "clamp(200px, 28vw, 380px)" }}
             >
               <Image src={`/images/thelivingtable/${src}.png`} alt="The Living Table" fill style={{ objectFit: "cover", objectPosition: "center" }} />
             </motion.div>
@@ -452,10 +463,10 @@ export default function LivingTablePage() {
         </section>
 
         {/* ── 7. BOOKING SECTION — two column ── */}
-        <section ref={formRef} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "auto", background: "#0A0806" }}>
+        <section ref={formRef} className="tlt-booking" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "auto", background: "#0A0806" }}>
 
           {/* LEFT: still image */}
-          <div style={{ position: "relative", overflow: "hidden", minHeight: "600px" }}>
+          <div className="tlt-booking-img" style={{ position: "relative", overflow: "hidden", minHeight: "600px" }}>
             <Image
               src="/images/thelivingtable/46.png"
               alt="The Living Table"
