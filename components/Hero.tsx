@@ -166,7 +166,7 @@ export default function Hero() {
           fontWeight: 700,
         }}
       >
-        — Agra Fort
+        Agra Fort
       </motion.p>
 
       {/* Scroll indicator */}
