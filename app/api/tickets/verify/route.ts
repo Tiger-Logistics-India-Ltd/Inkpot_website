@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Payment verification failed." }, { status: 400 });
     }
 
-    const seats = Math.min(Math.max(1, parseInt(qty) || 1), 4);
+    const seats = Math.min(Math.max(1, parseInt(qty) || 1), 8);
 
     // ── Assign seat numbers + generate QR ────────────────────────────────────
     let ticketNumber = 1;

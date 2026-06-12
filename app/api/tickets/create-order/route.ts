@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     if (!name?.trim() || !email?.trim() || !phone?.trim()) {
       return NextResponse.json({ error: "All fields are required." }, { status: 400 });
     }
-    const seats = Math.min(Math.max(1, parseInt(qty) || 1), 4);
+    const seats = Math.min(Math.max(1, parseInt(qty) || 1), 8);
     let totalPaise = PRICE_PAISE * seats;
     let discountPaise = 0;
     let appliedCoupon: string | null = null;

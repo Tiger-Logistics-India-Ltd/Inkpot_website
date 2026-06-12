@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Script from "next/script";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -26,14 +27,14 @@ const PROGRAMME = [
 ];
 
 
-function loadRazorpay(): Promise<void> {
+function waitForRazorpay(): Promise<void> {
   return new Promise((resolve, reject) => {
-    if (typeof window !== "undefined" && (window as any).Razorpay) { resolve(); return; }
-    const s = document.createElement("script");
-    s.src = "https://checkout.razorpay.com/v1/checkout.js";
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error("Payment gateway failed to load"));
-    document.body.appendChild(s);
+    if ((window as any).Razorpay) { resolve(); return; }
+    let attempts = 0;
+    const poll = setInterval(() => {
+      if ((window as any).Razorpay) { clearInterval(poll); resolve(); }
+      else if (++attempts > 20) { clearInterval(poll); reject(new Error("Payment gateway failed to load. Please refresh and try again.")); }
+    }, 200);
   });
 }
 
@@ -105,7 +106,7 @@ export default function LivingTablePage() {
         return;
       }
 
-      await loadRazorpay();
+      await waitForRazorpay();
       setLoading(false);
       setFlow("paying");
 
@@ -157,11 +158,12 @@ export default function LivingTablePage() {
     setMeals(prev => Array.from({ length: qty }, (_, i) => prev[i] ?? "non-veg"));
   }, [qty]);
 
-  const maxQty = available !== null ? Math.min(4, available) : 4;
+  const maxQty = available !== null ? Math.min(8, available) : 8;
   const total  = qty * 6500;
 
   return (
     <>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
       <Navbar />
       <main style={{ background: "#0A0806" }}>
         <style>{`
@@ -779,7 +781,7 @@ export default function LivingTablePage() {
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px", paddingTop: "8px", borderTop: "1px dashed rgba(0,0,0,0.1)" }}>
                               <p style={{ fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.26em", textTransform: "uppercase", color: "rgba(0,0,0,0.35)", margin: 0 }}>Total Payable</p>
                               <p style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(20px, 2.5vw, 26px)", color: "#901A1C", margin: 0 }}>
-                                ₹{((total * 100 - discount) / 100).toLocaleString("en-IN")}
+                                ₹{(Math.max(0, total * 100 - discount) / 100).toLocaleString("en-IN")}
                               </p>
                             </div>
                           )}
