@@ -104,7 +104,7 @@ export async function sendTicketConfirmation({
                         </td>
                         <td style="width:50%;padding:4px 0;">
                           <span style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(0,0,0,0.4);display:block;margin-bottom:3px;">Time</span>
-                          <span style="font-size:13px;color:#1a1a1a;">7:30 PM onwards</span>
+                          <span style="font-size:13px;color:#1a1a1a;">6:30 PM onwards</span>
                         </td>
                       </tr>
                     </table>
