@@ -30,6 +30,7 @@ export async function sendTicketConfirmation({
   amount,
   siteUrl,
 }: TicketEmailParams): Promise<void> {
+  const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const ticketUrl  = `${siteUrl}/ticket/${ticketId}`;
   const numPadded  = String(ticketNumber).padStart(4, "0");
   const seatsLabel = qty > 1
@@ -81,7 +82,7 @@ export async function sendTicketConfirmation({
           <tr>
             <td style="padding:32px 48px 0;">
               <p style="margin:0 0 16px;font-size:15px;color:#1a1a1a;line-height:1.7;">
-                Dear ${buyerName},
+                Dear ${esc(buyerName)},
               </p>
               <p style="margin:0;font-size:14px;color:rgba(0,0,0,0.55);line-height:1.85;">
                 Your booking is confirmed. We look forward to welcoming you to the table on 28th June.

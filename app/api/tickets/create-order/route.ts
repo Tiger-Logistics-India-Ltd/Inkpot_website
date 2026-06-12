@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       const { count, error: countError } = await supabase
         .from("living_table_tickets")
         .select("*", { count: "exact", head: true })
-        .eq("payment_status", "paid");
+        .in("payment_status", ["paid", "pending"]);
       if (countError) throw countError;
       if ((count ?? 0) + seats > MAX_TICKETS) {
         return NextResponse.json({ error: "Not enough seats remaining." }, { status: 400 });

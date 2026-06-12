@@ -58,7 +58,7 @@ export default function ScanPage() {
   // ── Load guest cache ──────────────────────────────────────────────────────
   const loadCache = useCallback(async (p: string) => {
     try {
-      const res = await fetch(`/api/admin/check-in?pw=${encodeURIComponent(p)}`);
+      const res = await fetch(`/api/admin/check-in`, { headers: { "x-admin-password": p } });
       if (!res.ok) { setAuthError("Wrong password."); return false; }
       const data = await res.json();
       setCache(data.tickets);
@@ -124,9 +124,9 @@ export default function ScanPage() {
     }
 
     try {
-      const res = await fetch(`/api/admin/check-in?pw=${encodeURIComponent(pw)}`, {
+      const res = await fetch(`/api/admin/check-in`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-admin-password": pw },
         body: JSON.stringify({ ticket_id: ticketId }),
       });
       const data = await res.json();

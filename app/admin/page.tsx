@@ -54,7 +54,7 @@ export default function AdminPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`/api/admin/guests?pw=${encodeURIComponent(p)}`);
+      const res = await fetch(`/api/admin/guests`, { headers: { "x-admin-password": p } });
       const data = await res.json();
       if (!res.ok) { setError("Wrong password."); return; }
       setTickets(data.tickets);
