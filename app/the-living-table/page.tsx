@@ -439,7 +439,7 @@ export default function LivingTablePage() {
 
         {/* ── 6. GALLERY ── */}
         <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3px", background: "#0A0806" }}>
-          {["40", "39"].map((src, i) => (
+          {["45", "47"].map((src, i) => (
             <motion.div
               key={src}
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
