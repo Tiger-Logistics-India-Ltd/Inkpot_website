@@ -96,7 +96,7 @@ export default function OGImage() {
               display: "flex",
             }}
           >
-            ₹6,500 per seat &nbsp;·&nbsp; Limited to 40 Guests
+            ₹6,500 per seat &nbsp;·&nbsp; Very Limited Seats
           </p>
         </div>
 
