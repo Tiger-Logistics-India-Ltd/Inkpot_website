@@ -509,7 +509,7 @@ export default function LivingTablePage() {
                 {
                   icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>,
                   label: "28 June 2026",
-                  sub: "Saturday",
+                  sub: "Sunday",
                 },
                 {
                   icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>,
