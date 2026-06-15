@@ -15,10 +15,11 @@ export default function OGImage() {
   // The original SVG has a 384×384 square canvas but the text content
   // only occupies roughly y=45–215 of that space. Crop the viewBox to
   // that region so the logo fills the img element instead of appearing tiny.
+  // Crop to text + decorative swirl region (swirl extends to y≈280 in SVG coords)
   const croppedSvg = svgRaw
-    .replace('viewBox="0 0 384 383.999986"', 'viewBox="0 45 384 175"')
+    .replace('viewBox="0 0 384 383.999986"', 'viewBox="0 40 384 245"')
     .replace('width="512"', 'width="384"')
-    .replace('height="512"', 'height="175"');
+    .replace('height="512"', 'height="245"');
   const logoDataUrl = `data:image/svg+xml;base64,${Buffer.from(croppedSvg).toString("base64")}`;
 
   return new ImageResponse(
@@ -44,7 +45,7 @@ export default function OGImage() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            padding: "48px 48px 48px 64px",
+            padding: "56px 56px 56px 72px",
           }}
         >
           <p
@@ -61,12 +62,12 @@ export default function OGImage() {
             Inkpot India Presents
           </p>
 
-          {/* Logo — cropped viewBox fills the full available width */}
+          {/* Logo — cropped viewBox, 384:245 aspect ratio */}
           <img
             src={logoDataUrl}
-            width={720}
-            height={328}
-            style={{ objectFit: "contain", objectPosition: "left center", marginBottom: 24 }}
+            width={500}
+            height={320}
+            style={{ objectFit: "contain", objectPosition: "left center", marginBottom: 20 }}
           />
 
           {/* Divider */}
