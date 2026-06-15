@@ -23,14 +23,6 @@ export const metadata: Metadata = {
       "A curated dining experience at Kathika Cultural Centre, Old Delhi. 28th June 2026 · Limited to 100 seats · ₹6,500 per person.",
     url: "https://www.inkpotindia.com/the-living-table",
     siteName: "Inkpot India",
-    images: [
-      {
-        url: "/images/thelivingtable/banner_1.png",
-        width: 1200,
-        height: 630,
-        alt: "The Living Table — Inkpot India",
-      },
-    ],
     locale: "en_IN",
     type: "website",
   },
@@ -38,7 +30,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "The Living Table — A One-Night Dinner by Inkpot India",
     description: "28th June 2026 · Old Delhi · Limited to 100 seats · ₹6,500 per person.",
-    images: ["/images/thelivingtable/banner_1.png"],
   },
 };
 
