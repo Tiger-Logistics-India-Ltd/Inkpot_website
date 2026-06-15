@@ -21,6 +21,18 @@ export async function POST(req: Request) {
     if (!name?.trim() || !email?.trim() || !phone?.trim()) {
       return NextResponse.json({ error: "All fields are required." }, { status: 400 });
     }
+    // Basic format validation
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
+    }
+    if (!/^[+\d\s\-().]{7,20}$/.test(phone.trim())) {
+      return NextResponse.json({ error: "Please enter a valid phone number." }, { status: 400 });
+    }
+    // Whitelist meal values — never store arbitrary client strings
+    const VALID_MEALS = ["veg", "non-veg"];
+    const safeMeals = Array.isArray(meals)
+      ? (meals as unknown[]).filter((m): m is string => VALID_MEALS.includes(m as string))
+      : [];
     const seats = Math.min(Math.max(1, parseInt(qty) || 1), 8);
     let totalPaise = PRICE_PAISE * seats;
     let discountPaise = 0;
@@ -107,19 +119,26 @@ export async function POST(req: Request) {
           ticket_number: ticketNumber,
           seat_numbers: seatNumbers,
           qr_token: qrToken,
-          meal_preferences: meals,
+          meal_preferences: safeMeals,
         })
         .select("id")
         .single();
 
       if (insertError) throw insertError;
 
-      // Increment coupon only after successful insert
+      // Atomic coupon increment — conditional on uses_count not having changed
+      // since we read it (prevents race condition where 2 concurrent requests
+      // both pass the uses_count check before either increments)
       if (couponId) {
-        await supabase
+        const { data: updated } = await supabase
           .from("living_table_coupons")
           .update({ uses_count: couponUsesCount + 1 })
-          .eq("id", couponId);
+          .eq("id", couponId)
+          .eq("uses_count", couponUsesCount)
+          .select("id");
+        if (!updated || updated.length === 0) {
+          return NextResponse.json({ error: "This coupon has already been used." }, { status: 400 });
+        }
       }
 
       // Generate QR
@@ -190,19 +209,24 @@ export async function POST(req: Request) {
           qty: seats,
           coupon_code: appliedCoupon,
           discount_amount: discountPaise,
-          meal_preferences: meals,
+          meal_preferences: safeMeals,
         })
         .select("id")
         .single();
       if (insertError) throw insertError;
       ticketId = ticket.id;
 
-      // Increment coupon only after order + ticket both succeed
+      // Atomic coupon increment — conditional on uses_count not having changed
       if (couponId) {
-        await supabase
+        const { data: updated } = await supabase
           .from("living_table_coupons")
           .update({ uses_count: couponUsesCount + 1 })
-          .eq("id", couponId);
+          .eq("id", couponId)
+          .eq("uses_count", couponUsesCount)
+          .select("id");
+        if (!updated || updated.length === 0) {
+          return NextResponse.json({ error: "This coupon has already been used." }, { status: 400 });
+        }
       }
     }
 
