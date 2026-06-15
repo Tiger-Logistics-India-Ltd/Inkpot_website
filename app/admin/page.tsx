@@ -17,6 +17,7 @@ interface Ticket {
   checked_in: boolean;
   checked_in_at: string | null;
   coupon_code: string | null;
+  meal_preferences: string[] | null;
   created_at: string;
 }
 
@@ -71,7 +72,7 @@ export default function AdminPage() {
   const refresh = () => fetchData(pw);
 
   function exportCSV() {
-    const headers = ["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Status", "Checked In", "Check-in Time", "Booked At"];
+    const headers = ["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Meals", "Status", "Checked In", "Check-in Time", "Booked At"];
     const rows = tickets.map(t => [
       fmtSeats(t),
       t.buyer_name,
@@ -79,6 +80,7 @@ export default function AdminPage() {
       t.buyer_phone,
       t.qty,
       fmtAmount(t.amount),
+      (t.meal_preferences ?? []).join(", "),
       t.payment_status,
       t.checked_in ? "Yes" : "No",
       t.checked_in_at ? fmtDate(t.checked_in_at) : "",
@@ -197,7 +199,7 @@ export default function AdminPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-black/10">
-                {["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Status", "Check-in", "Booked"].map(h => (
+                {["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Meals", "Status", "Check-in", "Booked"].map(h => (
                   <th key={h} className="text-left px-4 py-3 text-[9px] tracking-[0.2em] uppercase text-black/40 font-normal whitespace-nowrap">
                     {h}
                   </th>
@@ -207,7 +209,7 @@ export default function AdminPage() {
             <tbody>
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="px-4 py-10 text-center text-sm text-black/30">
+                  <td colSpan={10} className="px-4 py-10 text-center text-sm text-black/30">
                     No guests yet.
                   </td>
                 </tr>
@@ -220,6 +222,19 @@ export default function AdminPage() {
                   <td className="px-4 py-3 text-black/60 whitespace-nowrap">{t.buyer_phone}</td>
                   <td className="px-4 py-3 text-black/60 text-center">{t.qty}</td>
                   <td className="px-4 py-3 text-black/60 whitespace-nowrap">{fmtAmount(t.amount)}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {(t.meal_preferences ?? []).length > 0 ? (
+                      <div className="flex gap-1 flex-wrap">
+                        {(t.meal_preferences ?? []).map((m, mi) => (
+                          <span key={mi} className={`text-[9px] tracking-[0.1em] uppercase px-2 py-0.5 ${m === "veg" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+                            {m}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-black/25 text-xs">—</span>
+                    )}
+                  </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span className={`text-[9px] tracking-[0.15em] uppercase px-2 py-1 ${t.payment_status === "paid" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"}`}>
                       {t.payment_status}
