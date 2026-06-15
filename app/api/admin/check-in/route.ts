@@ -1,11 +1,17 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 import { getSupabase } from "@/lib/supabase";
 
 function auth(req: Request): boolean {
-  const pw = req.headers.get("x-admin-password");
-  return pw === process.env.ADMIN_PASSWORD;
+  const pw = req.headers.get("x-admin-password") ?? "";
+  const expected = process.env.ADMIN_PASSWORD ?? "";
+  if (!pw || !expected) return false;
+  // Constant-time comparison to prevent timing attacks
+  const a = Buffer.from(pw.padEnd(128).slice(0, 128));
+  const b = Buffer.from(expected.padEnd(128).slice(0, 128));
+  return crypto.timingSafeEqual(a, b) && pw.length === expected.length;
 }
 
 // GET — fetch all paid tickets (for offline cache)

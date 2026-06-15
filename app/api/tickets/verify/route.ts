@@ -18,17 +18,13 @@ export async function POST(req: Request) {
       razorpay_payment_id,
       razorpay_signature,
       ticket_id,
-      buyer_name,
-      buyer_email,
-      qty = 1,
-      amount,
     } = await req.json();
 
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !ticket_id) {
       return NextResponse.json({ error: "Missing payment fields." }, { status: 400 });
     }
 
-    // ── Verify Razorpay signature ─────────────────────────────────────────────
+    // ── 1. Verify Razorpay HMAC signature ────────────────────────────────────
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -38,19 +34,62 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Payment verification failed." }, { status: 400 });
     }
 
-    const seats = Math.min(Math.max(1, parseInt(qty) || 1), 8);
-
-    // ── Assign seat numbers + generate QR ────────────────────────────────────
     let ticketNumber = 1;
     let seatNumbers: number[] = [1];
-    let finalTicketId = ticket_id ?? `tmp_${Date.now()}`;
-    let qrToken = crypto.randomUUID();
+    let finalTicketId = ticket_id;
+    let seats = 1;
+    let resolvedBuyerName = "";
+    let resolvedBuyerEmail = "";
+    let resolvedAmount = 0;
 
     if (dbEnabled()) {
       const { getSupabase } = await import("@/lib/supabase");
       const supabase = getSupabase();
 
-      // Get next available seat block (count all paid + pending to avoid gaps)
+      // ── 2. Fetch the ticket and verify the order_id matches ──────────────
+      // SECURITY: prevents an attacker with a valid payment from marking
+      // a different (higher-value) ticket as paid by swapping ticket_id.
+      const { data: existingTicket, error: fetchError } = await supabase
+        .from("living_table_tickets")
+        .select("id, razorpay_order_id, qty, buyer_name, buyer_email, payment_status, amount, ticket_number, seat_numbers")
+        .eq("id", ticket_id)
+        .single();
+
+      if (fetchError || !existingTicket) {
+        return NextResponse.json({ error: "Payment verification failed." }, { status: 400 });
+      }
+
+      if (existingTicket.razorpay_order_id !== razorpay_order_id) {
+        console.error("[verify] SECURITY: order_id mismatch — possible ticket-swap attempt", {
+          ticket_id,
+          provided_order_id: razorpay_order_id,
+          stored_order_id: existingTicket.razorpay_order_id,
+        });
+        return NextResponse.json({ error: "Payment verification failed." }, { status: 400 });
+      }
+
+      // ── 3. Idempotency: already confirmed (e.g. webhook fired twice) ─────
+      if (existingTicket.payment_status === "paid") {
+        return NextResponse.json({
+          ticket: {
+            ticketId: existingTicket.id,
+            ticketNumber: existingTicket.ticket_number,
+            seatNumbers: existingTicket.seat_numbers,
+            qty: existingTicket.qty,
+            buyerName: existingTicket.buyer_name,
+            buyerEmail: existingTicket.buyer_email,
+          },
+        });
+      }
+
+      // ── 4. Use authoritative values from DB — never trust client for these ─
+      seats = existingTicket.qty;
+      resolvedBuyerName = existingTicket.buyer_name;
+      resolvedBuyerEmail = existingTicket.buyer_email;
+      resolvedAmount = existingTicket.amount;
+      finalTicketId = existingTicket.id;
+
+      // ── 5. Assign seat block ─────────────────────────────────────────────
       const { data: existing } = await supabase
         .from("living_table_tickets")
         .select("seat_numbers")
@@ -63,27 +102,22 @@ export async function POST(req: Request) {
       ticketNumber = nextSeat;
       seatNumbers = Array.from({ length: seats }, (_, i) => nextSeat + i);
 
-      // Update ticket: paid + seat numbers + qr_token
-      const { data: updated, error: updateError } = await supabase
+      // ── 6. Mark paid + assign seats ──────────────────────────────────────
+      const { error: updateError } = await supabase
         .from("living_table_tickets")
         .update({
           payment_status: "paid",
           razorpay_payment_id,
           ticket_number: ticketNumber,
           seat_numbers: seatNumbers,
-          qty: seats,
-          qr_token: qrToken,
+          qr_token: crypto.randomUUID(),
         })
-        .eq("id", ticket_id)
-        .select()
-        .single();
+        .eq("id", ticket_id);
 
       if (updateError) throw updateError;
-      finalTicketId = updated.id;
-      qrToken = updated.qr_token;
     }
 
-    // ── Generate QR code (server-side, embedded as base64) ───────────────────
+    // ── 7. Generate QR code ───────────────────────────────────────────────────
     const qrContent = `${SITE_URL}/ticket/${finalTicketId}`;
     const qrDataUrl = await QRCode.toDataURL(qrContent, {
       width: 400,
@@ -91,18 +125,18 @@ export async function POST(req: Request) {
       color: { dark: "#1a1a1a", light: "#ffffff" },
     });
 
-    // ── Send confirmation email ───────────────────────────────────────────────
-    if (emailEnabled()) {
+    // ── 8. Send confirmation email ────────────────────────────────────────────
+    if (emailEnabled() && resolvedBuyerEmail) {
       const { sendTicketConfirmation } = await import("@/lib/email");
       sendTicketConfirmation({
-        to: buyer_email,
-        buyerName: buyer_name,
+        to: resolvedBuyerEmail,
+        buyerName: resolvedBuyerName,
         ticketNumber,
         seatNumbers,
         qty: seats,
         qrDataUrl,
         ticketId: finalTicketId,
-        amount: amount ?? 650000 * seats,
+        amount: resolvedAmount,
         siteUrl: SITE_URL,
       }).catch(e => console.error("[email]", e));
     }
@@ -114,8 +148,8 @@ export async function POST(req: Request) {
         seatNumbers,
         qty: seats,
         qrDataUrl,
-        buyerName: buyer_name,
-        buyerEmail: buyer_email,
+        buyerName: resolvedBuyerName,
+        buyerEmail: resolvedBuyerEmail,
       },
     });
   } catch (err: any) {
