@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "The Living Table — A One-Night Dinner by Inkpot India",
     description:
-      "A curated dining experience at Kathika Cultural Centre, Old Delhi. 28th June 2026 · Limited to 100 seats · ₹6,500 per person.",
+      "A curated dining experience at Kathika Cultural Centre, Old Delhi. 28th June 2026 · Limited to 40 Guests · ₹6,500 per person.",
     url: "https://www.inkpotindia.com/the-living-table",
     siteName: "Inkpot India",
     locale: "en_IN",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "The Living Table — A One-Night Dinner by Inkpot India",
-    description: "28th June 2026 · Old Delhi · Limited to 100 seats · ₹6,500 per person.",
+    description: "28th June 2026 · Old Delhi · Limited to 40 Guests · ₹6,500 per person.",
   },
 };
 
