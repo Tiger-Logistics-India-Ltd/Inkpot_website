@@ -258,7 +258,7 @@ export default function LivingTablePage() {
         </section>
 
         {/* ── 2. THE EXPERIENCE ── */}
-        <section className="tlt-experience" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", background: "#ffffff", minHeight: "clamp(380px, 48vw, 600px)" }}>
+        <section ref={formRef} className="tlt-experience" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", background: "#ffffff", minHeight: "clamp(380px, 48vw, 600px)" }}>
 
           {/* Left — editorial text */}
           <motion.div
@@ -321,294 +321,7 @@ export default function LivingTablePage() {
             </p>
           </motion.div>
 
-          {/* Right — Event details */}
-          <div style={{ position: "relative", overflow: "hidden", background: "#F4EFE6", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "clamp(36px, 4vw, 60px) clamp(32px, 5vw, 64px)" }}>
-
-            {/* White card */}
-            <div style={{
-              position: "relative", zIndex: 2, width: "100%", maxWidth: "360px",
-              background: "#ffffff",
-              border: "1px solid rgba(0,0,0,0.07)",
-              boxShadow: "0 2px 24px rgba(0,0,0,0.06)",
-              padding: "clamp(28px, 3.5vw, 44px) clamp(24px, 3vw, 36px)",
-              overflow: "hidden",
-            }}>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.32em", textTransform: "uppercase", color: "#901A1C", margin: "0 0 28px" }}>
-                The Living Table
-              </p>
-
-              {[
-                {
-                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>,
-                  label: "28 June 2026",
-                  sub: "Sunday",
-                },
-                {
-                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>,
-                  label: "6:30 PM Onwards",
-                  sub: "",
-                },
-                {
-                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round"><path d="M12 21s-8-6.5-8-12a8 8 0 1 1 16 0c0 5.5-8 12-8 12z"/><circle cx="12" cy="9" r="2.5"/></svg>,
-                  label: "Kathika Cultural Centre",
-                  sub: "Gali Khatikan, Kucha Pati Ram\nSitaram Bazar, Delhi",
-                },
-                {
-                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round"><path d="M8 22h8M12 11v11M5 8l1.5 6h11L19 8H5z"/><path d="M5 8h14"/></svg>,
-                  label: "Liquor Included",
-                  sub: "2 drinks per person",
-                },
-                {
-                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>,
-                  label: "Dinner Included",
-                  sub: "",
-                },
-              ].map((item, i) => (
-                <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start", paddingBottom: i < 4 ? "16px" : 0, marginBottom: i < 4 ? "16px" : "24px", borderBottom: i < 4 ? "1px solid rgba(0,0,0,0.07)" : "none" }}>
-                  <div style={{ marginTop: "1px", flexShrink: 0 }}>{item.icon}</div>
-                  <div>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "#1a1a1a", margin: "0 0 3px", letterSpacing: "0.02em" }}>{item.label}</p>
-                    {item.sub && item.sub.split("\n").map((line, j) => (
-                      <p key={j} style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "rgba(0,0,0,0.4)", margin: "1px 0 0", lineHeight: 1.6 }}>{line}</p>
-                    ))}
-                  </div>
-                </div>
-              ))}
-
-              {/* Kathika sketch inside card */}
-              <div style={{ pointerEvents: "none", marginTop: "4px", opacity: 1 }}>
-                <Image
-                  src="/images/thelivingtable/kathika.png"
-                  alt=""
-                  width={280} height={130}
-                  style={{ width: "85%", height: "auto", margin: "0 auto", display: "block" }}
-                />
-              </div>
-            </div>
-
-            {/* Flower — outside card, bottom-left of panel */}
-            <div style={{ position: "absolute", bottom: "-10px", left: "-8px", zIndex: 3, pointerEvents: "none" }}>
-              <Image
-                src="/images/thelivingtable/flower.png"
-                alt=""
-                width={190} height={230}
-                style={{ width: "clamp(130px, 14vw, 190px)", height: "auto" }}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* ── 3. THINGS TO KNOW ── */}
-        <section style={{ background: "#F4EFE6", padding: "clamp(40px, 5vw, 64px) clamp(24px, 8vw, 120px)" }}>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "#901A1C", margin: "0 0 28px" }}>
-            Things to Know
-          </p>
-          <div className="tlt-know-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 clamp(32px, 6vw, 80px)", maxWidth: "680px" }}>
-            {([
-              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>, label: "Duration 3 Hours" },
-              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><path d="M2 12h20M2 12a2 2 0 0 0 2-2V7h16v3a2 2 0 0 0 2 2M2 12a2 2 0 0 1 2 2v3h16v-3a2 2 0 0 1 2-2"/><line x1="12" y1="7" x2="12" y2="17"/></svg>, label: "Minimum Age 18+" },
-              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>, label: "Sit Down Dinner" },
-              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 22V12h6v10"/></svg>, label: "Layout Indoor" },
-              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><rect x="5" y="11" width="14" height="5" rx="1"/><path d="M7 11V7a2 2 0 0 1 4 0v4M7 16v3M17 16v3"/></svg>, label: "Seating Arrangement Seated & Standing" },
-              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><circle cx="12" cy="7" r="3.5"/><path d="M5 21c0-3.5 3.1-6 7-6s7 2.5 7 6"/><line x1="4" y1="4" x2="20" y2="20"/></svg>, label: "Kids not allowed" },
-              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><ellipse cx="12" cy="16" rx="5" ry="4"/><circle cx="7.5" cy="9.5" r="1.5"/><circle cx="16.5" cy="9.5" r="1.5"/><circle cx="5" cy="13" r="1.5"/><circle cx="19" cy="13" r="1.5"/><line x1="4" y1="4" x2="20" y2="20"/></svg>, label: "Pets not allowed" },
-              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><path d="M8 22h8M12 11v11M5 8l1.5 6h11L19 8"/><path d="M5 8h14M9 8V4h6v4"/></svg>, label: "Liquor included — 2 drinks per person" },
-            ] as { icon: React.ReactNode; label: string }[]).map((item, i) => (
-              <div key={i} style={{ display: "flex", gap: "11px", alignItems: "center", padding: "13px 0", borderBottom: "1px solid rgba(0,0,0,0.06)", color: "rgba(0,0,0,0.38)" }}>
-                <div style={{ flexShrink: 0 }}>{item.icon}</div>
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12px, 1.1vw, 13px)", color: "rgba(0,0,0,0.58)", margin: 0, lineHeight: 1.45 }}>{item.label}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* white space */}
-        <div style={{ height: "clamp(48px, 6vw, 96px)", background: "#F4EFE6" }} />
-
-        {/* ── 4. WHY THIS EVENING EXISTS — auto-rotate images ── */}
-        <div style={{ background: "#F4EFE6" }}>
-          <div className="tlt-why-grid" style={{
-            display: "grid", gridTemplateColumns: "1fr 1fr",
-            background: "#0A0806", minHeight: "clamp(380px, 48vw, 600px)",
-            overflow: "hidden",
-          }}>
-            {/* Left — venue video */}
-            <div className="tlt-why-video" style={{ position: "relative", overflow: "hidden" }}>
-              <video
-                autoPlay muted loop playsInline
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-              >
-                <source src="/images/thelivingtable/VenueRevel_Video.mp4" type="video/mp4" />
-              </video>
-            </div>
-
-            {/* Right — quote + paragraph, white bg */}
-            <div style={{
-              padding: "clamp(40px, 5vw, 72px) clamp(24px, 4vw, 64px)",
-              display: "flex", flexDirection: "column", justifyContent: "center",
-              background: "#F4EFE6",
-            }}>
-              <p style={{
-                fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400,
-                fontSize: "clamp(22px, 3vw, 40px)", color: "#901A1C",
-                lineHeight: 1.4, margin: "0 0 36px",
-              }}>
-                Food remembers<br />what cities forget.
-              </p>
-              <div style={{ width: "40px", height: "1px", background: "rgba(0,0,0,0.15)", margin: "0 0 36px" }} />
-              <p style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "clamp(13px, 1.4vw, 16px)",
-                color: "rgba(0,0,0,0.55)",
-                lineHeight: 2.1, margin: "0 0 24px",
-              }}>
-                Old Delhi has always known how to feed a city. Its narrow lanes hold centuries of recipes — each one carrying the memory of the hands that made it, the occasions it marked, the families it gathered.
-              </p>
-              <p style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "clamp(13px, 1.4vw, 16px)",
-                color: "rgba(0,0,0,0.55)",
-                lineHeight: 2.1, margin: 0,
-              }}>
-                The Living Table is an attempt to bring those memories back. Not just as food, but as conversation. As an evening that asks: what does a city taste like when it remembers itself?
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* white space before venue */}
-        <div style={{ height: "clamp(64px, 8vw, 120px)", background: "#F4EFE6" }} />
-
-        {/* ── 5. VENUE ── */}
-        <section style={{ position: "relative", height: "clamp(240px, 38vh, 440px)", overflow: "hidden" }}>
-          <Image
-            src="/images/thelivingtable/banner_1.png"
-            alt="Kathika Cultural Centre"
-            fill
-            className="tlt-venue-desktop"
-            style={{ objectFit: "cover", objectPosition: "center" }}
-          />
-          <Image
-            src="/images/thelivingtable/landscape.png"
-            alt="Kathika Cultural Centre"
-            fill
-            className="tlt-venue-mobile"
-            style={{ objectFit: "cover", objectPosition: "center" }}
-          />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,8,6,0.88) 0%, rgba(10,8,6,0.2) 50%, rgba(10,8,6,0.04) 100%)" }} />
-          <motion.div
-            initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.9 }}
-            style={{
-              position: "absolute", bottom: "clamp(40px, 6vw, 72px)",
-              left: "clamp(24px, 6vw, 80px)", zIndex: 2,
-            }}
-          >
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.32em", textTransform: "uppercase", color: "#C9A84C", margin: "0 0 12px" }}>
-              Venue
-            </p>
-            <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(22px, 3vw, 36px)", color: "#F4EFE6", margin: "0 0 8px", lineHeight: 1.2 }}>
-              Kathika Cultural Centre
-            </p>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "rgba(244,239,230,0.45)", letterSpacing: "0.08em", margin: 0 }}>
-              Gali Khatikan, Kucha Pati Ram, Sitaram Bazar, Delhi
-            </p>
-          </motion.div>
-        </section>
-
-        {/* white space */}
-        <div style={{ height: "clamp(64px, 8vw, 120px)", background: "#F4EFE6" }} />
-
-        {/* ── 6. GALLERY ── */}
-        <section className="tlt-gallery" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(16px, 2vw, 32px)", background: "#F4EFE6", padding: "0 clamp(24px, 5vw, 100px)" }}>
-          {["45", "47"].map((src, i) => (
-            <motion.div
-              key={src}
-              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-              viewport={{ once: true, amount: 0.1 }} transition={{ duration: 1, delay: i * 0.12 }}
-              className="tlt-gallery-item" style={{ position: "relative", height: "clamp(200px, 28vw, 380px)" }}
-            >
-              <Image src={`/images/thelivingtable/${src}.png`} alt="The Living Table" fill style={{ objectFit: "cover", objectPosition: "center" }} />
-            </motion.div>
-          ))}
-        </section>
-
-        {/* white space */}
-        <div style={{ height: "clamp(64px, 8vw, 120px)", background: "#F4EFE6" }} />
-
-        {/* ── 7. BOOKING SECTION — two column ── */}
-        <section ref={formRef} className="tlt-booking" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "auto", background: "#ffffff" }}>
-
-          {/* LEFT: Programme */}
-          <div style={{
-            background: "#ffffff",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            padding: "clamp(28px, 4vw, 48px) clamp(20px, 3.5vw, 44px)",
-          }}>
-            <div style={{
-              position: "relative",
-              width: "100%",
-              maxWidth: "400px",
-              background: "#ffffff",
-              padding: "clamp(28px, 3.2vw, 42px) clamp(24px, 3vw, 38px)",
-              border: "1px solid rgba(0,0,0,0.07)",
-              boxShadow: "0 2px 0 rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.07), 4px 4px 0 rgba(0,0,0,0.03), 8px 8px 0 rgba(0,0,0,0.02)",
-            }}>
-
-              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(to right, transparent, #901A1C 30%, #901A1C 70%, transparent)" }} />
-
-              <motion.p
-                initial={{ opacity: 0, filter: "blur(8px)" }}
-                whileInView={{ opacity: 1, filter: "blur(0px)" }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 1.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-                style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(11px, 1.2vw, 14px)", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(0,0,0,0.3)", textAlign: "center", marginBottom: "16px" }}
-              >
-                The Programme
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, scaleX: 0.6 }}
-                whileInView={{ opacity: 1, scaleX: 1 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 1.1, delay: 0.3, ease: "easeOut" }}
-                style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "22px" }}
-              >
-                <div style={{ flex: 1, height: "1px", background: "rgba(0,0,0,0.1)" }} />
-                <svg width="14" height="8" viewBox="0 0 16 8" fill="rgba(144,26,28,0.35)">
-                  <circle cx="8" cy="4" r="2" /><circle cx="2" cy="4" r="1.2" /><circle cx="14" cy="4" r="1.2" />
-                </svg>
-                <div style={{ flex: 1, height: "1px", background: "rgba(0,0,0,0.1)" }} />
-              </motion.div>
-
-              {PROGRAMME.map((item, i) => (
-                <motion.div
-                  key={item.time}
-                  initial={{ opacity: 0, filter: "blur(12px)", y: 5 }}
-                  whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 1.2, delay: 0.42 + i * 0.18, ease: [0.22, 1, 0.36, 1] }}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "68px 1fr",
-                    gap: "12px",
-                    alignItems: "baseline",
-                    padding: "clamp(11px, 1.3vw, 15px) 0",
-                    borderBottom: i < PROGRAMME.length - 1 ? "1px solid rgba(0,0,0,0.07)" : "none",
-                  }}
-                >
-                  <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(8px, 0.9vw, 10px)", letterSpacing: "0.06em", color: "rgba(0,0,0,0.32)", fontWeight: 600 }}>
-                    {item.time}
-                  </span>
-                  <span style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(14px, 1.5vw, 18px)", color: "#1a1a1a", lineHeight: 1.25 }}>
-                    {item.label}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          {/* RIGHT: booking form */}
+          {/* Right — Booking form */}
           <div style={{ background: "#F4EFE6", padding: "clamp(28px, 3vw, 48px) clamp(28px, 4vw, 60px)", display: "flex", alignItems: "center" }}>
             <div style={{ width: "100%", maxWidth: "480px" }}>
               <AnimatePresence mode="wait">
@@ -754,6 +467,293 @@ export default function LivingTablePage() {
                   </motion.div>
                 )}
               </AnimatePresence>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 3. THINGS TO KNOW ── */}
+        <section style={{ background: "#F4EFE6", padding: "clamp(40px, 5vw, 64px) clamp(24px, 8vw, 120px)" }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "#901A1C", margin: "0 0 28px" }}>
+            Things to Know
+          </p>
+          <div className="tlt-know-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 clamp(32px, 6vw, 80px)", maxWidth: "680px" }}>
+            {([
+              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>, label: "Duration 3 Hours" },
+              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><path d="M2 12h20M2 12a2 2 0 0 0 2-2V7h16v3a2 2 0 0 0 2 2M2 12a2 2 0 0 1 2 2v3h16v-3a2 2 0 0 1 2-2"/><line x1="12" y1="7" x2="12" y2="17"/></svg>, label: "Minimum Age 18+" },
+              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>, label: "Sit Down Dinner" },
+              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 22V12h6v10"/></svg>, label: "Layout Indoor" },
+              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><rect x="5" y="11" width="14" height="5" rx="1"/><path d="M7 11V7a2 2 0 0 1 4 0v4M7 16v3M17 16v3"/></svg>, label: "Seating Arrangement Seated & Standing" },
+              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><circle cx="12" cy="7" r="3.5"/><path d="M5 21c0-3.5 3.1-6 7-6s7 2.5 7 6"/><line x1="4" y1="4" x2="20" y2="20"/></svg>, label: "Kids not allowed" },
+              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><ellipse cx="12" cy="16" rx="5" ry="4"/><circle cx="7.5" cy="9.5" r="1.5"/><circle cx="16.5" cy="9.5" r="1.5"/><circle cx="5" cy="13" r="1.5"/><circle cx="19" cy="13" r="1.5"/><line x1="4" y1="4" x2="20" y2="20"/></svg>, label: "Pets not allowed" },
+              { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><path d="M8 22h8M12 11v11M5 8l1.5 6h11L19 8"/><path d="M5 8h14M9 8V4h6v4"/></svg>, label: "Liquor included — 2 drinks per person" },
+            ] as { icon: React.ReactNode; label: string }[]).map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: "11px", alignItems: "center", padding: "13px 0", borderBottom: "1px solid rgba(0,0,0,0.06)", color: "rgba(0,0,0,0.38)" }}>
+                <div style={{ flexShrink: 0 }}>{item.icon}</div>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12px, 1.1vw, 13px)", color: "rgba(0,0,0,0.58)", margin: 0, lineHeight: 1.45 }}>{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* white space */}
+        <div style={{ height: "clamp(48px, 6vw, 96px)", background: "#F4EFE6" }} />
+
+        {/* ── 4. WHY THIS EVENING EXISTS — auto-rotate images ── */}
+        <div style={{ background: "#F4EFE6" }}>
+          <div className="tlt-why-grid" style={{
+            display: "grid", gridTemplateColumns: "1fr 1fr",
+            background: "#0A0806", minHeight: "clamp(380px, 48vw, 600px)",
+            overflow: "hidden",
+          }}>
+            {/* Left — venue video */}
+            <div className="tlt-why-video" style={{ position: "relative", overflow: "hidden" }}>
+              <video
+                autoPlay muted loop playsInline
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+              >
+                <source src="/images/thelivingtable/VenueRevel_Video.mp4" type="video/mp4" />
+              </video>
+            </div>
+
+            {/* Right — quote + paragraph, white bg */}
+            <div style={{
+              padding: "clamp(40px, 5vw, 72px) clamp(24px, 4vw, 64px)",
+              display: "flex", flexDirection: "column", justifyContent: "center",
+              background: "#F4EFE6",
+            }}>
+              <p style={{
+                fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400,
+                fontSize: "clamp(22px, 3vw, 40px)", color: "#901A1C",
+                lineHeight: 1.4, margin: "0 0 36px",
+              }}>
+                Food remembers<br />what cities forget.
+              </p>
+              <div style={{ width: "40px", height: "1px", background: "rgba(0,0,0,0.15)", margin: "0 0 36px" }} />
+              <p style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "clamp(13px, 1.4vw, 16px)",
+                color: "rgba(0,0,0,0.55)",
+                lineHeight: 2.1, margin: "0 0 24px",
+              }}>
+                Old Delhi has always known how to feed a city. Its narrow lanes hold centuries of recipes — each one carrying the memory of the hands that made it, the occasions it marked, the families it gathered.
+              </p>
+              <p style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "clamp(13px, 1.4vw, 16px)",
+                color: "rgba(0,0,0,0.55)",
+                lineHeight: 2.1, margin: 0,
+              }}>
+                The Living Table is an attempt to bring those memories back. Not just as food, but as conversation. As an evening that asks: what does a city taste like when it remembers itself?
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* white space before venue */}
+        <div style={{ height: "clamp(64px, 8vw, 120px)", background: "#F4EFE6" }} />
+
+        {/* ── 5. VENUE ── */}
+        <section style={{ position: "relative", height: "clamp(240px, 38vh, 440px)", overflow: "hidden" }}>
+          <Image
+            src="/images/thelivingtable/banner_1.png"
+            alt="Kathika Cultural Centre"
+            fill
+            className="tlt-venue-desktop"
+            style={{ objectFit: "cover", objectPosition: "center" }}
+          />
+          <Image
+            src="/images/thelivingtable/landscape.png"
+            alt="Kathika Cultural Centre"
+            fill
+            className="tlt-venue-mobile"
+            style={{ objectFit: "cover", objectPosition: "center" }}
+          />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,8,6,0.88) 0%, rgba(10,8,6,0.2) 50%, rgba(10,8,6,0.04) 100%)" }} />
+          <motion.div
+            initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.9 }}
+            style={{
+              position: "absolute", bottom: "clamp(40px, 6vw, 72px)",
+              left: "clamp(24px, 6vw, 80px)", zIndex: 2,
+            }}
+          >
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.32em", textTransform: "uppercase", color: "#C9A84C", margin: "0 0 12px" }}>
+              Venue
+            </p>
+            <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(22px, 3vw, 36px)", color: "#F4EFE6", margin: "0 0 8px", lineHeight: 1.2 }}>
+              Kathika Cultural Centre
+            </p>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "rgba(244,239,230,0.45)", letterSpacing: "0.08em", margin: 0 }}>
+              Gali Khatikan, Kucha Pati Ram, Sitaram Bazar, Delhi
+            </p>
+          </motion.div>
+        </section>
+
+        {/* white space */}
+        <div style={{ height: "clamp(64px, 8vw, 120px)", background: "#F4EFE6" }} />
+
+        {/* ── 6. GALLERY ── */}
+        <section className="tlt-gallery" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(16px, 2vw, 32px)", background: "#F4EFE6", padding: "0 clamp(24px, 5vw, 100px)" }}>
+          {["45", "47"].map((src, i) => (
+            <motion.div
+              key={src}
+              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.1 }} transition={{ duration: 1, delay: i * 0.12 }}
+              className="tlt-gallery-item" style={{ position: "relative", height: "clamp(200px, 28vw, 380px)" }}
+            >
+              <Image src={`/images/thelivingtable/${src}.png`} alt="The Living Table" fill style={{ objectFit: "cover", objectPosition: "center" }} />
+            </motion.div>
+          ))}
+        </section>
+
+        {/* white space */}
+        <div style={{ height: "clamp(64px, 8vw, 120px)", background: "#F4EFE6" }} />
+
+        {/* ── 7. BOOKING SECTION — two column ── */}
+        <section className="tlt-booking" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "auto", background: "#ffffff" }}>
+
+          {/* LEFT: Programme */}
+          <div style={{
+            background: "#ffffff",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: "clamp(28px, 4vw, 48px) clamp(20px, 3.5vw, 44px)",
+          }}>
+            <div style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: "400px",
+              background: "#ffffff",
+              padding: "clamp(28px, 3.2vw, 42px) clamp(24px, 3vw, 38px)",
+              border: "1px solid rgba(0,0,0,0.07)",
+              boxShadow: "0 2px 0 rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.07), 4px 4px 0 rgba(0,0,0,0.03), 8px 8px 0 rgba(0,0,0,0.02)",
+            }}>
+
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(to right, transparent, #901A1C 30%, #901A1C 70%, transparent)" }} />
+
+              <motion.p
+                initial={{ opacity: 0, filter: "blur(8px)" }}
+                whileInView={{ opacity: 1, filter: "blur(0px)" }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 1.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(11px, 1.2vw, 14px)", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(0,0,0,0.3)", textAlign: "center", marginBottom: "16px" }}
+              >
+                The Programme
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, scaleX: 0.6 }}
+                whileInView={{ opacity: 1, scaleX: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 1.1, delay: 0.3, ease: "easeOut" }}
+                style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "22px" }}
+              >
+                <div style={{ flex: 1, height: "1px", background: "rgba(0,0,0,0.1)" }} />
+                <svg width="14" height="8" viewBox="0 0 16 8" fill="rgba(144,26,28,0.35)">
+                  <circle cx="8" cy="4" r="2" /><circle cx="2" cy="4" r="1.2" /><circle cx="14" cy="4" r="1.2" />
+                </svg>
+                <div style={{ flex: 1, height: "1px", background: "rgba(0,0,0,0.1)" }} />
+              </motion.div>
+
+              {PROGRAMME.map((item, i) => (
+                <motion.div
+                  key={item.time}
+                  initial={{ opacity: 0, filter: "blur(12px)", y: 5 }}
+                  whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 1.2, delay: 0.42 + i * 0.18, ease: [0.22, 1, 0.36, 1] }}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "68px 1fr",
+                    gap: "12px",
+                    alignItems: "baseline",
+                    padding: "clamp(11px, 1.3vw, 15px) 0",
+                    borderBottom: i < PROGRAMME.length - 1 ? "1px solid rgba(0,0,0,0.07)" : "none",
+                  }}
+                >
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(8px, 0.9vw, 10px)", letterSpacing: "0.06em", color: "rgba(0,0,0,0.32)", fontWeight: 600 }}>
+                    {item.time}
+                  </span>
+                  <span style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(14px, 1.5vw, 18px)", color: "#1a1a1a", lineHeight: 1.25 }}>
+                    {item.label}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT: Event details */}
+          <div style={{ position: "relative", overflow: "hidden", background: "#F4EFE6", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "clamp(36px, 4vw, 60px) clamp(32px, 5vw, 64px)" }}>
+
+            {/* White card */}
+            <div style={{
+              position: "relative", zIndex: 2, width: "100%", maxWidth: "360px",
+              background: "#ffffff",
+              border: "1px solid rgba(0,0,0,0.07)",
+              boxShadow: "0 2px 24px rgba(0,0,0,0.06)",
+              padding: "clamp(28px, 3.5vw, 44px) clamp(24px, 3vw, 36px)",
+              overflow: "hidden",
+            }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.32em", textTransform: "uppercase", color: "#901A1C", margin: "0 0 28px" }}>
+                The Living Table
+              </p>
+
+              {[
+                {
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>,
+                  label: "28 June 2026",
+                  sub: "Sunday",
+                },
+                {
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>,
+                  label: "6:30 PM Onwards",
+                  sub: "",
+                },
+                {
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round"><path d="M12 21s-8-6.5-8-12a8 8 0 1 1 16 0c0 5.5-8 12-8 12z"/><circle cx="12" cy="9" r="2.5"/></svg>,
+                  label: "Kathika Cultural Centre",
+                  sub: "Gali Khatikan, Kucha Pati Ram\nSitaram Bazar, Delhi",
+                },
+                {
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round"><path d="M8 22h8M12 11v11M5 8l1.5 6h11L19 8H5z"/><path d="M5 8h14"/></svg>,
+                  label: "Liquor Included",
+                  sub: "2 drinks per person",
+                },
+                {
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(144,26,28,0.5)" strokeWidth="1.4" strokeLinecap="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>,
+                  label: "Dinner Included",
+                  sub: "",
+                },
+              ].map((item, i) => (
+                <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start", paddingBottom: i < 4 ? "16px" : 0, marginBottom: i < 4 ? "16px" : "24px", borderBottom: i < 4 ? "1px solid rgba(0,0,0,0.07)" : "none" }}>
+                  <div style={{ marginTop: "1px", flexShrink: 0 }}>{item.icon}</div>
+                  <div>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "#1a1a1a", margin: "0 0 3px", letterSpacing: "0.02em" }}>{item.label}</p>
+                    {item.sub && item.sub.split("\n").map((line, j) => (
+                      <p key={j} style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "rgba(0,0,0,0.4)", margin: "1px 0 0", lineHeight: 1.6 }}>{line}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {/* Kathika sketch inside card */}
+              <div style={{ pointerEvents: "none", marginTop: "4px", opacity: 1 }}>
+                <Image
+                  src="/images/thelivingtable/kathika.png"
+                  alt=""
+                  width={280} height={130}
+                  style={{ width: "85%", height: "auto", margin: "0 auto", display: "block" }}
+                />
+              </div>
+            </div>
+
+            {/* Flower — outside card, bottom-left of panel */}
+            <div style={{ position: "absolute", bottom: "-10px", left: "-8px", zIndex: 3, pointerEvents: "none" }}>
+              <Image
+                src="/images/thelivingtable/flower.png"
+                alt=""
+                width={190} height={230}
+                style={{ width: "clamp(130px, 14vw, 190px)", height: "auto" }}
+              />
             </div>
           </div>
         </section>
