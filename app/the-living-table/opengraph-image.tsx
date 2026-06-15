@@ -12,7 +12,14 @@ export default function OGImage() {
     join(process.cwd(), "public/images/thelivingtable/logo_the_right_one_1.svg"),
     "utf-8"
   );
-  const logoDataUrl = `data:image/svg+xml;base64,${Buffer.from(svgRaw).toString("base64")}`;
+  // The original SVG has a 384×384 square canvas but the text content
+  // only occupies roughly y=45–215 of that space. Crop the viewBox to
+  // that region so the logo fills the img element instead of appearing tiny.
+  const croppedSvg = svgRaw
+    .replace('viewBox="0 0 384 383.999986"', 'viewBox="0 45 384 175"')
+    .replace('width="512"', 'width="384"')
+    .replace('height="512"', 'height="175"');
+  const logoDataUrl = `data:image/svg+xml;base64,${Buffer.from(croppedSvg).toString("base64")}`;
 
   return new ImageResponse(
     (
@@ -37,7 +44,7 @@ export default function OGImage() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            padding: "72px 64px 72px 80px",
+            padding: "48px 48px 48px 64px",
           }}
         >
           <p
@@ -54,12 +61,12 @@ export default function OGImage() {
             Inkpot India Presents
           </p>
 
-          {/* Logo image — 2× bigger */}
+          {/* Logo — cropped viewBox fills the full available width */}
           <img
             src={logoDataUrl}
-            width={840}
-            height={168}
-            style={{ objectFit: "contain", objectPosition: "left center", marginBottom: 32 }}
+            width={720}
+            height={328}
+            style={{ objectFit: "contain", objectPosition: "left center", marginBottom: 24 }}
           />
 
           {/* Divider */}
