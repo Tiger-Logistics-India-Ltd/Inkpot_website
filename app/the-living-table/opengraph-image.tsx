@@ -37,7 +37,7 @@ export default function OGImage() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            padding: "72px 72px 72px 80px",
+            padding: "72px 64px 72px 80px",
           }}
         >
           <p
@@ -47,28 +47,28 @@ export default function OGImage() {
               letterSpacing: "0.34em",
               textTransform: "uppercase",
               color: "#901A1C",
-              margin: "0 0 28px",
+              margin: "0 0 24px",
               display: "flex",
             }}
           >
             Inkpot India Presents
           </p>
 
-          {/* Logo image */}
+          {/* Logo image — 2× bigger */}
           <img
             src={logoDataUrl}
-            width={420}
+            width={840}
             height={168}
-            style={{ objectFit: "contain", objectPosition: "left center", marginBottom: 36 }}
+            style={{ objectFit: "contain", objectPosition: "left center", marginBottom: 32 }}
           />
 
           {/* Divider */}
-          <div style={{ width: 48, height: 1, background: "#901A1C", margin: "0 0 28px", display: "flex" }} />
+          <div style={{ width: 48, height: 1, background: "#901A1C", margin: "0 0 24px", display: "flex" }} />
 
           <p
             style={{
               fontFamily: "sans-serif",
-              fontSize: 22,
+              fontSize: 21,
               color: "rgba(0,0,0,0.48)",
               margin: "0 0 10px",
               letterSpacing: "0.06em",
@@ -81,55 +81,55 @@ export default function OGImage() {
           <p
             style={{
               fontFamily: "sans-serif",
-              fontSize: 20,
+              fontSize: 19,
               color: "rgba(0,0,0,0.35)",
               margin: 0,
               letterSpacing: "0.04em",
               display: "flex",
             }}
           >
-            ₹6,500 per seat &nbsp;·&nbsp; Limited to 100 guests
+            ₹6,500 per seat &nbsp;·&nbsp; Limited to 40 Guests
           </p>
         </div>
 
-        {/* Right — dark accent panel */}
+        {/* Right — primary red panel */}
         <div
           style={{
-            width: 320,
-            background: "#0A0806",
+            width: 300,
+            background: "#901A1C",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: "40px 32px",
+            padding: "40px 28px",
             gap: 24,
           }}
         >
-          <div style={{ width: 1, height: 80, background: "rgba(255,255,255,0.12)", display: "flex" }} />
+          <div style={{ width: 1, height: 72, background: "rgba(255,255,255,0.2)", display: "flex" }} />
           <p
             style={{
               fontFamily: "serif",
               fontStyle: "italic",
-              fontSize: 26,
-              color: "#F4EFE6",
+              fontSize: 24,
+              color: "#ffffff",
               margin: 0,
               textAlign: "center",
-              lineHeight: 1.5,
+              lineHeight: 1.6,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
             }}
           >
-            Food remembers{"\n"}what cities forget.
+            Where stories find{"\n"}their way onto{"\n"}the plate.
           </p>
-          <div style={{ width: 1, height: 80, background: "rgba(255,255,255,0.12)", display: "flex" }} />
+          <div style={{ width: 1, height: 72, background: "rgba(255,255,255,0.2)", display: "flex" }} />
           <p
             style={{
               fontFamily: "sans-serif",
               fontSize: 11,
               letterSpacing: "0.3em",
               textTransform: "uppercase",
-              color: "rgba(255,255,255,0.3)",
+              color: "rgba(255,255,255,0.45)",
               margin: 0,
               display: "flex",
             }}
