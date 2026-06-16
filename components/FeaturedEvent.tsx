@@ -92,8 +92,7 @@ export default function FeaturedEvent() {
             </h2>
           </div>
           <a
-            href="/events"
-            target="_blank" rel="noopener noreferrer"
+            href="/the-living-table"
             style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(0,0,0,0.32)", textDecoration: "none", paddingBottom: "3px", borderBottom: "1px solid rgba(0,0,0,0.14)", transition: "color 0.22s, border-color 0.22s" }}
             onMouseEnter={(e) => { e.currentTarget.style.color = "var(--primary-red)"; e.currentTarget.style.borderBottomColor = "var(--primary-red)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(0,0,0,0.32)"; e.currentTarget.style.borderBottomColor = "rgba(0,0,0,0.14)"; }}
