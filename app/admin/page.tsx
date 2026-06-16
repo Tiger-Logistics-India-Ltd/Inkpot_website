@@ -50,6 +50,8 @@ export default function AdminPage() {
   const [stats, setStats]       = useState<Stats | null>(null);
   const [filter, setFilter]     = useState<"all" | "paid" | "pending" | "checked_in">("all");
   const [search, setSearch]     = useState("");
+  const [resending, setResending]   = useState<string | null>(null);
+  const [resendResult, setResendResult] = useState<Record<string, "ok" | "err">>({});
 
   const fetchData = useCallback(async (p: string) => {
     setLoading(true);
@@ -70,6 +72,22 @@ export default function AdminPage() {
   }, []);
 
   const refresh = () => fetchData(pw);
+
+  async function handleResend(ticketId: string) {
+    setResending(ticketId);
+    try {
+      const res = await fetch("/api/admin/resend-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-password": pw },
+        body: JSON.stringify({ ticket_id: ticketId }),
+      });
+      setResendResult(prev => ({ ...prev, [ticketId]: res.ok ? "ok" : "err" }));
+    } catch {
+      setResendResult(prev => ({ ...prev, [ticketId]: "err" }));
+    } finally {
+      setResending(null);
+    }
+  }
 
   function exportCSV() {
     const headers = ["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Meals", "Status", "Checked In", "Check-in Time", "Booked At"];
@@ -199,7 +217,7 @@ export default function AdminPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-black/10">
-                {["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Meals", "Status", "Check-in", "Booked"].map(h => (
+                {["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Meals", "Status", "Check-in", "Booked", ""].map(h => (
                   <th key={h} className="text-left px-4 py-3 text-[9px] tracking-[0.2em] uppercase text-black/40 font-normal whitespace-nowrap">
                     {h}
                   </th>
@@ -209,7 +227,7 @@ export default function AdminPage() {
             <tbody>
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={10} className="px-4 py-10 text-center text-sm text-black/30">
+                  <td colSpan={11} className="px-4 py-10 text-center text-sm text-black/30">
                     No guests yet.
                   </td>
                 </tr>
@@ -246,6 +264,26 @@ export default function AdminPage() {
                       : <span className="text-[9px] tracking-[0.15em] uppercase text-black/25">—</span>}
                   </td>
                   <td className="px-4 py-3 text-black/40 text-xs whitespace-nowrap">{fmtDate(t.created_at)}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {t.payment_status === "paid" ? (
+                      <button
+                        onClick={() => handleResend(t.id)}
+                        disabled={resending === t.id}
+                        className={`text-[9px] tracking-[0.15em] uppercase px-2 py-1 transition-colors ${
+                          resendResult[t.id] === "ok"  ? "bg-green-50 text-green-700" :
+                          resendResult[t.id] === "err" ? "bg-red-50 text-red-700" :
+                          "border border-black/20 text-black/40 hover:border-[#901A1C] hover:text-[#901A1C]"
+                        }`}
+                      >
+                        {resending === t.id ? "…" :
+                         resendResult[t.id] === "ok"  ? "✓ Sent" :
+                         resendResult[t.id] === "err" ? "✗ Error" :
+                         "Resend"}
+                      </button>
+                    ) : (
+                      <span className="text-black/20 text-xs">—</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

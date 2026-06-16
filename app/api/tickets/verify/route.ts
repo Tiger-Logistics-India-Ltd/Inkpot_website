@@ -41,6 +41,7 @@ export async function POST(req: Request) {
     let resolvedBuyerName = "";
     let resolvedBuyerEmail = "";
     let resolvedAmount = 0;
+    let resolvedMeals: string[] = [];
 
     if (dbEnabled()) {
       const { getSupabase } = await import("@/lib/supabase");
@@ -51,7 +52,7 @@ export async function POST(req: Request) {
       // a different (higher-value) ticket as paid by swapping ticket_id.
       const { data: existingTicket, error: fetchError } = await supabase
         .from("living_table_tickets")
-        .select("id, razorpay_order_id, qty, buyer_name, buyer_email, payment_status, amount, ticket_number, seat_numbers")
+        .select("id, razorpay_order_id, qty, buyer_name, buyer_email, payment_status, amount, ticket_number, seat_numbers, meal_preferences")
         .eq("id", ticket_id)
         .single();
 
@@ -87,6 +88,7 @@ export async function POST(req: Request) {
       resolvedBuyerName = existingTicket.buyer_name;
       resolvedBuyerEmail = existingTicket.buyer_email;
       resolvedAmount = existingTicket.amount;
+      resolvedMeals = existingTicket.meal_preferences ?? [];
       finalTicketId = existingTicket.id;
 
       // ── 5. Assign seat block ─────────────────────────────────────────────
@@ -138,6 +140,7 @@ export async function POST(req: Request) {
         ticketId: finalTicketId,
         amount: resolvedAmount,
         siteUrl: SITE_URL,
+        mealPreferences: resolvedMeals,
       }).catch(e => console.error("[email]", e));
     }
 

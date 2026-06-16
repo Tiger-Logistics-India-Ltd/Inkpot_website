@@ -17,6 +17,7 @@ interface TicketEmailParams {
   ticketId: string;
   amount: number;
   siteUrl: string;
+  mealPreferences?: string[];
 }
 
 export async function sendTicketConfirmation({
@@ -29,14 +30,35 @@ export async function sendTicketConfirmation({
   ticketId,
   amount,
   siteUrl,
+  mealPreferences = [],
 }: TicketEmailParams): Promise<void> {
   const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  const ticketUrl  = `${siteUrl}/ticket/${ticketId}`;
   const numPadded  = String(ticketNumber).padStart(4, "0");
   const seatsLabel = qty > 1
     ? seatNumbers.map(n => `TLT-${String(n).padStart(4, "0")}`).join(", ")
     : `TLT-${numPadded}`;
   const amountFormatted = `₹${(amount / 100).toLocaleString("en-IN")}`;
+
+  const mealLabel = (m: string): string => m === "veg" ? "Vegetarian" : "Non-Vegetarian";
+  const mealsRow = mealPreferences.length > 0
+    ? `
+          <!-- Meal Preferences -->
+          <tr>
+            <td style="padding:16px 48px 0;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4EFE6;padding:16px 28px;">
+                <tr>
+                  <td>
+                    <span style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(0,0,0,0.4);display:block;margin-bottom:8px;">Meal Preference${qty > 1 ? "s" : ""}</span>
+                    ${qty === 1
+                      ? `<span style="font-size:13px;color:#1a1a1a;">${mealLabel(mealPreferences[0] ?? "non-veg")}</span>`
+                      : mealPreferences.map((m, i) => `<span style="font-size:12px;color:#1a1a1a;display:block;line-height:1.9;">Guest ${i + 1}: ${mealLabel(m)}</span>`).join("")
+                    }
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>`
+    : "";
 
   await getResend().emails.send({
     from: "Inkpot India <tickets@tickets.inkpotindia.com>",
@@ -114,6 +136,8 @@ export async function sendTicketConfirmation({
             </td>
           </tr>
 
+          ${mealsRow}
+
           <!-- QR code -->
           <tr>
             <td style="padding:32px 48px 0;text-align:center;">
@@ -158,13 +182,13 @@ export async function sendTicketConfirmation({
                 <tr>
                   <td style="padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
                     <span style="font-size:10px;color:rgba(0,0,0,0.38);letter-spacing:0.06em;font-weight:600;">7:00 PM</span>
-                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">A conversation on the history of food at Kathika Cultural Centre, featuring Monish Gujral, Sadaf Hussain, and Salma Husain, moderated by Simar Malhotra.</p>
+                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">A conversation tracing the journey of North Indian food through the lens of partition and memory, with Monish Gujral, Sadaf Hussain, and Salma Husain, moderated by Simar Malhotra.</p>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
                     <span style="font-size:10px;color:rgba(0,0,0,0.38);letter-spacing:0.06em;font-weight:600;">8:00 PM</span>
-                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">The bar opens and the dining experience begins at Neem Ki Haveli, accompanied by narratives on the dishes, cultural storytelling, and immersive musical performances.</p>
+                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">The bar opens and the dining experience begins at Neem Ki Haveli.</p>
                   </td>
                 </tr>
                 <tr>
@@ -188,8 +212,11 @@ export async function sendTicketConfirmation({
           <tr>
             <td style="padding:28px 48px 40px;text-align:center;">
               <p style="margin:0 0 6px;font-size:12px;color:#1a1a1a;font-family:Georgia,serif;font-style:italic;">Inkpot India</p>
-              <p style="margin:0;font-size:11px;color:rgba(0,0,0,0.35);">
+              <p style="margin:0 0 4px;font-size:11px;color:rgba(0,0,0,0.35);">
                 Questions? <a href="mailto:info@inkpotindia.com" style="color:#901A1C;text-decoration:none;">info@inkpotindia.com</a>
+              </p>
+              <p style="margin:0;font-size:11px;color:rgba(0,0,0,0.35);">
+                Sumeet (Manager) &nbsp;&middot;&nbsp; <a href="tel:+919953228456" style="color:#901A1C;text-decoration:none;">+91 99532 28456</a>
               </p>
             </td>
           </tr>
