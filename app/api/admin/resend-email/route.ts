@@ -41,8 +41,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Ticket is not paid — cannot resend" }, { status: 400 });
   }
 
-  const qrImageUrl = `${SITE_URL}/api/qr/${ticket.id}`;
-
   const { sendTicketConfirmation } = await import("@/lib/email");
   await sendTicketConfirmation({
     to: ticket.buyer_email,
@@ -50,7 +48,6 @@ export async function POST(req: Request) {
     ticketNumber: ticket.ticket_number,
     seatNumbers: ticket.seat_numbers,
     qty: ticket.qty,
-    qrImageUrl,
     ticketId: ticket.id,
     amount: ticket.amount,
     siteUrl: SITE_URL,

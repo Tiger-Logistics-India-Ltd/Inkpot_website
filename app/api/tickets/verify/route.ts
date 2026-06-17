@@ -119,7 +119,6 @@ export async function POST(req: Request) {
     }
 
     // ── 7. Send confirmation email ────────────────────────────────────────────
-    const qrImageUrl = `${SITE_URL}/api/qr/${finalTicketId}`;
     if (emailEnabled() && resolvedBuyerEmail) {
       const { sendTicketConfirmation } = await import("@/lib/email");
       sendTicketConfirmation({
@@ -128,7 +127,6 @@ export async function POST(req: Request) {
         ticketNumber,
         seatNumbers,
         qty: seats,
-        qrImageUrl,
         ticketId: finalTicketId,
         amount: resolvedAmount,
         siteUrl: SITE_URL,

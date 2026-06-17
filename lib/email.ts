@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import QRCode from "qrcode";
 
 let _resend: Resend | null = null;
 
@@ -13,7 +14,6 @@ interface TicketEmailParams {
   ticketNumber: number;
   seatNumbers: number[];
   qty: number;
-  qrImageUrl: string;
   ticketId: string;
   amount: number;
   siteUrl: string;
@@ -26,12 +26,18 @@ export async function sendTicketConfirmation({
   ticketNumber,
   seatNumbers,
   qty,
-  qrImageUrl,
   ticketId,
   amount,
   siteUrl,
   mealPreferences = [],
 }: TicketEmailParams): Promise<void> {
+  // Generate QR as a PNG buffer — embedded as inline CID attachment so it
+  // renders in Gmail (which strips data: URIs) and every other client.
+  const qrBuffer = await QRCode.toBuffer(`${siteUrl}/ticket/${ticketId}`, {
+    width: 400,
+    margin: 2,
+    color: { dark: "#1a1a1a", light: "#ffffff" },
+  });
   const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const numPadded  = String(ticketNumber).padStart(4, "0");
   const seatsLabel = qty > 1
@@ -64,6 +70,14 @@ export async function sendTicketConfirmation({
     from: "Inkpot India <tickets@tickets.inkpotindia.com>",
     to,
     subject: `Your Seat at The Living Table — 28th June`,
+    attachments: [
+      {
+        filename: "entry-qr.png",
+        content: qrBuffer,
+        content_type: "image/png",
+        content_id: "entry-qr",
+      },
+    ],
     html: `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -145,7 +159,7 @@ export async function sendTicketConfirmation({
                 Your entry QR code
               </p>
               <img
-                src="${qrImageUrl}"
+                src="cid:entry-qr"
                 alt="Entry QR Code"
                 width="200"
                 height="200"
