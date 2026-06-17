@@ -223,7 +223,7 @@ export default function ScanPage() {
 
   // ── Scanner (authed) ─────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white flex flex-col" style={{ maxWidth: "480px", margin: "0 auto" }}>
+    <div className="min-h-screen bg-[#0D0D0D] text-white flex flex-col mx-auto w-full max-w-sm md:max-w-lg">
 
       {/* ── Full-screen result popup ── */}
       {popup && (() => {
@@ -263,10 +263,10 @@ export default function ScanPage() {
       })()}
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between px-5 pt-6 pb-2">
+      <div className="flex items-center justify-between px-6 pt-8 pb-4">
         <div>
           <p className="text-[8px] tracking-[0.32em] uppercase text-[#901A1C]">Inkpot India</p>
-          <p className="text-[13px] text-white/80 mt-0.5 font-light" style={{ fontFamily: "Georgia,serif", fontStyle: "italic" }}>
+          <p className="text-sm md:text-base text-white/80 mt-0.5 font-light" style={{ fontFamily: "Georgia,serif", fontStyle: "italic" }}>
             The Living Table — 28 June
           </p>
         </div>
@@ -283,29 +283,29 @@ export default function ScanPage() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="mx-5 mt-3 mb-5 grid grid-cols-3 gap-3">
-        <div className="bg-white/4 rounded-lg px-3 py-3 text-center border border-white/6">
-          <p className={`text-3xl font-light mb-0.5 ${checkedIn > 0 ? "text-green-400" : "text-white/30"}`}>{checkedIn}</p>
-          <p className="text-[8px] tracking-[0.2em] uppercase text-white/22">Checked In</p>
+      <div className="mx-6 mb-8 grid grid-cols-3 gap-3">
+        <div className="bg-white/5 rounded-2xl px-3 py-4 md:py-5 text-center border border-white/8">
+          <p className={`text-4xl md:text-5xl font-light mb-1 ${checkedIn > 0 ? "text-green-400" : "text-white/25"}`}>{checkedIn}</p>
+          <p className="text-[8px] tracking-[0.18em] uppercase text-white/30">Checked In</p>
         </div>
-        <div className="bg-white/4 rounded-lg px-3 py-3 text-center border border-white/6">
-          <p className="text-3xl font-light text-white/70 mb-0.5">{totalPaid}</p>
-          <p className="text-[8px] tracking-[0.2em] uppercase text-white/22">Total</p>
+        <div className="bg-white/5 rounded-2xl px-3 py-4 md:py-5 text-center border border-white/8">
+          <p className="text-4xl md:text-5xl font-light text-white/60 mb-1">{totalPaid}</p>
+          <p className="text-[8px] tracking-[0.18em] uppercase text-white/30">Total</p>
         </div>
-        <div className="bg-white/4 rounded-lg px-3 py-3 text-center border border-white/6">
-          <p className={`text-3xl font-light mb-0.5 ${remaining > 0 ? "text-amber-400" : "text-white/30"}`}>{remaining}</p>
-          <p className="text-[8px] tracking-[0.2em] uppercase text-white/22">Remaining</p>
+        <div className="bg-white/5 rounded-2xl px-3 py-4 md:py-5 text-center border border-white/8">
+          <p className={`text-4xl md:text-5xl font-light mb-1 ${remaining > 0 ? "text-amber-400" : "text-white/25"}`}>{remaining}</p>
+          <p className="text-[8px] tracking-[0.18em] uppercase text-white/30">Remaining</p>
         </div>
       </div>
 
       {/* ── Camera ── */}
-      <div className="px-5 mb-5">
+      <div className="px-6 mb-8">
         {scanning ? (
           <div>
-            <div id="qr-reader" className="w-full rounded-xl overflow-hidden border border-white/8" />
+            <div id="qr-reader" className="w-full rounded-2xl overflow-hidden border border-white/10" />
             <button
               onClick={() => { scannerRef.current?.stop().catch(() => {}); setScanning(false); }}
-              className="w-full mt-3 py-3 border border-white/10 rounded-lg text-[9px] tracking-[0.22em] uppercase text-white/30 hover:border-white/25 hover:text-white/50 transition-colors"
+              className="w-full mt-4 py-3.5 border border-white/10 rounded-2xl text-[9px] tracking-[0.22em] uppercase text-white/30 hover:border-white/25 hover:text-white/50 transition-colors"
             >
               Stop Camera
             </button>
@@ -313,67 +313,71 @@ export default function ScanPage() {
         ) : (
           <button
             onClick={() => setScanning(true)}
-            className="w-full bg-[#901A1C] rounded-xl py-7 flex flex-col items-center gap-3 hover:bg-[#7a1517] active:bg-[#6b1214] transition-colors"
+            className="w-full bg-[#901A1C] rounded-2xl py-10 md:py-12 flex flex-col items-center gap-4 hover:bg-[#7a1517] active:bg-[#6b1214] transition-colors"
+            style={{ boxShadow: "0 8px 32px rgba(144,26,28,0.35)" }}
           >
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" className="opacity-90">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.3" strokeLinecap="round" className="opacity-90">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
               <circle cx="12" cy="13" r="4"/>
             </svg>
-            <span className="text-[11px] tracking-[0.3em] uppercase text-white/90 font-medium">Scan QR Code</span>
+            <div className="text-center">
+              <p className="text-sm md:text-base tracking-[0.28em] uppercase text-white font-medium">Scan QR Code</p>
+              <p className="text-[10px] text-white/45 tracking-wider mt-1">Point camera at guest QR</p>
+            </div>
           </button>
         )}
       </div>
 
       {/* ── Divider ── */}
-      <div className="flex items-center gap-4 px-5 mb-5">
-        <div className="flex-1 h-px bg-white/6" />
-        <span className="text-[8px] tracking-[0.28em] uppercase text-white/18">or search by seat</span>
-        <div className="flex-1 h-px bg-white/6" />
+      <div className="flex items-center gap-4 px-6 mb-6">
+        <div className="flex-1 h-px bg-white/8" />
+        <span className="text-[8px] tracking-[0.28em] uppercase text-white/22">or search by seat</span>
+        <div className="flex-1 h-px bg-white/8" />
       </div>
 
       {/* ── Manual search ── */}
-      <div className="px-5 pb-8">
-        <form onSubmit={handleManualSearch} className="flex gap-0 rounded-lg overflow-hidden border border-white/10">
+      <div className="px-6 pb-10">
+        <form onSubmit={handleManualSearch} className="flex gap-0 rounded-2xl overflow-hidden border border-white/10">
           <input
-            type="text" placeholder="TLT-0012 or just 12"
+            type="text" placeholder="TLT-0012  or just  12"
             value={manualSerial}
             onChange={e => { setManualSerial(e.target.value); setManualLookup(null); }}
-            className="flex-1 bg-white/5 px-4 py-3.5 text-[13px] text-white outline-none focus:bg-white/8 placeholder-white/18 transition-colors"
+            className="flex-1 bg-white/5 px-5 py-4 text-sm text-white outline-none focus:bg-white/8 placeholder-white/20 transition-colors"
           />
           <button type="submit"
-            className="bg-white/8 border-l border-white/10 text-white/45 text-[9px] tracking-[0.2em] uppercase px-5 hover:bg-white/14 transition-colors whitespace-nowrap">
+            className="bg-white/10 border-l border-white/10 text-white/50 text-[9px] tracking-[0.2em] uppercase px-6 hover:bg-white/16 transition-colors whitespace-nowrap">
             Find
           </button>
         </form>
 
         {/* Manual lookup result */}
         {manualLookup === "notfound" && (
-          <div className="mt-3 rounded-lg bg-[#901A1C]/30 border border-[#901A1C]/50 px-4 py-3">
-            <p className="text-[13px] font-medium text-white/80">✕ Ticket not found</p>
-            <p className="text-[11px] text-white/40 mt-0.5">Check the seat number and try again.</p>
+          <div className="mt-4 rounded-2xl bg-[#901A1C]/25 border border-[#901A1C]/40 px-5 py-4">
+            <p className="text-sm font-medium text-white/80">✕ Ticket not found</p>
+            <p className="text-xs text-white/35 mt-1">Check the seat number and try again.</p>
           </div>
         )}
 
         {manualLookup && manualLookup !== "notfound" && (
-          <div className={`mt-3 rounded-lg border px-4 py-4 ${
-            manualLookup.checked_in ? "bg-amber-900/30 border-amber-700/50" :
-            manualLookup.payment_status === "paid" ? "bg-green-900/30 border-green-700/50" :
-            "bg-red-900/30 border-red-800/50"
+          <div className={`mt-4 rounded-2xl border px-5 py-5 ${
+            manualLookup.checked_in ? "bg-amber-900/25 border-amber-700/40" :
+            manualLookup.payment_status === "paid" ? "bg-green-900/25 border-green-700/40" :
+            "bg-red-900/25 border-red-800/40"
           }`}>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-[13px] font-medium text-white/85">{manualLookup.buyer_name}</p>
-                <p className="text-[11px] text-white/40 mt-0.5 font-mono">{fmtSeats(manualLookup)} · {manualLookup.qty} seat{manualLookup.qty > 1 ? "s" : ""}</p>
+                <p className="text-sm font-medium text-white/90">{manualLookup.buyer_name}</p>
+                <p className="text-xs text-white/40 mt-1 font-mono">{fmtSeats(manualLookup)} · {manualLookup.qty} seat{manualLookup.qty > 1 ? "s" : ""}</p>
                 {manualLookup.checked_in_at && (
-                  <p className="text-[10px] text-white/30 mt-1">
+                  <p className="text-[10px] text-white/28 mt-1.5">
                     Checked in {new Date(manualLookup.checked_in_at).toLocaleTimeString("en-IN")}
                   </p>
                 )}
               </div>
-              <span className={`text-[8px] tracking-[0.14em] uppercase px-2 py-1 rounded-full shrink-0 ${
-                manualLookup.checked_in ? "bg-amber-500/30 text-amber-300" :
-                manualLookup.payment_status === "paid" ? "bg-green-500/30 text-green-300" :
-                "bg-red-500/30 text-red-300"
+              <span className={`text-[8px] tracking-[0.14em] uppercase px-3 py-1 rounded-full shrink-0 mt-0.5 ${
+                manualLookup.checked_in ? "bg-amber-500/25 text-amber-300" :
+                manualLookup.payment_status === "paid" ? "bg-green-500/25 text-green-300" :
+                "bg-red-500/25 text-red-300"
               }`}>
                 {manualLookup.checked_in ? "Already In" : manualLookup.payment_status === "paid" ? "Valid" : "Unpaid"}
               </span>
@@ -383,7 +387,7 @@ export default function ScanPage() {
               <button
                 onClick={() => handleManualCheckIn(manualLookup)}
                 disabled={checkingIn}
-                className="w-full mt-4 bg-green-700 hover:bg-green-600 text-white text-[10px] tracking-[0.22em] uppercase py-3 rounded-lg transition-colors disabled:opacity-40"
+                className="w-full mt-5 bg-green-700 hover:bg-green-600 text-white text-[10px] tracking-[0.22em] uppercase py-3.5 rounded-xl transition-colors disabled:opacity-40"
               >
                 {checkingIn ? "Checking in…" : "Check In →"}
               </button>
@@ -392,7 +396,7 @@ export default function ScanPage() {
         )}
 
         {/* Cache info */}
-        <p className="text-center text-[9px] text-white/15 mt-6 tracking-wide">
+        <p className="text-center text-[9px] text-white/12 mt-8 tracking-wide">
           {cache.length} guests cached
           {cacheTime && ` · ${cacheTime.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`}
         </p>
