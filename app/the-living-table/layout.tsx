@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     canonical: "https://www.inkpotindia.com/the-living-table",
   },
   openGraph: {
-    title: "The Living Table — A One-Night Dinner by Inkpot India",
+    title: "The Living Table — A Curated Sit-Down Dinner with Inkpot India",
     description:
       "A curated dining experience at Kathika Cultural Centre, Old Delhi. 28th June 2026 · Very Limited Seats · ₹6,500 per person.",
     url: "https://www.inkpotindia.com/the-living-table",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Living Table — A One-Night Dinner by Inkpot India",
+    title: "The Living Table — A Curated Sit-Down Dinner with Inkpot India",
     description: "28th June 2026 · Old Delhi · Very Limited Seats · ₹6,500 per person.",
   },
 };
