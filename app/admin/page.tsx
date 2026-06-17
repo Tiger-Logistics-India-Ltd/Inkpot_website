@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, Fragment } from "react";
 
 const TOTAL = 100;
 
@@ -299,8 +299,8 @@ export default function AdminPage() {
                 <tr><td colSpan={9} className="px-4 py-12 text-center text-sm text-black/25">No guests found.</td></tr>
               )}
               {filtered.map((t) => (
-                <>
-                  <tr key={t.id}
+                <Fragment key={t.id}>
+                  <tr
                     className={`border-b border-black/5 transition-colors ${
                       t.archived ? "opacity-40" : "hover:bg-[#F4EFE6]/40"
                     }`}
@@ -397,7 +397,7 @@ export default function AdminPage() {
 
                   {/* ── Expandable notes row ── */}
                   {expandedNotes === t.id && (
-                    <tr key={`${t.id}-notes`} className="border-b border-black/5 bg-amber-50/40">
+                    <tr className="border-b border-black/5 bg-amber-50/40">
                       <td colSpan={9} className="px-4 py-3">
                         <div className="flex items-start gap-3">
                           <p className="text-[8px] tracking-[0.22em] uppercase text-black/35 mt-2 whitespace-nowrap">Note for {t.buyer_name.split(" ")[0]}</p>
@@ -423,7 +423,7 @@ export default function AdminPage() {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               ))}
             </tbody>
           </table>

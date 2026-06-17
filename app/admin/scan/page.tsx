@@ -13,7 +13,7 @@ interface CachedTicket {
   checked_in_at: string | null;
 }
 
-type ScanStatus = "valid" | "duplicate" | "invalid" | null;
+type ScanStatus = "valid" | "duplicate" | "invalid";
 
 interface ScanResult {
   status: ScanStatus;
@@ -34,34 +34,37 @@ function extractTicketId(raw: string): string | null {
   return null;
 }
 
-const STATUS_STYLE: Record<string, { bg: string; border: string; icon: string }> = {
-  valid:     { bg: "bg-green-600",  border: "border-green-500",  icon: "✓" },
-  duplicate: { bg: "bg-amber-500",  border: "border-amber-400",  icon: "⚠" },
-  invalid:   { bg: "bg-[#901A1C]",  border: "border-red-700",    icon: "✕" },
+const POPUP_CONFIG: Record<ScanStatus, { bg: string; icon: string; label: string }> = {
+  valid:     { bg: "#166534", icon: "✓", label: "Welcome!" },
+  duplicate: { bg: "#92400e", icon: "⚠", label: "Already In" },
+  invalid:   { bg: "#7f1d1d", icon: "✕", label: "Not Valid" },
 };
+
+const LS_KEY = "inkpot-scan-pw";
 
 export default function ScanPage() {
   const [password, setPassword]   = useState("");
   const [pw, setPw]               = useState("");
   const [authed, setAuthed]       = useState(false);
   const [authError, setAuthError] = useState("");
+  const [authLoading, setAuthLoading] = useState(true); // true while checking localStorage
   const [cache, setCache]         = useState<CachedTicket[]>([]);
   const [cacheTime, setCacheTime] = useState<Date | null>(null);
 
-  const [result, setResult]         = useState<ScanResult | null>(null);
-  const [scanning, setScanning]     = useState(false);
+  const [popup, setPopup]         = useState<ScanResult | null>(null);
+  const [scanning, setScanning]   = useState(false);
   const [manualSerial, setManualSerial] = useState("");
-  const [manualResult, setManualResult] = useState<CachedTicket | null | "notfound">(null);
+  const [manualLookup, setManualLookup] = useState<CachedTicket | null | "notfound">(null);
   const [checkingIn, setCheckingIn] = useState(false);
-  const [recentCheckIns, setRecentCheckIns] = useState<CachedTicket[]>([]);
 
   const scannerRef  = useRef<any>(null);
-  const resultTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const popupTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const loadCache = useCallback(async (p: string) => {
+  // ── Restore session from localStorage ───────────────────────────────────
+  const loadCache = useCallback(async (p: string): Promise<boolean> => {
     try {
       const res = await fetch("/api/admin/check-in", { headers: { "x-admin-password": p } });
-      if (!res.ok) { setAuthError("Wrong password."); return false; }
+      if (!res.ok) return false;
       const data = await res.json();
       setCache(data.tickets);
       setCacheTime(new Date());
@@ -69,13 +72,36 @@ export default function ScanPage() {
     } catch { return false; }
   }, []);
 
+  useEffect(() => {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved) {
+      loadCache(saved).then(ok => {
+        if (ok) { setPw(saved); setAuthed(true); }
+        else { localStorage.removeItem(LS_KEY); }
+        setAuthLoading(false);
+      });
+    } else {
+      setAuthLoading(false);
+    }
+  }, [loadCache]);
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault(); setAuthError("");
     const ok = await loadCache(password);
-    if (ok) { setPw(password); setAuthed(true); }
+    if (ok) {
+      localStorage.setItem(LS_KEY, password);
+      setPw(password); setAuthed(true);
+    } else {
+      setAuthError("Wrong password.");
+    }
   }
 
-  // ── QR Scanner ──────────────────────────────────────────────────────────
+  function handleLogout() {
+    localStorage.removeItem(LS_KEY);
+    setAuthed(false); setPw(""); setPassword(""); setCache([]);
+  }
+
+  // ── QR Scanner ────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!authed || !scanning) return;
     let html5Scanner: any;
@@ -85,32 +111,30 @@ export default function ScanPage() {
       scannerRef.current = html5Scanner;
       await html5Scanner.start(
         { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 240, height: 240 } },
+        { fps: 10, qrbox: { width: 260, height: 260 } },
         async (decodedText: string) => {
           const id = extractTicketId(decodedText);
-          if (!id) { showResult({ status: "invalid", message: "Not a valid ticket QR." }); return; }
+          if (!id) { showPopup({ status: "invalid", message: "Not a valid ticket QR." }); return; }
           await checkIn(id);
         },
         () => {}
       );
     }
-    startScanner().catch(err => {
-      console.error(err);
-      showResult({ status: "invalid", message: "Camera access denied or unavailable." });
+    startScanner().catch(() => {
+      showPopup({ status: "invalid", message: "Camera unavailable." });
       setScanning(false);
     });
     return () => { scannerRef.current?.stop().catch(() => {}); };
   }, [authed, scanning]);
 
-  // ── Check-in ────────────────────────────────────────────────────────────
+  // ── Check-in ─────────────────────────────────────────────────────────────
   async function checkIn(ticketId: string) {
     if (checkingIn) return;
     setCheckingIn(true);
     const cached = cache.find(t => t.id === ticketId);
     if (cached?.checked_in) {
-      showResult({ status: "duplicate", message: "Already checked in.", ticket: cached });
-      setCheckingIn(false);
-      return;
+      showPopup({ status: "duplicate", message: "Already checked in.", ticket: cached });
+      setCheckingIn(false); return;
     }
     try {
       const res = await fetch("/api/admin/check-in", {
@@ -120,66 +144,75 @@ export default function ScanPage() {
       });
       const data = await res.json();
       if (!res.ok || data.error) {
-        showResult({ status: "invalid", message: data.error ?? "Server error." });
+        showPopup({ status: "invalid", message: data.error ?? "Server error." });
       } else {
-        showResult({ status: data.status, message: data.message, ticket: data.ticket });
+        showPopup({ status: data.status, message: data.message, ticket: data.ticket });
         setCache(prev => prev.map(t => t.id === ticketId ? { ...t, checked_in: true, checked_in_at: new Date().toISOString() } : t));
-        if (data.status === "valid" && data.ticket) {
-          setRecentCheckIns(prev => [data.ticket, ...prev.slice(0, 4)]);
-        }
       }
     } catch {
       if (cached) {
-        showResult({ status: cached.payment_status === "paid" ? "valid" : "invalid", message: cached.payment_status === "paid" ? "(Offline) Guest found." : "Not a paid ticket.", ticket: cached });
+        showPopup({ status: cached.payment_status === "paid" ? "valid" : "invalid", message: "(Offline) Guest found in cache.", ticket: cached });
         setCache(prev => prev.map(t => t.id === ticketId ? { ...t, checked_in: true } : t));
       } else {
-        showResult({ status: "invalid", message: "(Offline) Ticket not in cache." });
+        showPopup({ status: "invalid", message: "(Offline) Ticket not in cache." });
       }
     } finally { setCheckingIn(false); }
   }
 
-  function showResult(r: ScanResult) {
-    setResult(r);
-    if (resultTimer.current) clearTimeout(resultTimer.current);
-    resultTimer.current = setTimeout(() => setResult(null), 5000);
+  function showPopup(r: ScanResult) {
+    setPopup(r);
+    if (popupTimer.current) clearTimeout(popupTimer.current);
+    popupTimer.current = setTimeout(() => setPopup(null), 4500);
   }
 
   function handleManualSearch(e: React.FormEvent) {
     e.preventDefault();
     const query = manualSerial.replace(/TLT-?/i, "").trim();
     const num = parseInt(query, 10);
-    if (isNaN(num)) { setManualResult("notfound"); return; }
+    if (isNaN(num)) { setManualLookup("notfound"); return; }
     const found = cache.find(t => t.seat_numbers?.includes(num) || t.ticket_number === num);
-    setManualResult(found ?? "notfound");
+    setManualLookup(found ?? "notfound");
   }
 
   async function handleManualCheckIn(ticket: CachedTicket) {
     await checkIn(ticket.id);
-    setManualResult(prev => (typeof prev === "object" && prev) ? { ...prev, checked_in: true } : prev);
+    setManualSerial(""); setManualLookup(null);
   }
 
   const checkedIn   = cache.filter(t => t.checked_in).length;
-  const totalGuests = cache.filter(t => t.payment_status === "paid").length;
-  const remaining   = totalGuests - checkedIn;
+  const totalPaid   = cache.filter(t => t.payment_status === "paid").length;
+  const remaining   = totalPaid - checkedIn;
 
-  // ── Login ────────────────────────────────────────────────────────────────
+  // ── Loading (checking localStorage) ────────────────────────────────────
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[#901A1C] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // ── Login ─────────────────────────────────────────────────────────────────
   if (!authed) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-8">
         <div className="w-full max-w-xs">
-          <p className="text-[9px] tracking-[0.32em] uppercase text-[#901A1C] mb-2 text-center">Inkpot India</p>
-          <h1 className="text-xl text-white text-center mb-1" style={{ fontFamily: "Georgia,serif", fontStyle: "italic", fontWeight: 400 }}>
+          <p className="text-[8px] tracking-[0.36em] uppercase text-[#901A1C] text-center mb-3">Inkpot India</p>
+          <h1 className="text-2xl text-white text-center mb-1 font-light" style={{ fontFamily: "Georgia,serif", fontStyle: "italic" }}>
             Door Scanner
           </h1>
-          <p className="text-xs text-white/25 text-center mb-8 tracking-wide">The Living Table · 28 June 2026</p>
-          <form onSubmit={handleLogin} className="space-y-3">
-            <input type="password" placeholder="Admin password" value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 px-4 py-3 text-sm text-white outline-none focus:border-[#901A1C] placeholder-white/25"
+          <p className="text-[11px] text-white/25 text-center mb-10 tracking-wide">
+            The Living Table · 28 June 2026
+          </p>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input
+              type="password" placeholder="Admin password" value={password}
+              onChange={e => setPassword(e.target.value)} autoFocus
+              className="w-full bg-transparent border-b border-white/15 pb-3 text-base text-white outline-none focus:border-[#901A1C] placeholder-white/20 text-center tracking-widest"
             />
-            {authError && <p className="text-red-400 text-xs">{authError}</p>}
-            <button type="submit"
-              className="w-full bg-[#901A1C] text-white text-[10px] tracking-[0.22em] uppercase py-3.5 hover:bg-[#7a1517] transition-colors">
+            {authError && <p className="text-red-400 text-xs text-center">{authError}</p>}
+            <button type="submit" disabled={!password}
+              className="w-full bg-[#901A1C] text-white text-[10px] tracking-[0.26em] uppercase py-4 hover:bg-[#7a1517] transition-colors disabled:opacity-30 mt-2">
               Enter
             </button>
           </form>
@@ -188,155 +221,182 @@ export default function ScanPage() {
     );
   }
 
-  // ── Scanner ──────────────────────────────────────────────────────────────
+  // ── Scanner (authed) ─────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white flex flex-col max-w-md mx-auto">
+    <div className="min-h-screen bg-[#0D0D0D] text-white flex flex-col" style={{ maxWidth: "480px", margin: "0 auto" }}>
 
-      {/* ── Header ── */}
-      <div className="px-5 pt-5 pb-3 flex items-start justify-between">
-        <div>
-          <p className="text-[8px] tracking-[0.32em] uppercase text-[#901A1C]">Inkpot India</p>
-          <h1 className="text-base text-white mt-0.5" style={{ fontFamily: "Georgia,serif", fontStyle: "italic", fontWeight: 400 }}>
-            The Living Table — 28 June
-          </h1>
-          <p className="text-[10px] text-white/25 mt-0.5">
-            {cache.length} guests cached
-            {cacheTime && ` · ${cacheTime.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`}
-          </p>
-        </div>
-        <button onClick={() => loadCache(pw)}
-          className="text-[8px] tracking-[0.18em] uppercase text-white/30 border border-white/10 px-3 py-1.5 hover:border-white/30 transition-colors">
-          Refresh
-        </button>
-      </div>
-
-      {/* ── Stats bar ── */}
-      <div className="mx-5 mb-4 grid grid-cols-3 divide-x divide-white/8 border border-white/8 bg-white/3">
-        {[
-          { label: "Checked In", value: checkedIn,   color: checkedIn > 0 ? "text-green-400" : "text-white" },
-          { label: "Total Paid",  value: totalGuests, color: "text-white" },
-          { label: "Remaining",  value: remaining,   color: remaining > 0 ? "text-amber-400" : "text-white/40" },
-        ].map(s => (
-          <div key={s.label} className="px-3 py-3 text-center">
-            <p className={`text-2xl font-light ${s.color}`}>{s.value}</p>
-            <p className="text-[8px] tracking-[0.2em] uppercase text-white/25 mt-0.5">{s.label}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Scan result ── */}
-      {result && (() => {
-        const s = STATUS_STYLE[result.status ?? "invalid"];
+      {/* ── Full-screen result popup ── */}
+      {popup && (() => {
+        const cfg = POPUP_CONFIG[popup.status];
         return (
-          <div className={`mx-5 mb-4 p-4 border-l-4 ${s.bg} ${s.border} bg-opacity-90`}>
-            <div className="flex items-start gap-3">
-              <span className="text-2xl font-bold leading-none mt-0.5">{s.icon}</span>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-[13px]">{result.message}</p>
-                {result.ticket && (
-                  <p className="text-[11px] mt-0.5 opacity-85">
-                    <strong>{result.ticket.buyer_name}</strong>
-                    {" · "}{fmtSeats(result.ticket)}
-                    {" · "}{result.ticket.qty} seat{result.ticket.qty > 1 ? "s" : ""}
-                  </p>
-                )}
-              </div>
+          <div
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center px-8 cursor-pointer"
+            style={{ background: cfg.bg }}
+            onClick={() => { setPopup(null); if (popupTimer.current) clearTimeout(popupTimer.current); }}
+          >
+            {/* Big icon */}
+            <div className="text-[96px] leading-none mb-4 font-bold" style={{ textShadow: "0 4px 24px rgba(0,0,0,0.3)" }}>
+              {cfg.icon}
             </div>
+
+            {/* Status label */}
+            <p className="text-[10px] tracking-[0.4em] uppercase text-white/60 mb-3">{cfg.label}</p>
+
+            {/* Guest name */}
+            {popup.ticket ? (
+              <>
+                <h2 className="text-3xl font-light text-white text-center mb-2 leading-tight" style={{ fontFamily: "Georgia,serif" }}>
+                  {popup.ticket.buyer_name}
+                </h2>
+                <p className="text-sm text-white/50 tracking-wider font-mono">{fmtSeats(popup.ticket)}</p>
+                {popup.ticket.qty > 1 && (
+                  <p className="text-xs text-white/35 mt-1">{popup.ticket.qty} seats</p>
+                )}
+              </>
+            ) : (
+              <p className="text-base text-white/70 text-center">{popup.message}</p>
+            )}
+
+            <p className="text-[10px] text-white/25 tracking-widest uppercase mt-12">tap to dismiss</p>
           </div>
         );
       })()}
+
+      {/* ── Header ── */}
+      <div className="flex items-center justify-between px-5 pt-6 pb-2">
+        <div>
+          <p className="text-[8px] tracking-[0.32em] uppercase text-[#901A1C]">Inkpot India</p>
+          <p className="text-[13px] text-white/80 mt-0.5 font-light" style={{ fontFamily: "Georgia,serif", fontStyle: "italic" }}>
+            The Living Table — 28 June
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={() => loadCache(pw)}
+            className="text-[8px] tracking-[0.16em] uppercase text-white/25 border border-white/10 px-3 py-1.5 hover:border-white/25 transition-colors">
+            Refresh
+          </button>
+          <button onClick={handleLogout}
+            className="text-[8px] tracking-[0.16em] uppercase text-white/20 border border-white/8 px-3 py-1.5 hover:text-white/40 transition-colors">
+            Log out
+          </button>
+        </div>
+      </div>
+
+      {/* ── Stats ── */}
+      <div className="mx-5 mt-3 mb-5 grid grid-cols-3 gap-3">
+        <div className="bg-white/4 rounded-lg px-3 py-3 text-center border border-white/6">
+          <p className={`text-3xl font-light mb-0.5 ${checkedIn > 0 ? "text-green-400" : "text-white/30"}`}>{checkedIn}</p>
+          <p className="text-[8px] tracking-[0.2em] uppercase text-white/22">Checked In</p>
+        </div>
+        <div className="bg-white/4 rounded-lg px-3 py-3 text-center border border-white/6">
+          <p className="text-3xl font-light text-white/70 mb-0.5">{totalPaid}</p>
+          <p className="text-[8px] tracking-[0.2em] uppercase text-white/22">Total</p>
+        </div>
+        <div className="bg-white/4 rounded-lg px-3 py-3 text-center border border-white/6">
+          <p className={`text-3xl font-light mb-0.5 ${remaining > 0 ? "text-amber-400" : "text-white/30"}`}>{remaining}</p>
+          <p className="text-[8px] tracking-[0.2em] uppercase text-white/22">Remaining</p>
+        </div>
+      </div>
 
       {/* ── Camera ── */}
       <div className="px-5 mb-5">
         {scanning ? (
           <div>
-            <div id="qr-reader" className="w-full overflow-hidden rounded-sm border border-white/10" />
-            <button onClick={() => { scannerRef.current?.stop().catch(() => {}); setScanning(false); }}
-              className="w-full mt-3 border border-white/15 text-white/40 text-[9px] tracking-[0.22em] uppercase py-2.5 hover:border-white/30 transition-colors">
+            <div id="qr-reader" className="w-full rounded-xl overflow-hidden border border-white/8" />
+            <button
+              onClick={() => { scannerRef.current?.stop().catch(() => {}); setScanning(false); }}
+              className="w-full mt-3 py-3 border border-white/10 rounded-lg text-[9px] tracking-[0.22em] uppercase text-white/30 hover:border-white/25 hover:text-white/50 transition-colors"
+            >
               Stop Camera
             </button>
           </div>
         ) : (
-          <button onClick={() => setScanning(true)}
-            className="w-full bg-[#901A1C] text-white py-5 hover:bg-[#7a1517] transition-colors flex items-center justify-center gap-3 group">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" className="opacity-75 group-hover:opacity-100 transition-opacity">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+          <button
+            onClick={() => setScanning(true)}
+            className="w-full bg-[#901A1C] rounded-xl py-7 flex flex-col items-center gap-3 hover:bg-[#7a1517] active:bg-[#6b1214] transition-colors"
+          >
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" className="opacity-90">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
             </svg>
-            <span className="text-[11px] tracking-[0.22em] uppercase font-medium">Start Camera Scanner</span>
+            <span className="text-[11px] tracking-[0.3em] uppercase text-white/90 font-medium">Scan QR Code</span>
           </button>
         )}
       </div>
 
       {/* ── Divider ── */}
-      <div className="flex items-center gap-3 px-5 mb-4">
-        <div className="flex-1 h-px bg-white/8" />
-        <span className="text-[8px] tracking-[0.22em] uppercase text-white/22">Or enter seat number</span>
-        <div className="flex-1 h-px bg-white/8" />
+      <div className="flex items-center gap-4 px-5 mb-5">
+        <div className="flex-1 h-px bg-white/6" />
+        <span className="text-[8px] tracking-[0.28em] uppercase text-white/18">or search by seat</span>
+        <div className="flex-1 h-px bg-white/6" />
       </div>
 
-      {/* ── Manual lookup ── */}
-      <div className="px-5 mb-5">
-        <form onSubmit={handleManualSearch} className="flex gap-0">
-          <input type="text" placeholder="TLT-0012 or just 12"
+      {/* ── Manual search ── */}
+      <div className="px-5 pb-8">
+        <form onSubmit={handleManualSearch} className="flex gap-0 rounded-lg overflow-hidden border border-white/10">
+          <input
+            type="text" placeholder="TLT-0012 or just 12"
             value={manualSerial}
-            onChange={e => { setManualSerial(e.target.value); setManualResult(null); }}
-            className="flex-1 bg-white/5 border border-white/10 border-r-0 px-4 py-3 text-[13px] text-white outline-none focus:border-[#901A1C] placeholder-white/22"
+            onChange={e => { setManualSerial(e.target.value); setManualLookup(null); }}
+            className="flex-1 bg-white/5 px-4 py-3.5 text-[13px] text-white outline-none focus:bg-white/8 placeholder-white/18 transition-colors"
           />
           <button type="submit"
-            className="bg-white/8 border border-white/10 text-white/50 text-[9px] tracking-[0.18em] uppercase px-5 hover:bg-white/12 transition-colors whitespace-nowrap">
+            className="bg-white/8 border-l border-white/10 text-white/45 text-[9px] tracking-[0.2em] uppercase px-5 hover:bg-white/14 transition-colors whitespace-nowrap">
             Find
           </button>
         </form>
 
-        {manualResult === "notfound" && (
-          <div className="mt-3 p-4 bg-[#901A1C]/80 border border-[#901A1C]">
-            <p className="text-[13px] font-semibold">✕ Ticket not found</p>
-            <p className="text-[11px] opacity-75 mt-0.5">Check the number and try again.</p>
+        {/* Manual lookup result */}
+        {manualLookup === "notfound" && (
+          <div className="mt-3 rounded-lg bg-[#901A1C]/30 border border-[#901A1C]/50 px-4 py-3">
+            <p className="text-[13px] font-medium text-white/80">✕ Ticket not found</p>
+            <p className="text-[11px] text-white/40 mt-0.5">Check the seat number and try again.</p>
           </div>
         )}
 
-        {manualResult && manualResult !== "notfound" && (
-          <div className={`mt-3 p-4 border-l-4 ${
-            manualResult.checked_in ? "bg-amber-600 border-amber-400" :
-            manualResult.payment_status === "paid" ? "bg-green-700 border-green-400" :
-            "bg-[#901A1C] border-red-600"
+        {manualLookup && manualLookup !== "notfound" && (
+          <div className={`mt-3 rounded-lg border px-4 py-4 ${
+            manualLookup.checked_in ? "bg-amber-900/30 border-amber-700/50" :
+            manualLookup.payment_status === "paid" ? "bg-green-900/30 border-green-700/50" :
+            "bg-red-900/30 border-red-800/50"
           }`}>
-            <p className="text-[13px] font-semibold">
-              {manualResult.checked_in ? "⚠ Already Checked In" :
-               manualResult.payment_status === "paid" ? "✓ Valid Ticket" : "✕ Payment Incomplete"}
-            </p>
-            <p className="text-[11px] mt-1 opacity-85">
-              {manualResult.buyer_name} · {fmtSeats(manualResult)} · {manualResult.qty} seat{manualResult.qty > 1 ? "s" : ""}
-            </p>
-            {manualResult.checked_in_at && (
-              <p className="text-[10px] mt-0.5 opacity-65">
-                Checked in {new Date(manualResult.checked_in_at).toLocaleTimeString("en-IN")}
-              </p>
-            )}
-            {!manualResult.checked_in && manualResult.payment_status === "paid" && (
-              <button onClick={() => handleManualCheckIn(manualResult)} disabled={checkingIn}
-                className="mt-3 w-full bg-white/20 text-white text-[9px] tracking-[0.2em] uppercase py-2.5 hover:bg-white/30 transition-colors disabled:opacity-40">
-                {checkingIn ? "Checking in…" : "Mark as Checked In →"}
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[13px] font-medium text-white/85">{manualLookup.buyer_name}</p>
+                <p className="text-[11px] text-white/40 mt-0.5 font-mono">{fmtSeats(manualLookup)} · {manualLookup.qty} seat{manualLookup.qty > 1 ? "s" : ""}</p>
+                {manualLookup.checked_in_at && (
+                  <p className="text-[10px] text-white/30 mt-1">
+                    Checked in {new Date(manualLookup.checked_in_at).toLocaleTimeString("en-IN")}
+                  </p>
+                )}
+              </div>
+              <span className={`text-[8px] tracking-[0.14em] uppercase px-2 py-1 rounded-full shrink-0 ${
+                manualLookup.checked_in ? "bg-amber-500/30 text-amber-300" :
+                manualLookup.payment_status === "paid" ? "bg-green-500/30 text-green-300" :
+                "bg-red-500/30 text-red-300"
+              }`}>
+                {manualLookup.checked_in ? "Already In" : manualLookup.payment_status === "paid" ? "Valid" : "Unpaid"}
+              </span>
+            </div>
+
+            {!manualLookup.checked_in && manualLookup.payment_status === "paid" && (
+              <button
+                onClick={() => handleManualCheckIn(manualLookup)}
+                disabled={checkingIn}
+                className="w-full mt-4 bg-green-700 hover:bg-green-600 text-white text-[10px] tracking-[0.22em] uppercase py-3 rounded-lg transition-colors disabled:opacity-40"
+              >
+                {checkingIn ? "Checking in…" : "Check In →"}
               </button>
             )}
           </div>
         )}
-      </div>
 
-      {/* ── Recent check-ins ── */}
-      {recentCheckIns.length > 0 && (
-        <div className="px-5 mb-5">
-          <p className="text-[8px] tracking-[0.26em] uppercase text-white/22 mb-2">Recent Check-ins</p>
-          <div className="space-y-1">
-            {recentCheckIns.map((t, i) => (
-              <div key={`${t.id}-${i}`} className="flex items-center justify-between px-3 py-2 bg-white/4 border border-white/6">
-                <p className="text-[12px] text-white/70">{t.buyer_name}</p>
-                <p className="text-[10px] text-white/30 font-mono">{fmtSeats(t)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+        {/* Cache info */}
+        <p className="text-center text-[9px] text-white/15 mt-6 tracking-wide">
+          {cache.length} guests cached
+          {cacheTime && ` · ${cacheTime.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`}
+        </p>
+      </div>
 
     </div>
   );
