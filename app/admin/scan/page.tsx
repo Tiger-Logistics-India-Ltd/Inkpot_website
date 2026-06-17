@@ -292,7 +292,7 @@ export default function ScanPage() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="mx-6 mb-8 grid grid-cols-3 gap-3">
+      <div className="mx-6 mb-12 grid grid-cols-3 gap-3">
         <div className="bg-white/5 rounded-2xl px-3 py-4 md:py-5 text-center border border-white/8">
           <p className={`text-4xl md:text-5xl font-light mb-1 ${checkedIn > 0 ? "text-green-400" : "text-white/25"}`}>{checkedIn}</p>
           <p className="text-[8px] tracking-[0.18em] uppercase text-white/30">Checked In</p>
@@ -308,7 +308,7 @@ export default function ScanPage() {
       </div>
 
       {/* ── Camera ── */}
-      <div className="px-6 mb-8">
+      <div className="px-6 mb-10">
         {scanning ? (
           <div>
             <div id="qr-reader" className="w-full rounded-2xl overflow-hidden border border-white/10" />
@@ -338,7 +338,7 @@ export default function ScanPage() {
       </div>
 
       {/* ── Divider ── */}
-      <div className="flex items-center gap-4 px-6 mb-6">
+      <div className="flex items-center gap-4 px-6 mb-8">
         <div className="flex-1 h-px bg-white/8" />
         <span className="text-[8px] tracking-[0.28em] uppercase text-white/22">or search by seat</span>
         <div className="flex-1 h-px bg-white/8" />
