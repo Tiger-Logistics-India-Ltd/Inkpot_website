@@ -104,12 +104,14 @@ export default function ScanPage() {
   // ── QR Scanner ────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!authed || !scanning) return;
-    let html5Scanner: any;
+    let scanner: any;
+    let started = false;
+
     async function startScanner() {
       const { Html5Qrcode } = await import("html5-qrcode");
-      html5Scanner = new Html5Qrcode("qr-reader");
-      scannerRef.current = html5Scanner;
-      await html5Scanner.start(
+      scanner = new Html5Qrcode("qr-reader");
+      scannerRef.current = scanner;
+      await scanner.start(
         { facingMode: "environment" },
         { fps: 10, qrbox: { width: 260, height: 260 } },
         async (decodedText: string) => {
@@ -119,12 +121,19 @@ export default function ScanPage() {
         },
         () => {}
       );
+      started = true;
     }
+
     startScanner().catch(() => {
       showPopup({ status: "invalid", message: "Camera unavailable." });
       setScanning(false);
     });
-    return () => { scannerRef.current?.stop().catch(() => {}); };
+
+    return () => {
+      // Only stop if we confirmed it started — prevents the double-stop crash
+      if (started) { scanner?.stop().catch(() => {}); }
+      scannerRef.current = null;
+    };
   }, [authed, scanning]);
 
   // ── Check-in ─────────────────────────────────────────────────────────────
@@ -304,7 +313,7 @@ export default function ScanPage() {
           <div>
             <div id="qr-reader" className="w-full rounded-2xl overflow-hidden border border-white/10" />
             <button
-              onClick={() => { scannerRef.current?.stop().catch(() => {}); setScanning(false); }}
+              onClick={() => setScanning(false)}
               className="w-full mt-4 py-3.5 border border-white/10 rounded-2xl text-[9px] tracking-[0.22em] uppercase text-white/30 hover:border-white/25 hover:text-white/50 transition-colors"
             >
               Stop Camera
