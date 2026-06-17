@@ -16,10 +16,13 @@ const emailEnabled = () => !!process.env.RESEND_API_KEY?.trim();
 
 export async function POST(req: Request) {
   try {
-    const { name, email, phone, qty = 1, coupon_code, meals = [] } = await req.json();
+    const { name, email, phone, qty = 1, coupon_code, meals = [], terms_accepted } = await req.json();
 
     if (!name?.trim() || !email?.trim() || !phone?.trim()) {
       return NextResponse.json({ error: "All fields are required." }, { status: 400 });
+    }
+    if (terms_accepted !== true) {
+      return NextResponse.json({ error: "You must accept the Terms & Conditions to proceed." }, { status: 400 });
     }
     // Basic format validation
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
@@ -120,6 +123,7 @@ export async function POST(req: Request) {
           seat_numbers: seatNumbers,
           qr_token: qrToken,
           meal_preferences: safeMeals,
+          terms_accepted_at: new Date().toISOString(),
         })
         .select("id")
         .single();
@@ -210,6 +214,7 @@ export async function POST(req: Request) {
           coupon_code: appliedCoupon,
           discount_amount: discountPaise,
           meal_preferences: safeMeals,
+          terms_accepted_at: new Date().toISOString(),
         })
         .select("id")
         .single();

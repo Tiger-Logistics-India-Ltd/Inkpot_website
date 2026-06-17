@@ -54,7 +54,10 @@ export default function LivingTablePage() {
   const [ticket, setTicket]       = useState<TicketInfo | null>(null);
   const [qr, setQr]               = useState("");
   const [showModal, setShowModal] = useState(false);
-  const formRef = useRef<HTMLDivElement>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsOpen, setTermsOpen]         = useState(false);
+  const formRef  = useRef<HTMLDivElement>(null);
+  const termsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch("/api/tickets/count")
@@ -90,7 +93,7 @@ export default function LivingTablePage() {
       const res  = await fetch("/api/tickets/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, qty, coupon_code: coupon.trim() || undefined, meals }),
+        body: JSON.stringify({ name, email, phone, qty, coupon_code: coupon.trim() || undefined, meals, terms_accepted: termsAccepted }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -758,6 +761,54 @@ export default function LivingTablePage() {
           </div>
         </section>
 
+        {/* ── 8. TERMS & CONDITIONS ── */}
+        <div ref={termsRef} id="terms" style={{ background: "#0A0806", padding: "clamp(28px, 3.5vw, 48px) clamp(24px, 8vw, 120px)" }}>
+          <button
+            type="button"
+            onClick={() => setTermsOpen(o => !o)}
+            style={{ width: "100%", background: "none", border: "none", padding: 0, display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", gap: "16px" }}
+          >
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(244,239,230,0.3)", margin: 0 }}>
+              Terms &amp; Conditions
+            </p>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(244,239,230,0.3)" strokeWidth="1.5" strokeLinecap="round" style={{ flexShrink: 0, transition: "transform 0.3s", transform: termsOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+
+          <AnimatePresence>
+            {termsOpen && (
+              <motion.div
+                key="terms-body"
+                initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.35 }}
+                style={{ overflow: "hidden" }}
+              >
+                <div style={{ paddingTop: "28px", maxWidth: "680px" }}>
+                  {([
+                    { title: "All Sales Are Final", body: "Tickets are non-refundable. Once your booking is confirmed, no cancellations or exchanges are permitted under any circumstances." },
+                    { title: "Non-Transferable", body: "Tickets are issued in the buyer's name and cannot be transferred to another person or resold." },
+                    { title: "Meal Preferences Are Locked", body: "Vegetarian or non-vegetarian preferences selected at checkout cannot be changed after your booking is confirmed." },
+                    { title: "Age Restriction — 18 and Above", body: "This is a strictly adults-only event. A valid government-issued photo ID is required at entry. Entry will be refused without it." },
+                    { title: "No Children or Pets", body: "Guests under 18 years of age and pets are not permitted at the venue." },
+                    { title: "Right to Refuse Entry", body: "Inkpot India reserves the right to refuse entry to any guest who appears intoxicated, disruptive, or unable to produce valid identification." },
+                    { title: "Event Changes", body: "In the unlikely event of a cancellation or significant change by the organiser, registered guests will be notified via the email address provided at booking." },
+                  ] as { title: string; body: string }[]).map((item, i, arr) => (
+                    <div key={i} style={{ paddingBottom: "16px", marginBottom: "16px", borderBottom: i < arr.length - 1 ? "1px solid rgba(244,239,230,0.06)" : "none" }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(244,239,230,0.4)", margin: "0 0 5px" }}>
+                        {item.title}
+                      </p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "rgba(244,239,230,0.28)", lineHeight: 1.85, margin: 0 }}>
+                        {item.body}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
       </main>
 
       {/* ── CONTACT MODAL ── */}
@@ -823,6 +874,31 @@ export default function LivingTablePage() {
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "#166534", fontWeight: 600, margin: 0 }}>− ₹{(discount / 100).toLocaleString("en-IN")}</p>
                   </div>
                 )}
+
+                <div style={{ margin: "24px 0 20px", display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                  <input
+                    type="checkbox"
+                    id="tlt-terms"
+                    required
+                    checked={termsAccepted}
+                    onChange={e => setTermsAccepted(e.target.checked)}
+                    style={{ marginTop: "3px", flexShrink: 0, accentColor: "#901A1C", cursor: "pointer", width: "14px", height: "14px" }}
+                  />
+                  <label htmlFor="tlt-terms" style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "rgba(0,0,0,0.5)", lineHeight: 1.75, cursor: "pointer" }}>
+                    I agree to the{" "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowModal(false);
+                        setTimeout(() => { termsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); setTermsOpen(true); }, 280);
+                      }}
+                      style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: "#901A1C", fontFamily: "var(--font-body)", fontSize: "11px", textDecoration: "underline" }}
+                    >
+                      Terms &amp; Conditions
+                    </button>
+                    . Tickets are non-refundable, non-cancellable, and non-transferable.
+                  </label>
+                </div>
 
                 {error && (
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#901A1C", lineHeight: 1.7, marginBottom: "16px" }}>
