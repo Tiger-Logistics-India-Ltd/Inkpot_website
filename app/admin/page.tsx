@@ -87,7 +87,8 @@ export default function AdminPage() {
     try {
       const res = await fetch("/api/admin/guests", { headers: { "x-admin-password": p } });
       const data = await res.json();
-      if (!res.ok) { setError("Wrong password."); return; }
+      if (res.status === 401) { setError("Wrong password."); return; }
+      if (!res.ok) { setError(data.error ?? "Server error — run the pending Supabase migration."); return; }
       setTickets(data.tickets);
       setStats(data.stats);
       setAuthed(true);
