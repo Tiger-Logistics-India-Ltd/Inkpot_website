@@ -189,6 +189,13 @@ export default function AdminPage() {
   const archivedCount = tickets.filter(t => t.archived).length;
   const pendingCount  = tickets.filter(t => !t.archived && t.payment_status === "pending").length;
 
+  // Computed from non-archived paid tickets only
+  const activePaid     = tickets.filter(t => !t.archived && t.payment_status === "paid");
+  const seatsSold      = activePaid.reduce((s, t) => s + (t.qty ?? 1), 0);
+  const seatsRemaining = TOTAL - seatsSold;
+  const revenue        = seatsSold * 6500;
+  const checkedInCount = activePaid.filter(t => t.checked_in).length;
+
   // ── Login ─────────────────────────────────────────────────────────────────
   if (!authed) {
     return (
@@ -246,10 +253,10 @@ export default function AdminPage() {
         {/* ── Stats ── */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Seats Sold",      value: `${stats?.seats_sold ?? 0} / ${TOTAL}`,                    accent: false },
-            { label: "Seats Remaining", value: stats?.seats_remaining ?? TOTAL,                            accent: false },
-            { label: "Revenue",         value: `₹${((stats?.seats_sold ?? 0) * 6500).toLocaleString("en-IN")}`, accent: false },
-            { label: "Checked In",      value: `${stats?.checked_in_count ?? 0} / ${stats?.seats_sold ?? 0}`, accent: true },
+            { label: "Seats Sold",      value: `${seatsSold} / ${TOTAL}`,                              accent: false },
+            { label: "Seats Remaining", value: seatsRemaining,                                          accent: false },
+            { label: "Revenue",         value: `₹${revenue.toLocaleString("en-IN")}`,                  accent: false },
+            { label: "Checked In",      value: `${checkedInCount} / ${seatsSold}`,                     accent: true },
           ].map(s => (
             <div key={s.label} className={`bg-white px-5 py-4 border-t-2 ${s.accent ? "border-[#901A1C]" : "border-black/8"} shadow-[0_1px_4px_rgba(0,0,0,0.06)]`}>
               <p className="text-[8px] tracking-[0.28em] uppercase text-black/35 mb-1.5">{s.label}</p>
