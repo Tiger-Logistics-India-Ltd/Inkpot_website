@@ -50,8 +50,10 @@ export default function AdminPage() {
   const [stats, setStats]       = useState<Stats | null>(null);
   const [filter, setFilter]     = useState<"all" | "paid" | "pending" | "checked_in">("all");
   const [search, setSearch]     = useState("");
-  const [resending, setResending]   = useState<string | null>(null);
+  const [resending, setResending]       = useState<string | null>(null);
   const [resendResult, setResendResult] = useState<Record<string, "ok" | "err">>({});
+  const [markingPaid, setMarkingPaid]   = useState<string | null>(null);
+  const [markPaidResult, setMarkPaidResult] = useState<Record<string, "ok" | "err">>({});
 
   const fetchData = useCallback(async (p: string) => {
     setLoading(true);
@@ -72,6 +74,24 @@ export default function AdminPage() {
   }, []);
 
   const refresh = () => fetchData(pw);
+
+  async function handleMarkPaid(ticketId: string) {
+    if (!confirm("Mark this ticket as paid and send the confirmation email?")) return;
+    setMarkingPaid(ticketId);
+    try {
+      const res = await fetch("/api/admin/mark-paid", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-password": pw },
+        body: JSON.stringify({ ticket_id: ticketId }),
+      });
+      setMarkPaidResult(prev => ({ ...prev, [ticketId]: res.ok ? "ok" : "err" }));
+      if (res.ok) setTimeout(refresh, 800);
+    } catch {
+      setMarkPaidResult(prev => ({ ...prev, [ticketId]: "err" }));
+    } finally {
+      setMarkingPaid(null);
+    }
+  }
 
   async function handleResend(ticketId: string) {
     setResending(ticketId);
@@ -281,7 +301,20 @@ export default function AdminPage() {
                          "Resend"}
                       </button>
                     ) : (
-                      <span className="text-black/20 text-xs">—</span>
+                      <button
+                        onClick={() => handleMarkPaid(t.id)}
+                        disabled={markingPaid === t.id}
+                        className={`text-[9px] tracking-[0.15em] uppercase px-2 py-1 transition-colors ${
+                          markPaidResult[t.id] === "ok"  ? "bg-green-50 text-green-700" :
+                          markPaidResult[t.id] === "err" ? "bg-red-50 text-red-700" :
+                          "border border-amber-400 text-amber-700 hover:bg-amber-50"
+                        }`}
+                      >
+                        {markingPaid === t.id     ? "…" :
+                         markPaidResult[t.id] === "ok"  ? "✓ Confirmed" :
+                         markPaidResult[t.id] === "err" ? "✗ Error" :
+                         "Mark as Paid"}
+                      </button>
                     )}
                   </td>
                 </tr>
