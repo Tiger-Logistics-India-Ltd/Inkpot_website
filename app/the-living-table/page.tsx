@@ -761,6 +761,23 @@ export default function LivingTablePage() {
           </div>
         </section>
 
+        {/* ── CTA strip ── */}
+        <div style={{ background: "#F4EFE6", padding: "clamp(36px, 4.5vw, 60px) 24px", textAlign: "center" }}>
+          <button
+            onClick={scrollToForm}
+            style={{ background: "#901A1C", color: "#ffffff", padding: "16px 52px", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", border: "none", cursor: "pointer", transition: "background 0.25s" }}
+            onMouseEnter={e => (e.currentTarget.style.background = "#7a1517")}
+            onMouseLeave={e => (e.currentTarget.style.background = "#901A1C")}
+          >
+            Reserve Your Seat →
+          </button>
+          {available !== null && available > 0 && (
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.28)", marginTop: "12px", letterSpacing: "0.08em" }}>
+              Limited seats available
+            </p>
+          )}
+        </div>
+
         {/* ── 8. TERMS & CONDITIONS ── */}
         <div ref={termsRef} id="terms" style={{ background: "#0A0806", padding: "clamp(28px, 3.5vw, 48px) clamp(24px, 8vw, 120px)" }}>
           <button
