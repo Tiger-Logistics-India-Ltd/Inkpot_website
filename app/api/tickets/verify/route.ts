@@ -2,7 +2,6 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import QRCode from "qrcode";
 
 const dbEnabled = () =>
   !!(process.env.SUPABASE_URL?.trim() && process.env.SUPABASE_SERVICE_ROLE_KEY?.trim());
@@ -119,15 +118,8 @@ export async function POST(req: Request) {
       if (updateError) throw updateError;
     }
 
-    // ── 7. Generate QR code ───────────────────────────────────────────────────
-    const qrContent = `${SITE_URL}/ticket/${finalTicketId}`;
-    const qrDataUrl = await QRCode.toDataURL(qrContent, {
-      width: 400,
-      margin: 2,
-      color: { dark: "#1a1a1a", light: "#ffffff" },
-    });
-
-    // ── 8. Send confirmation email ────────────────────────────────────────────
+    // ── 7. Send confirmation email ────────────────────────────────────────────
+    const qrImageUrl = `${SITE_URL}/api/qr/${finalTicketId}`;
     if (emailEnabled() && resolvedBuyerEmail) {
       const { sendTicketConfirmation } = await import("@/lib/email");
       sendTicketConfirmation({
@@ -136,7 +128,7 @@ export async function POST(req: Request) {
         ticketNumber,
         seatNumbers,
         qty: seats,
-        qrDataUrl,
+        qrImageUrl,
         ticketId: finalTicketId,
         amount: resolvedAmount,
         siteUrl: SITE_URL,

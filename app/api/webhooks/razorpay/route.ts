@@ -2,7 +2,6 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import QRCode from "qrcode";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.inkpotindia.com";
 const emailEnabled = () => !!process.env.RESEND_API_KEY?.trim();
@@ -107,13 +106,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "DB update failed." }, { status: 500 });
   }
 
-  // Generate QR and send confirmation email
-  const qrContent = `${SITE_URL}/ticket/${ticket.id}`;
-  const qrDataUrl = await QRCode.toDataURL(qrContent, {
-    width: 400, margin: 2,
-    color: { dark: "#1a1a1a", light: "#ffffff" },
-  });
-
+  // Send confirmation email
+  const qrImageUrl = `${SITE_URL}/api/qr/${ticket.id}`;
   if (emailEnabled()) {
     const { sendTicketConfirmation } = await import("@/lib/email");
     sendTicketConfirmation({
@@ -122,7 +116,7 @@ export async function POST(req: Request) {
       ticketNumber,
       seatNumbers,
       qty: seats,
-      qrDataUrl,
+      qrImageUrl,
       ticketId: ticket.id,
       amount: ticket.amount,
       siteUrl: SITE_URL,

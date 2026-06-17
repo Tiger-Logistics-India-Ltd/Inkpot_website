@@ -13,7 +13,7 @@ interface TicketEmailParams {
   ticketNumber: number;
   seatNumbers: number[];
   qty: number;
-  qrDataUrl: string;
+  qrImageUrl: string;
   ticketId: string;
   amount: number;
   siteUrl: string;
@@ -26,7 +26,7 @@ export async function sendTicketConfirmation({
   ticketNumber,
   seatNumbers,
   qty,
-  qrDataUrl,
+  qrImageUrl,
   ticketId,
   amount,
   siteUrl,
@@ -145,7 +145,7 @@ export async function sendTicketConfirmation({
                 Your entry QR code
               </p>
               <img
-                src="${qrDataUrl}"
+                src="${qrImageUrl}"
                 alt="Entry QR Code"
                 width="200"
                 height="200"

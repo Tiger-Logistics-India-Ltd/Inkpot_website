@@ -2,7 +2,6 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import QRCode from "qrcode";
 import { getSupabase } from "@/lib/supabase";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.inkpotindia.com";
@@ -42,12 +41,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Ticket is not paid — cannot resend" }, { status: 400 });
   }
 
-  const qrContent = `${SITE_URL}/ticket/${ticket.id}`;
-  const qrDataUrl = await QRCode.toDataURL(qrContent, {
-    width: 400,
-    margin: 2,
-    color: { dark: "#1a1a1a", light: "#ffffff" },
-  });
+  const qrImageUrl = `${SITE_URL}/api/qr/${ticket.id}`;
 
   const { sendTicketConfirmation } = await import("@/lib/email");
   await sendTicketConfirmation({
@@ -56,7 +50,7 @@ export async function POST(req: Request) {
     ticketNumber: ticket.ticket_number,
     seatNumbers: ticket.seat_numbers,
     qty: ticket.qty,
-    qrDataUrl,
+    qrImageUrl,
     ticketId: ticket.id,
     amount: ticket.amount,
     siteUrl: SITE_URL,
