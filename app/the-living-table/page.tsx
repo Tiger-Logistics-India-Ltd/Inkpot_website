@@ -779,16 +779,16 @@ export default function LivingTablePage() {
         </div>
 
         {/* ── 8. TERMS & CONDITIONS ── */}
-        <div ref={termsRef} id="terms" style={{ background: "#0A0806", padding: "clamp(28px, 3.5vw, 48px) clamp(24px, 8vw, 120px)" }}>
+        <div ref={termsRef} id="terms" style={{ background: "#F4EFE6", padding: "clamp(28px, 3.5vw, 48px) clamp(24px, 8vw, 120px)", borderTop: "1px solid rgba(0,0,0,0.07)" }}>
           <button
             type="button"
             onClick={() => setTermsOpen(o => !o)}
             style={{ width: "100%", background: "none", border: "none", padding: 0, display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", gap: "16px" }}
           >
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(244,239,230,0.3)", margin: 0 }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(0,0,0,0.32)", margin: 0 }}>
               Terms &amp; Conditions
             </p>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(244,239,230,0.3)" strokeWidth="1.5" strokeLinecap="round" style={{ flexShrink: 0, transition: "transform 0.3s", transform: termsOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.32)" strokeWidth="1.5" strokeLinecap="round" style={{ flexShrink: 0, transition: "transform 0.3s", transform: termsOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
               <path d="M6 9l6 6 6-6" />
             </svg>
           </button>
@@ -811,11 +811,11 @@ export default function LivingTablePage() {
                     { title: "Right to Refuse Entry", body: "Inkpot India reserves the right to refuse entry to any guest who appears intoxicated, disruptive, or unable to produce valid identification." },
                     { title: "Event Changes", body: "In the unlikely event of a cancellation or significant change by the organiser, registered guests will be notified via the email address provided at booking." },
                   ] as { title: string; body: string }[]).map((item, i, arr) => (
-                    <div key={i} style={{ paddingBottom: "16px", marginBottom: "16px", borderBottom: i < arr.length - 1 ? "1px solid rgba(244,239,230,0.06)" : "none" }}>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(244,239,230,0.4)", margin: "0 0 5px" }}>
+                    <div key={i} style={{ paddingBottom: "16px", marginBottom: "16px", borderBottom: i < arr.length - 1 ? "1px solid rgba(0,0,0,0.07)" : "none" }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", margin: "0 0 5px" }}>
                         {item.title}
                       </p>
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "rgba(244,239,230,0.28)", lineHeight: 1.85, margin: 0 }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "rgba(0,0,0,0.5)", lineHeight: 1.85, margin: 0 }}>
                         {item.body}
                       </p>
                     </div>
