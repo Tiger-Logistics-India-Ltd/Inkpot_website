@@ -785,10 +785,10 @@ export default function LivingTablePage() {
             onClick={() => setTermsOpen(o => !o)}
             style={{ width: "100%", background: "none", border: "none", padding: 0, display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", gap: "16px" }}
           >
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(0,0,0,0.32)", margin: 0 }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#1a1a1a", fontWeight: 600, margin: 0 }}>
               Terms &amp; Conditions
             </p>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.32)" strokeWidth="1.5" strokeLinecap="round" style={{ flexShrink: 0, transition: "transform 0.3s", transform: termsOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" style={{ flexShrink: 0, transition: "transform 0.3s", transform: termsOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
               <path d="M6 9l6 6 6-6" />
             </svg>
           </button>
