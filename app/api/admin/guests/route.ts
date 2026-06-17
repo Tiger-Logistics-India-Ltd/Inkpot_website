@@ -24,7 +24,7 @@ export async function GET(req: Request) {
   const [{ data: tickets, error }, { data: stats }] = await Promise.all([
     supabase
       .from("living_table_tickets")
-      .select("id, ticket_number, seat_numbers, buyer_name, buyer_email, buyer_phone, qty, amount, payment_status, checked_in, checked_in_at, coupon_code, meal_preferences, created_at")
+      .select("id, ticket_number, seat_numbers, buyer_name, buyer_email, buyer_phone, qty, amount, payment_status, checked_in, checked_in_at, coupon_code, meal_preferences, archived, notes, created_at")
       .order("ticket_number", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: true }),
     supabase.from("living_table_stats").select("*").single(),
