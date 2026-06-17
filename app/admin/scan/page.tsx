@@ -292,23 +292,23 @@ export default function ScanPage() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="mx-6 mb-12 grid grid-cols-3 gap-3">
-        <div className="bg-white/5 rounded-2xl px-3 py-4 md:py-5 text-center border border-white/8">
-          <p className={`text-4xl md:text-5xl font-light mb-1 ${checkedIn > 0 ? "text-green-400" : "text-white/25"}`}>{checkedIn}</p>
+      <div className="mx-6 mt-2 grid grid-cols-3 gap-3">
+        <div className="bg-white/5 rounded-2xl px-3 py-5 text-center border border-white/8">
+          <p className={`text-4xl font-light mb-1 ${checkedIn > 0 ? "text-green-400" : "text-white/25"}`}>{checkedIn}</p>
           <p className="text-[8px] tracking-[0.18em] uppercase text-white/30">Checked In</p>
         </div>
-        <div className="bg-white/5 rounded-2xl px-3 py-4 md:py-5 text-center border border-white/8">
-          <p className="text-4xl md:text-5xl font-light text-white/60 mb-1">{totalPaid}</p>
+        <div className="bg-white/5 rounded-2xl px-3 py-5 text-center border border-white/8">
+          <p className="text-4xl font-light text-white/60 mb-1">{totalPaid}</p>
           <p className="text-[8px] tracking-[0.18em] uppercase text-white/30">Total</p>
         </div>
-        <div className="bg-white/5 rounded-2xl px-3 py-4 md:py-5 text-center border border-white/8">
-          <p className={`text-4xl md:text-5xl font-light mb-1 ${remaining > 0 ? "text-amber-400" : "text-white/25"}`}>{remaining}</p>
+        <div className="bg-white/5 rounded-2xl px-3 py-5 text-center border border-white/8">
+          <p className={`text-4xl font-light mb-1 ${remaining > 0 ? "text-amber-400" : "text-white/25"}`}>{remaining}</p>
           <p className="text-[8px] tracking-[0.18em] uppercase text-white/30">Remaining</p>
         </div>
       </div>
 
-      {/* ── Camera ── */}
-      <div className="px-6 mb-10">
+      {/* ── Camera — flex-1 so it fills the middle of the screen ── */}
+      <div className="flex-1 flex flex-col justify-center px-6 py-8">
         {scanning ? (
           <div>
             <div id="qr-reader" className="w-full rounded-2xl overflow-hidden border border-white/10" />
@@ -322,30 +322,29 @@ export default function ScanPage() {
         ) : (
           <button
             onClick={() => setScanning(true)}
-            className="w-full bg-[#901A1C] rounded-2xl py-10 md:py-12 flex flex-col items-center gap-4 hover:bg-[#7a1517] active:bg-[#6b1214] transition-colors"
-            style={{ boxShadow: "0 8px 32px rgba(144,26,28,0.35)" }}
+            className="w-full bg-[#901A1C] rounded-2xl py-12 flex flex-col items-center gap-4 hover:bg-[#7a1517] active:bg-[#6b1214] transition-colors"
+            style={{ boxShadow: "0 8px 40px rgba(144,26,28,0.4)" }}
           >
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.3" strokeLinecap="round" className="opacity-90">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.3" strokeLinecap="round" className="opacity-90">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
               <circle cx="12" cy="13" r="4"/>
             </svg>
             <div className="text-center">
-              <p className="text-sm md:text-base tracking-[0.28em] uppercase text-white font-medium">Scan QR Code</p>
-              <p className="text-[10px] text-white/45 tracking-wider mt-1">Point camera at guest QR</p>
+              <p className="text-base tracking-[0.28em] uppercase text-white font-medium">Scan QR Code</p>
+              <p className="text-[10px] text-white/45 tracking-wider mt-1.5">Point camera at guest QR</p>
             </div>
           </button>
         )}
       </div>
 
-      {/* ── Divider ── */}
-      <div className="flex items-center gap-4 px-6 mb-8">
-        <div className="flex-1 h-px bg-white/8" />
-        <span className="text-[8px] tracking-[0.28em] uppercase text-white/22">or search by seat</span>
-        <div className="flex-1 h-px bg-white/8" />
-      </div>
-
-      {/* ── Manual search ── */}
+      {/* ── Divider + Manual search — pinned to bottom ── */}
       <div className="px-6 pb-10">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="flex-1 h-px bg-white/8" />
+          <span className="text-[8px] tracking-[0.28em] uppercase text-white/22">or search by seat</span>
+          <div className="flex-1 h-px bg-white/8" />
+        </div>
+
         <form onSubmit={handleManualSearch} className="flex gap-0 rounded-2xl overflow-hidden border border-white/10">
           <input
             type="text" placeholder="TLT-0012  or just  12"
