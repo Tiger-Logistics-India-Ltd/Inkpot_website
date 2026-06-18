@@ -75,7 +75,6 @@ export async function sendTicketConfirmation({
         filename: "entry-qr.png",
         content: qrBuffer,
         content_type: "image/png",
-        content_id: "entry-qr",
       },
     ],
     html: `<!DOCTYPE html>
@@ -155,18 +154,18 @@ export async function sendTicketConfirmation({
           <!-- QR code -->
           <tr>
             <td style="padding:32px 48px 0;text-align:center;">
-              <p style="margin:0 0 16px;font-size:9px;letter-spacing:0.26em;text-transform:uppercase;color:rgba(0,0,0,0.38);">
+              <p style="margin:0 0 12px;font-size:9px;letter-spacing:0.26em;text-transform:uppercase;color:rgba(0,0,0,0.38);">
                 Your entry QR code
               </p>
-              <img
-                src="cid:entry-qr"
-                alt="Entry QR Code"
-                width="200"
-                height="200"
-                style="display:block;margin:0 auto;border:1px solid rgba(0,0,0,0.08);"
-              />
-              <p style="margin:12px 0 0;font-size:10px;color:rgba(0,0,0,0.35);letter-spacing:0.05em;">
-                Screenshot or save this email. Present at entry.
+              <p style="margin:0 0 20px;font-size:13px;color:rgba(0,0,0,0.55);line-height:1.7;">
+                Your QR code is <strong style="color:#1a1a1a;">attached to this email</strong> as <em>entry-qr.png</em>.<br />Open the attachment and show it at the door.
+              </p>
+              <a href="${siteUrl}/ticket/${ticketId}"
+                style="display:inline-block;background:#901A1C;color:#ffffff;text-decoration:none;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;padding:14px 32px;">
+                View My Ticket &rarr;
+              </a>
+              <p style="margin:16px 0 0;font-size:10px;color:rgba(0,0,0,0.35);letter-spacing:0.05em;">
+                Opens your ticket page with a scannable QR code.
               </p>
             </td>
           </tr>
