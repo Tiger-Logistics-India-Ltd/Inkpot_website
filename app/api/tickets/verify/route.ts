@@ -140,7 +140,6 @@ export async function POST(req: Request) {
         ticketNumber,
         seatNumbers,
         qty: seats,
-        qrDataUrl,
         buyerName: resolvedBuyerName,
         buyerEmail: resolvedBuyerEmail,
       },

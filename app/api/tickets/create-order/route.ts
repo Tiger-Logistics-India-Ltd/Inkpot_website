@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import crypto from "crypto";
-import QRCode from "qrcode";
 
 const PRICE_PAISE = 650000; // ₹6,500
 const MAX_TICKETS = 100;
@@ -145,13 +144,6 @@ export async function POST(req: Request) {
         }
       }
 
-      // Generate QR
-      const qrContent = `${SITE_URL}/ticket/${ticket.id}`;
-      const qrDataUrl = await QRCode.toDataURL(qrContent, {
-        width: 400, margin: 2,
-        color: { dark: "#1a1a1a", light: "#ffffff" },
-      });
-
       // Send confirmation email
       if (emailEnabled()) {
         const { sendTicketConfirmation } = await import("@/lib/email");
@@ -161,7 +153,6 @@ export async function POST(req: Request) {
           ticketNumber,
           seatNumbers,
           qty: seats,
-          qrDataUrl,
           ticketId: ticket.id,
           amount: 0,
           siteUrl: SITE_URL,
