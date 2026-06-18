@@ -74,7 +74,7 @@ export async function sendTicketConfirmation({
       {
         filename: "entry-qr.png",
         content: qrBuffer,
-        content_type: "image/png",
+        contentType: "image/png",
       },
     ],
     html: `<!DOCTYPE html>
