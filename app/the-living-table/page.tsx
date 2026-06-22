@@ -86,9 +86,24 @@ export default function LivingTablePage() {
       .catch(() => {});
   }, []);
 
-  // Hero video: delay play by 1.2s so LCP paints first; poster shows instantly
+  // Hero video: inject <source> tags via JS after 1.2s so browser fetches 0 bytes
+  // during the critical path. preload="none" alone doesn't stop Chrome from
+  // beginning a fetch when <source> elements are in the DOM.
   useEffect(() => {
-    const t = setTimeout(() => { heroVideoRef.current?.play().catch(() => {}); }, 1200);
+    const t = setTimeout(() => {
+      const video = heroVideoRef.current;
+      if (!video) return;
+      const webm = document.createElement("source");
+      webm.src = "/images/thelivingtable/hero.webm";
+      webm.type = "video/webm";
+      const mp4 = document.createElement("source");
+      mp4.src = "/images/thelivingtable/Dining_table_in_Old_Delhi_202606091648.mp4";
+      mp4.type = "video/mp4";
+      video.appendChild(webm);
+      video.appendChild(mp4);
+      video.load();
+      video.play().catch(() => {});
+    }, 1200);
     return () => clearTimeout(t);
   }, []);
 
@@ -236,8 +251,6 @@ export default function LivingTablePage() {
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
             poster="/images/thelivingtable/38.png"
           >
-            <source src="/images/thelivingtable/hero.webm" type="video/webm" />
-            <source src="/images/thelivingtable/Dining_table_in_Old_Delhi_202606091648.mp4" type="video/mp4" />
             <track kind="captions" src="/empty.vtt" srcLang="en" label="No dialogue" />
           </video>
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,8,6,0.18) 0%, rgba(10,8,6,0.52) 55%, rgba(10,8,6,0.96) 100%)" }} />
@@ -249,8 +262,8 @@ export default function LivingTablePage() {
             textAlign: "center", padding: "0 24px",
           }}>
             <motion.div
-              initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, delay: 0.5 }}
+              initial={{ y: 20 }} animate={{ y: 0 }}
+              transition={{ duration: 0.9 }}
               style={{ marginBottom: "16px" }}
             >
               <Image

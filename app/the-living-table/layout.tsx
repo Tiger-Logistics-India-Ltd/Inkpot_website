@@ -34,21 +34,5 @@ export const metadata: Metadata = {
 };
 
 export default function LivingTableLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      {/* Preconnect to Razorpay origins — est. 860ms LCP savings */}
-      <link rel="preconnect" href="https://api.razorpay.com" />
-      <link rel="preconnect" href="https://cdn.razorpay.com" />
-      <link rel="preconnect" href="https://checkout-static-next.razorpay.com" />
-      {/* Preload the hero LCP image so the browser finds it immediately */}
-      <link
-        rel="preload"
-        as="image"
-        href="/images/thelivingtable/logo_the_right_one_1.svg"
-        // @ts-expect-error fetchPriority is valid HTML but not yet in React types
-        fetchpriority="high"
-      />
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
