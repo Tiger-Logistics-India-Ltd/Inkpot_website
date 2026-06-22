@@ -60,7 +60,7 @@ export async function POST(req: Request) {
       // a different (higher-value) ticket as paid by swapping ticket_id.
       const { data: existingTicket, error: fetchError } = await supabase
         .from("living_table_tickets")
-        .select("id, razorpay_order_id, qty, buyer_name, buyer_email, payment_status, amount, ticket_number, seat_numbers, meal_preferences")
+        .select("id, razorpay_order_id, qty, buyer_name, buyer_email, payment_status, amount, ticket_number, seat_numbers, meal_preferences, coupon_code")
         .eq("id", ticket_id)
         .single();
 
@@ -125,9 +125,26 @@ export async function POST(req: Request) {
         .eq("id", ticket_id);
 
       if (updateError) throw updateError;
+
+      // ── 7. Atomic coupon increment (deferred from create-order) ─────────────
+      if (existingTicket.coupon_code) {
+        const { data: coupon } = await supabase
+          .from("living_table_coupons")
+          .select("id, uses_count")
+          .eq("code", existingTicket.coupon_code)
+          .eq("active", true)
+          .single();
+        if (coupon) {
+          await supabase
+            .from("living_table_coupons")
+            .update({ uses_count: coupon.uses_count + 1 })
+            .eq("id", coupon.id)
+            .eq("uses_count", coupon.uses_count);
+        }
+      }
     }
 
-    // ── 7. Send confirmation email ────────────────────────────────────────────
+    // ── 8. Send confirmation email ────────────────────────────────────────────
     if (emailEnabled() && resolvedBuyerEmail) {
       const { sendTicketConfirmation } = await import("@/lib/email");
       sendTicketConfirmation({

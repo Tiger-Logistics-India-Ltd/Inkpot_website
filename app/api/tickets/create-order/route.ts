@@ -85,6 +85,16 @@ export async function POST(req: Request) {
       if ((count ?? 0) + seats > MAX_TICKETS) {
         return NextResponse.json({ error: "Not enough seats remaining." }, { status: 400 });
       }
+      // Per-email cap — prevents one person draining all inventory
+      const { data: emailTickets } = await supabase
+        .from("living_table_tickets")
+        .select("qty")
+        .eq("buyer_email", email.trim().toLowerCase())
+        .in("payment_status", ["paid", "pending"]);
+      const alreadyBooked = (emailTickets ?? []).reduce((s: number, t: { qty: number }) => s + (t.qty || 0), 0);
+      if (alreadyBooked + seats > 8) {
+        return NextResponse.json({ error: "You've already booked the maximum of 8 seats with this email." }, { status: 400 });
+      }
     }
 
     // ── FREE BOOKING (100% coupon — skip Razorpay entirely) ──────────────────
@@ -211,19 +221,8 @@ export async function POST(req: Request) {
         .single();
       if (insertError) throw insertError;
       ticketId = ticket.id;
-
-      // Atomic coupon increment — conditional on uses_count not having changed
-      if (couponId) {
-        const { data: updated } = await supabase
-          .from("living_table_coupons")
-          .update({ uses_count: couponUsesCount + 1 })
-          .eq("id", couponId)
-          .eq("uses_count", couponUsesCount)
-          .select("id");
-        if (!updated || updated.length === 0) {
-          return NextResponse.json({ error: "This coupon has already been used." }, { status: 400 });
-        }
-      }
+      // Coupon increment is deferred to verify route (after payment confirmed)
+      // to avoid permanently burning a slot if payment is abandoned.
     }
 
     return NextResponse.json({

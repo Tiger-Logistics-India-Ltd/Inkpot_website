@@ -8,7 +8,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     const { id } = await params;
     const { data, error } = await getSupabase()
       .from("living_table_tickets")
-      .select("id, ticket_number, buyer_name, buyer_email, payment_status, created_at")
+      .select("id, ticket_number, buyer_name, payment_status, created_at")
       .eq("id", id)
       .eq("payment_status", "paid")
       .single();
