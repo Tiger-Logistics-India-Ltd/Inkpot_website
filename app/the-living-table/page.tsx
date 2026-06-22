@@ -76,7 +76,6 @@ export default function LivingTablePage() {
   const [termsOpen, setTermsOpen]         = useState(false);
   const formRef      = useRef<HTMLDivElement>(null);
   const termsRef     = useRef<HTMLDivElement>(null);
-  const venueVideoRef= useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     fetch("/api/tickets/count")
@@ -85,23 +84,6 @@ export default function LivingTablePage() {
       .catch(() => {});
   }, []);
 
-  // Venue video: start buffering 400px before it enters the viewport so it's
-  // already loaded when the user reaches it (no visible load delay on scroll).
-  useEffect(() => {
-    const video = venueVideoRef.current;
-    if (!video) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          video.play().catch(() => {});
-          obs.disconnect();
-        }
-      },
-      { threshold: 0, rootMargin: "400px 0px" }
-    );
-    obs.observe(video);
-    return () => obs.disconnect();
-  }, []);
 
 
 
@@ -639,8 +621,7 @@ export default function LivingTablePage() {
             {/* Left — venue video */}
             <div className="tlt-why-video" style={{ position: "relative", overflow: "hidden" }}>
               <video
-                ref={venueVideoRef}
-                muted loop playsInline preload="none"
+                autoPlay muted loop playsInline
                 style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
               >
                 <source src="/images/thelivingtable/VenueRevel_Video.webm" type="video/webm" />
