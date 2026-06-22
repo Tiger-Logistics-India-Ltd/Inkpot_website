@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Script from "next/script";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -41,10 +40,17 @@ const PROGRAMME = [
 function waitForRazorpay(): Promise<void> {
   return new Promise((resolve, reject) => {
     if ((window as any).Razorpay) { resolve(); return; }
+    // Inject Razorpay script on first use — not on page load
+    if (!document.querySelector('script[src*="checkout.razorpay.com"]')) {
+      const s = document.createElement("script");
+      s.src = "https://checkout.razorpay.com/v1/checkout.js";
+      s.async = true;
+      document.head.appendChild(s);
+    }
     let attempts = 0;
     const poll = setInterval(() => {
       if ((window as any).Razorpay) { clearInterval(poll); resolve(); }
-      else if (++attempts > 20) { clearInterval(poll); reject(new Error("Payment gateway failed to load. Please refresh and try again.")); }
+      else if (++attempts > 30) { clearInterval(poll); reject(new Error("Payment gateway failed to load. Please refresh and try again.")); }
     }, 200);
   });
 }
@@ -68,14 +74,34 @@ export default function LivingTablePage() {
   const [menuOpen, setMenuOpen]   = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [termsOpen, setTermsOpen]         = useState(false);
-  const formRef  = useRef<HTMLDivElement>(null);
-  const termsRef = useRef<HTMLDivElement>(null);
+  const formRef      = useRef<HTMLDivElement>(null);
+  const termsRef     = useRef<HTMLDivElement>(null);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
+  const venueVideoRef= useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     fetch("/api/tickets/count")
       .then(r => r.json())
       .then(d => setAvailable(d.available))
       .catch(() => {});
+  }, []);
+
+  // Hero video: delay play by 1.2s so LCP paints first; poster shows instantly
+  useEffect(() => {
+    const t = setTimeout(() => { heroVideoRef.current?.play().catch(() => {}); }, 1200);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Venue video: play only when scrolled into view
+  useEffect(() => {
+    const video = venueVideoRef.current;
+    if (!video) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { video.play().catch(() => {}); obs.disconnect(); } },
+      { threshold: 0.15 }
+    );
+    obs.observe(video);
+    return () => obs.disconnect();
   }, []);
 
 
@@ -180,7 +206,6 @@ export default function LivingTablePage() {
 
   return (
     <>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
       <Navbar />
       <main style={{ background: "#0A0806" }}>
         <style>{`
@@ -206,11 +231,14 @@ export default function LivingTablePage() {
         {/* ── 1. HERO ── */}
         <section style={{ position: "relative", height: "100dvh", minHeight: "480px", overflow: "hidden" }}>
           <video
-            autoPlay muted loop playsInline
+            ref={heroVideoRef}
+            muted loop playsInline preload="none"
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
             poster="/images/thelivingtable/38.png"
           >
+            <source src="/images/thelivingtable/hero.webm" type="video/webm" />
             <source src="/images/thelivingtable/Dining_table_in_Old_Delhi_202606091648.mp4" type="video/mp4" />
+            <track kind="captions" src="/empty.vtt" srcLang="en" label="No dialogue" />
           </video>
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,8,6,0.18) 0%, rgba(10,8,6,0.52) 55%, rgba(10,8,6,0.96) 100%)" }} />
 
@@ -428,7 +456,7 @@ export default function LivingTablePage() {
                       <div>
                         {/* Seats stepper */}
                         <div style={{ marginBottom: "24px" }}>
-                          <label style={{ fontFamily: "var(--font-body)", fontSize: "8.5px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", display: "block", marginBottom: "12px" }}>
+                          <label style={{ fontFamily: "var(--font-body)", fontSize: "8.5px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(0,0,0,0.58)", display: "block", marginBottom: "12px" }}>
                             Number of Seats
                           </label>
                           <div style={{ display: "flex", alignItems: "center" }}>
@@ -440,7 +468,7 @@ export default function LivingTablePage() {
 
                         {/* Meal preferences */}
                         <div style={{ marginBottom: "28px" }}>
-                          <label style={{ fontFamily: "var(--font-body)", fontSize: "8.5px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(0,0,0,0.38)", display: "block", marginBottom: "14px" }}>
+                          <label style={{ fontFamily: "var(--font-body)", fontSize: "8.5px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(0,0,0,0.58)", display: "block", marginBottom: "14px" }}>
                             Meal Preference{qty > 1 ? "s" : ""}
                           </label>
                           {Array.from({ length: qty }, (_, i) => (
@@ -455,7 +483,7 @@ export default function LivingTablePage() {
                                   return (
                                     <button key={opt.key} type="button"
                                       onClick={() => setMeals(prev => { const next = [...prev]; next[i] = opt.key; return next; })}
-                                      style={{ padding: "6px 14px", border: `1px solid ${active ? opt.borderColor : "rgba(0,0,0,0.18)"}`, background: active ? opt.activeBg : "transparent", color: active ? opt.activeColor : "rgba(0,0,0,0.45)", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.08em", cursor: "pointer", transition: "all 0.18s", fontWeight: active ? 600 : 400 }}>
+                                      style={{ padding: "6px 14px", border: `1px solid ${active ? opt.borderColor : "rgba(0,0,0,0.18)"}`, background: active ? opt.activeBg : "transparent", color: active ? opt.activeColor : "rgba(0,0,0,0.6)", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.08em", cursor: "pointer", transition: "all 0.18s", fontWeight: active ? 600 : 400 }}>
                                       {opt.label}
                                     </button>
                                   );
@@ -481,7 +509,7 @@ export default function LivingTablePage() {
                         >
                           Book Now
                         </button>
-                        <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.28)", marginTop: "14px", textAlign: "center", lineHeight: 1.7 }}>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.5)", marginTop: "14px", textAlign: "center", lineHeight: 1.7 }}>
                           Secure payment via Razorpay · UPI · Cards · Net Banking
                         </p>
 
@@ -535,7 +563,7 @@ export default function LivingTablePage() {
             onMouseLeave={e => (e.currentTarget.style.background = "none")}
           >
             <div style={{ textAlign: "left" }}>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", margin: "0 0 8px" }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(255,255,255,0.85)", margin: "0 0 8px" }}>
                 The Menu
               </p>
               <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(20px, 2.4vw, 30px)", color: "#ffffff", margin: 0, lineHeight: 1.2 }}>
@@ -614,10 +642,13 @@ export default function LivingTablePage() {
             {/* Left — venue video */}
             <div className="tlt-why-video" style={{ position: "relative", overflow: "hidden" }}>
               <video
-                autoPlay muted loop playsInline
+                ref={venueVideoRef}
+                muted loop playsInline preload="none"
                 style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
               >
+                <source src="/images/thelivingtable/VenueRevel_Video.webm" type="video/webm" />
                 <source src="/images/thelivingtable/VenueRevel_Video.mp4" type="video/mp4" />
+                <track kind="captions" src="/empty.vtt" srcLang="en" label="No dialogue" />
               </video>
             </div>
 
@@ -707,7 +738,7 @@ export default function LivingTablePage() {
               viewport={{ once: true, amount: 0.1 }} transition={{ duration: 1, delay: i * 0.12 }}
               className="tlt-gallery-item" style={{ position: "relative", height: "clamp(200px, 28vw, 380px)" }}
             >
-              <Image src={`/images/thelivingtable/${src}.png`} alt="The Living Table" fill style={{ objectFit: "cover", objectPosition: "center" }} />
+              <Image src={`/images/thelivingtable/${src}.png`} alt="The Living Table" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover", objectPosition: "center" }} />
             </motion.div>
           ))}
         </section>
@@ -835,7 +866,7 @@ export default function LivingTablePage() {
                   <div>
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "#1a1a1a", margin: "0 0 3px", letterSpacing: "0.02em" }}>{item.label}</p>
                     {item.sub && item.sub.split("\n").map((line, j) => (
-                      <p key={j} style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "rgba(0,0,0,0.4)", margin: "1px 0 0", lineHeight: 1.6 }}>{line}</p>
+                      <p key={j} style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "rgba(0,0,0,0.6)", margin: "1px 0 0", lineHeight: 1.6 }}>{line}</p>
                     ))}
                   </div>
                 </div>
@@ -875,7 +906,7 @@ export default function LivingTablePage() {
             Reserve Your Seat →
           </button>
           {available !== null && available > 0 && (
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.28)", marginTop: "12px", letterSpacing: "0.08em" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.5)", marginTop: "12px", letterSpacing: "0.08em" }}>
               Limited seats available
             </p>
           )}
@@ -1036,7 +1067,7 @@ export default function LivingTablePage() {
                   {loading ? "Creating order…" : flow === "paying" ? "Opening payment…" : "Continue to Payment →"}
                 </button>
 
-                <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.28)", marginTop: "14px", textAlign: "center", lineHeight: 1.7 }}>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.5)", marginTop: "14px", textAlign: "center", lineHeight: 1.7 }}>
                   Secure payment via Razorpay · UPI · Cards · Net Banking
                 </p>
               </form>
