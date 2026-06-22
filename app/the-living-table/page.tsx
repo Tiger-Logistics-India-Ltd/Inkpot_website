@@ -76,7 +76,6 @@ export default function LivingTablePage() {
   const [termsOpen, setTermsOpen]         = useState(false);
   const formRef      = useRef<HTMLDivElement>(null);
   const termsRef     = useRef<HTMLDivElement>(null);
-  const heroVideoRef = useRef<HTMLVideoElement>(null);
   const venueVideoRef= useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -86,19 +85,19 @@ export default function LivingTablePage() {
       .catch(() => {});
   }, []);
 
-  // Hero video: delay play by 1.2s so LCP paints first; poster shows instantly
-  useEffect(() => {
-    const t = setTimeout(() => { heroVideoRef.current?.play().catch(() => {}); }, 1200);
-    return () => clearTimeout(t);
-  }, []);
-
-  // Venue video: play only when scrolled into view
+  // Venue video: start buffering 400px before it enters the viewport so it's
+  // already loaded when the user reaches it (no visible load delay on scroll).
   useEffect(() => {
     const video = venueVideoRef.current;
     if (!video) return;
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { video.play().catch(() => {}); obs.disconnect(); } },
-      { threshold: 0.15 }
+      ([e]) => {
+        if (e.isIntersecting) {
+          video.play().catch(() => {});
+          obs.disconnect();
+        }
+      },
+      { threshold: 0, rootMargin: "400px 0px" }
     );
     obs.observe(video);
     return () => obs.disconnect();
@@ -231,8 +230,7 @@ export default function LivingTablePage() {
         {/* ── 1. HERO ── */}
         <section style={{ position: "relative", height: "100dvh", minHeight: "480px", overflow: "hidden" }}>
           <video
-            ref={heroVideoRef}
-            muted loop playsInline preload="none"
+            autoPlay muted loop playsInline
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
           >
             <source src="/images/thelivingtable/hero.webm" type="video/webm" />
