@@ -36,21 +36,13 @@ export const metadata: Metadata = {
 export default function LivingTableLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      {/* Preload the LCP image so the browser fetches it before React renders.
-          Next.js Image `priority` only adds a preload for server components;
-          since page.tsx is a client component this explicit hint is required. */}
+      {/* Preload the LCP image. Next.js Image `priority` only generates a preload
+          for server components — page.tsx is a client component so this is required. */}
       <link
         rel="preload"
         as="image"
         href="/images/thelivingtable/logo_the_right_one_1.svg"
         fetchPriority="high"
-      />
-      {/* Preload the hero poster so the hero section is not blank while the
-          video defers loading. Poster is the first visible background on slow connections. */}
-      <link
-        rel="preload"
-        as="image"
-        href="/images/thelivingtable/landscape.png"
       />
       {children}
     </>

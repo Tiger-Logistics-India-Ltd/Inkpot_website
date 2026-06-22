@@ -86,9 +86,11 @@ export default function LivingTablePage() {
       .catch(() => {});
   }, []);
 
-  // Hero video: inject <source> tags via JS after 1.2s so browser fetches 0 bytes
-  // during the critical path. preload="none" alone doesn't stop Chrome from
-  // beginning a fetch when <source> elements are in the DOM.
+  // Hero video: inject <source> tags after LCP paints so browser fetches 0 bytes
+  // during critical path. preload="none" alone doesn't stop Chrome from fetching
+  // when <source> elements are already in the DOM at parse time.
+  // Play is triggered on 'canplay' so it works on iOS Safari (which blocks
+  // programmatic play() if called before the video is ready).
   useEffect(() => {
     const t = setTimeout(() => {
       const video = heroVideoRef.current;
@@ -101,8 +103,8 @@ export default function LivingTablePage() {
       mp4.type = "video/mp4";
       video.appendChild(webm);
       video.appendChild(mp4);
+      video.addEventListener("canplay", () => { video.play().catch(() => {}); }, { once: true });
       video.load();
-      video.play().catch(() => {});
     }, 1200);
     return () => clearTimeout(t);
   }, []);
