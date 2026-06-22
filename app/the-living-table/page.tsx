@@ -249,7 +249,7 @@ export default function LivingTablePage() {
             ref={heroVideoRef}
             muted loop playsInline preload="none"
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-            poster="/images/thelivingtable/38.png"
+            poster="/images/thelivingtable/landscape.png"
           >
             <track kind="captions" src="/empty.vtt" srcLang="en" label="No dialogue" />
           </video>
