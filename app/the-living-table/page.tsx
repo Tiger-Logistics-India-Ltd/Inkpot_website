@@ -331,9 +331,16 @@ export default function LivingTablePage() {
 
             <p style={{
               fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.3vw, 15px)",
+              color: "rgba(0,0,0,0.55)", lineHeight: 1.9, margin: "0 0 10px",
+            }}>
+              <strong style={{ color: "#1a1a1a", fontWeight: 500 }}>Sadaf Husain</strong> — Author, Chef and Food Writer.
+            </p>
+
+            <p style={{
+              fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.3vw, 15px)",
               color: "rgba(0,0,0,0.55)", lineHeight: 1.9, margin: 0,
             }}>
-              <strong style={{ color: "#1a1a1a", fontWeight: 500 }}>Sadaf Husain</strong> — Author, Chef and Food Writer, alongside Food Historian, Author  and other distinguished guests.
+              <strong style={{ color: "#1a1a1a", fontWeight: 500 }}>Salma Husain</strong> — Food Historian and Author, whose knowledge of Persian allows her remarkable access to the history of food from the Mughal era.
             </p>
           </motion.div>
 
