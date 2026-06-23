@@ -71,7 +71,6 @@ export default function LivingTablePage() {
   const [ticket, setTicket]       = useState<TicketInfo | null>(null);
   const [qr, setQr]               = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [menuOpen, setMenuOpen]   = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [termsOpen, setTermsOpen]         = useState(false);
   const formRef      = useRef<HTMLDivElement>(null);
@@ -527,87 +526,51 @@ export default function LivingTablePage() {
           </div>
         </section>
 
-        {/* ── 3.5 THE MENU ── tap to reveal ── */}
-        <section style={{ background: "#901A1C" }}>
+        {/* ── 3.5 THE MENU ── always open ── */}
+        <section style={{ background: "#901A1C", padding: "clamp(36px, 4.5vw, 60px) clamp(24px, 8vw, 120px)" }}>
 
-          {/* Trigger row */}
-          <button
-            type="button"
-            onClick={() => setMenuOpen(o => !o)}
-            style={{
-              width: "100%", background: "none", border: "none", cursor: "pointer",
-              padding: "clamp(22px, 3vw, 36px) clamp(24px, 8vw, 120px)",
-              display: "flex", alignItems: "center", justifyContent: "space-between", gap: "24px",
-              transition: "background 0.25s",
-            }}
-            onMouseEnter={e => (e.currentTarget.style.background = "rgba(0,0,0,0.1)")}
-            onMouseLeave={e => (e.currentTarget.style.background = "none")}
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+            style={{ marginBottom: "clamp(28px, 3.5vw, 44px)" }}
           >
-            <div style={{ textAlign: "left" }}>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(255,255,255,0.85)", margin: "0 0 8px" }}>
-                The Menu
-              </p>
-              <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(20px, 2.4vw, 30px)", color: "#ffffff", margin: 0, lineHeight: 1.2 }}>
-                {menuOpen ? "Close the menu" : "See what's on the table"}
-              </p>
-            </div>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(255,255,255,0.85)", margin: "0 0 8px" }}>
+              The Menu
+            </p>
+            <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(20px, 2.4vw, 30px)", color: "#ffffff", margin: 0, lineHeight: 1.2 }}>
+              See what&apos;s on the table
+            </p>
+          </motion.div>
 
-            {/* Animated circle arrow */}
-            <motion.div
-              animate={{ rotate: menuOpen ? 180 : 0 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                flexShrink: 0,
-                width: "clamp(40px, 4.5vw, 52px)", height: "clamp(40px, 4.5vw, 52px)",
-                borderRadius: "50%", border: "1px solid rgba(255,255,255,0.35)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round">
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </motion.div>
-          </button>
-
-          {/* Expandable menu panel */}
-          <AnimatePresence initial={false}>
-            {menuOpen && (
+          {/* Menu grid */}
+          <div
+            className="tlt-menu-grid"
+            style={{
+              display: "grid", gridTemplateColumns: "1fr 1fr",
+              gap: "clamp(16px, 2.5vw, 40px)",
+            }}
+          >
+            {(["11", "12"] as const).map((n, i) => (
               <motion.div
-                key="menu-panel"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                style={{ overflow: "hidden" }}
+                key={n}
+                initial={{ opacity: 0, y: 36, scale: 0.97 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.8, delay: i * 0.14, ease: [0.22, 1, 0.36, 1] }}
+                style={{ boxShadow: "0 4px 40px rgba(0,0,0,0.6)" }}
               >
-                <div
-                  className="tlt-menu-grid"
-                  style={{
-                    display: "grid", gridTemplateColumns: "1fr 1fr",
-                    gap: "clamp(16px, 2.5vw, 40px)",
-                    padding: "0 clamp(24px, 8vw, 120px) clamp(40px, 5vw, 64px)",
-                  }}
-                >
-                  {(["11", "12"] as const).map((n, i) => (
-                    <motion.div
-                      key={n}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.55, delay: 0.15 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                      style={{ boxShadow: "0 4px 40px rgba(0,0,0,0.6)" }}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={`/images/thelivingtable/${n}.svg`}
-                        alt={`Menu page ${i + 1}`}
-                        style={{ width: "100%", height: "auto", display: "block" }}
-                      />
-                    </motion.div>
-                  ))}
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`/images/thelivingtable/${n}.svg`}
+                  alt={`Menu page ${i + 1}`}
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
               </motion.div>
-            )}
-          </AnimatePresence>
+            ))}
+          </div>
         </section>
 
         {/* white space */}
