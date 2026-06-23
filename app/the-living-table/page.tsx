@@ -75,6 +75,7 @@ export default function LivingTablePage() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [termsOpen, setTermsOpen]         = useState(false);
   const formRef      = useRef<HTMLDivElement>(null);
+  const bookingRef   = useRef<HTMLDivElement>(null);
   const termsRef     = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -99,9 +100,10 @@ export default function LivingTablePage() {
 
   const scrollToForm = () => {
     setFlow("form");
-    requestAnimationFrame(() =>
-      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-    );
+    requestAnimationFrame(() => {
+      const target = window.innerWidth < 769 ? bookingRef.current : formRef.current;
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
   const handlePay = async (e: React.FormEvent) => {
@@ -333,14 +335,14 @@ export default function LivingTablePage() {
               fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.3vw, 15px)",
               color: "rgba(0,0,0,0.55)", lineHeight: 1.9, margin: "0 0 10px",
             }}>
-              <strong style={{ color: "#1a1a1a", fontWeight: 500 }}>Monish Gujral</strong> — Author, Chef &amp; Entrepreneur, owner of Moti Mahal, and the family behind the invention of Butter Chicken.
+              <strong style={{ color: "#1a1a1a", fontWeight: 500 }}>Monish Gujral</strong> — Author, Chef &amp; Entrepreneur, Chairman of Moti Mahal, and the family behind the invention of Butter Chicken.
             </p>
 
             <p style={{
               fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.3vw, 15px)",
               color: "rgba(0,0,0,0.55)", lineHeight: 1.9, margin: "0 0 10px",
             }}>
-              <strong style={{ color: "#1a1a1a", fontWeight: 500 }}>Sadaf Husain</strong> — Author, Chef and Food Writer.
+              <strong style={{ color: "#1a1a1a", fontWeight: 500 }}>Sadaf Husain</strong> — An author, chef and food writer, who was among the top 8 on MasterChef India in 2016.
             </p>
 
             <p style={{
@@ -352,7 +354,7 @@ export default function LivingTablePage() {
           </motion.div>
 
           {/* Right — Booking form */}
-          <div style={{ background: "#F4EFE6", padding: "clamp(28px, 3vw, 48px) clamp(28px, 4vw, 60px)", display: "flex", alignItems: "center" }}>
+          <div ref={bookingRef} style={{ background: "#F4EFE6", padding: "clamp(28px, 3vw, 48px) clamp(28px, 4vw, 60px)", display: "flex", alignItems: "center" }}>
             <div style={{ width: "100%", maxWidth: "480px" }}>
               <AnimatePresence mode="wait">
 
