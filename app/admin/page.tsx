@@ -159,12 +159,14 @@ export default function AdminPage() {
   }
 
   function exportCSV() {
-    const headers = ["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Meals", "Status", "Checked In", "Check-in Time", "Archived", "Notes", "Booked At"];
+    const SITE = "https://www.inkpotindia.com";
+    const headers = ["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Meals", "Status", "Checked In", "Check-in Time", "Archived", "Notes", "Booked At", "Ticket URL (for QR)"];
     const rows = tickets.map(t => [
       fmtSeats(t), t.buyer_name, t.buyer_email, t.buyer_phone, t.qty,
       fmtAmount(t.amount), (t.meal_preferences ?? []).join(", "), t.payment_status,
       t.checked_in ? "Yes" : "No", t.checked_in_at ? fmtDate(t.checked_in_at) : "",
       t.archived ? "Yes" : "No", t.notes ?? "", fmtDate(t.created_at),
+      t.payment_status === "paid" ? `${SITE}/ticket/${t.id}` : "",
     ]);
     const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
