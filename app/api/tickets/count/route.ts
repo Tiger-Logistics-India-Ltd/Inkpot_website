@@ -10,7 +10,8 @@ export async function GET() {
     const { count, error } = await getSupabase()
       .from("living_table_tickets")
       .select("*", { count: "exact", head: true })
-      .eq("payment_status", "paid");
+      .eq("payment_status", "paid")
+      .eq("archived", false);
 
     if (error) throw error;
 
