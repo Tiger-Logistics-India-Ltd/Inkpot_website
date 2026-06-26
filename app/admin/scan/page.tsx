@@ -53,6 +53,7 @@ export default function ScanPage() {
 
   const [popup, setPopup]         = useState<ScanResult | null>(null);
   const [scanning, setScanning]   = useState(false);
+  const [cameraError, setCameraError] = useState<"denied" | "unavailable" | null>(null);
   const [manualSerial, setManualSerial] = useState("");
   const [manualLookup, setManualLookup] = useState<CachedTicket | null | "notfound">(null);
   const [checkingIn, setCheckingIn] = useState(false);
@@ -137,8 +138,10 @@ export default function ScanPage() {
       started = true;
     }
 
-    startScanner().catch(() => {
-      showPopup({ status: "invalid", message: "Camera unavailable. Allow camera access and try again." });
+    startScanner().catch((err: any) => {
+      const name = err?.name ?? err?.message ?? "";
+      const denied = /NotAllowed|Permission|denied/i.test(name);
+      setCameraError(denied ? "denied" : "unavailable");
       setScanning(false);
     });
 
@@ -332,9 +335,46 @@ export default function ScanPage() {
               Stop Camera
             </button>
           </div>
+        ) : cameraError ? (
+          <div className="rounded-2xl border border-white/10 bg-white/5 px-6 py-7">
+            {cameraError === "denied" ? (
+              <>
+                <p className="text-[9px] tracking-[0.28em] uppercase text-[#901A1C] mb-3">Camera Blocked</p>
+                <p className="text-sm text-white/70 leading-relaxed mb-5">
+                  Chrome has blocked camera access for this site. To fix it:
+                </p>
+                <ol className="space-y-3 mb-6">
+                  {[
+                    "Tap the 🔒 lock icon in Chrome's address bar",
+                    'Tap "Permissions" or "Site settings"',
+                    'Set Camera to "Allow"',
+                    "Come back and tap Try Again",
+                  ].map((step, i) => (
+                    <li key={i} className="flex gap-3 items-start">
+                      <span className="text-[10px] text-[#901A1C] font-bold mt-0.5 shrink-0">{i + 1}.</span>
+                      <span className="text-[13px] text-white/60 leading-snug">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            ) : (
+              <>
+                <p className="text-[9px] tracking-[0.28em] uppercase text-white/40 mb-3">Camera Unavailable</p>
+                <p className="text-sm text-white/60 leading-relaxed mb-5">
+                  Could not access the camera. Make sure no other app is using it, then try again.
+                </p>
+              </>
+            )}
+            <button
+              onClick={() => { setCameraError(null); setScanning(true); }}
+              className="w-full bg-[#901A1C] rounded-xl py-4 text-[10px] tracking-[0.24em] uppercase text-white hover:bg-[#7a1517] transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
         ) : (
           <button
-            onClick={() => setScanning(true)}
+            onClick={() => { setCameraError(null); setScanning(true); }}
             className="w-full bg-[#901A1C] rounded-2xl py-12 flex flex-col items-center gap-4 hover:bg-[#7a1517] active:bg-[#6b1214] transition-colors"
             style={{ boxShadow: "0 8px 40px rgba(144,26,28,0.4)" }}
           >
