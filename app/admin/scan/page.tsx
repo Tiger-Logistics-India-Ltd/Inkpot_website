@@ -122,30 +122,32 @@ export default function ScanPage() {
       scanner = new Html5Qrcode("qr-reader");
       scannerRef.current = scanner;
 
+      // html5-qrcode rejects with strings, not Error objects — normalise both
+      const toStr = (e: any): string =>
+        typeof e === "string" ? e : (e?.message ?? e?.name ?? JSON.stringify(e) ?? "unknown");
+
       const tryStart = async (constraint: any) =>
         scanner.start(constraint, config, onDecode, () => {});
 
       try {
         // Attempt 1: back camera preferred
-        await tryStart({ facingMode: { ideal: "environment" } });
+        await tryStart({ facingMode: "environment" });
       } catch (e1: any) {
-        const isPermission = /NotAllowed|Permission|denied/i.test(e1?.name ?? "");
+        const s1 = toStr(e1);
+        const isPermission = /NotAllowed|Permission|denied/i.test(s1);
         if (isPermission) {
           // Trigger permission popup then retry
           const stream = await navigator.mediaDevices.getUserMedia({ video: true });
           stream.getTracks().forEach(t => t.stop());
           await new Promise(r => setTimeout(r, 400));
-          await tryStart({ facingMode: { ideal: "environment" } });
+          await tryStart({ facingMode: "environment" });
         } else {
-          // Attempt 2: any camera, no constraints
+          // Attempt 2: front camera (always exists on any Android phone)
           try {
-            await tryStart({ video: true });
+            await tryStart({ facingMode: "user" });
           } catch (e2: any) {
-            // Re-throw with full detail so the catch below can show it
-            const detail = `${e1?.name}:${e1?.message} / ${e2?.name}:${e2?.message}`;
-            const err = new Error(detail);
-            (err as any).name = e2?.name ?? e1?.name ?? "UnknownError";
-            throw err;
+            const s2 = toStr(e2);
+            throw new Error(`back: ${s1} | front: ${s2}`);
           }
         }
       }
@@ -154,13 +156,17 @@ export default function ScanPage() {
     }
 
     startScanner().catch((err: any) => {
-      const name = err?.name ?? "";
-      const msg  = err?.message ?? String(err);
-      const denied = /NotAllowed|Permission|denied/i.test(name + msg);
+      const msg = err instanceof Error ? err.message : toStr(err);
+      const denied = /NotAllowed|Permission|denied/i.test(msg);
       setCameraError(denied ? "denied" : "unavailable");
-      setCameraErrDetail(`${name}: ${msg}`);
+      setCameraErrDetail(msg.slice(0, 400));
       setScanning(false);
     });
+
+    // hoist toStr so the catch above can use it
+    function toStr(e: any): string {
+      return typeof e === "string" ? e : (e?.message ?? e?.name ?? JSON.stringify(e) ?? "unknown");
+    }
 
     return () => {
       // Only stop if we confirmed it started — prevents the double-stop crash
