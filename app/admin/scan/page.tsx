@@ -110,8 +110,10 @@ export default function ScanPage() {
     async function startScanner() {
       const { Html5Qrcode } = await import("html5-qrcode");
 
-      // getCameras() triggers the Android permission prompt reliably.
-      // Passing facingMode constraint directly to start() fails on many Android devices.
+      // getUserMedia must be called before enumerateDevices (used by getCameras)
+      // otherwise Android Chrome never shows the permission popup.
+      await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+
       const cameras = await Html5Qrcode.getCameras();
       if (!cameras.length) throw new Error("No cameras found");
 
