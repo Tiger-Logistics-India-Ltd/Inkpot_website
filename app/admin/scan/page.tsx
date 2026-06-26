@@ -104,73 +104,82 @@ export default function ScanPage() {
   }
 
   // ── QR Scanner ────────────────────────────────────────────────────────────
+  // Android Chrome → native BarcodeDetector (direct getUserMedia, no library)
+  // iOS / other    → html5-qrcode fallback (was already working there)
   useEffect(() => {
     if (!authed || !scanning) return;
-    let scanner: any;
-    let started = false;
+    let stream: MediaStream | null = null;
+    let animFrame: number | null = null;
+    let active = true;
+    let h5scanner: any = null;
+    let h5started = false;
 
     async function startScanner() {
-      const { Html5Qrcode } = await import("html5-qrcode");
+      if ("BarcodeDetector" in window) {
+        // ── Native path: Android Chrome ──────────────────────────────────
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "environment" } },
+        });
+        const video = document.getElementById("qr-video") as HTMLVideoElement;
+        if (!video) throw new Error("Video element not mounted");
+        video.srcObject = stream;
+        await video.play();
 
-      const config = { fps: 10, qrbox: { width: 260, height: 260 } };
-      const onDecode = async (decodedText: string) => {
-        const id = extractTicketId(decodedText);
-        if (!id) { showPopup({ status: "invalid", message: "Not a valid ticket QR." }); return; }
-        await checkIn(id);
-      };
-
-      scanner = new Html5Qrcode("qr-reader");
-      scannerRef.current = scanner;
-
-      // html5-qrcode rejects with strings, not Error objects — normalise both
-      const toStr = (e: any): string =>
-        typeof e === "string" ? e : (e?.message ?? e?.name ?? JSON.stringify(e) ?? "unknown");
-
-      const tryStart = async (constraint: any) =>
-        scanner.start(constraint, config, onDecode, () => {});
-
-      try {
-        // Attempt 1: back camera preferred
-        await tryStart({ facingMode: "environment" });
-      } catch (e1: any) {
-        const s1 = toStr(e1);
-        const isPermission = /NotAllowed|Permission|denied/i.test(s1);
-        if (isPermission) {
-          // Trigger permission popup then retry
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          stream.getTracks().forEach(t => t.stop());
-          await new Promise(r => setTimeout(r, 400));
-          await tryStart({ facingMode: "environment" });
-        } else {
-          // Attempt 2: front camera (always exists on any Android phone)
-          try {
-            await tryStart({ facingMode: "user" });
-          } catch (e2: any) {
-            const s2 = toStr(e2);
-            throw new Error(`back: ${s1} | front: ${s2}`);
+        const detector = new (window as any).BarcodeDetector({ formats: ["qr_code"] });
+        let busy = false;
+        async function scanFrame() {
+          if (!active) return;
+          if (!busy && video.readyState >= 2) {
+            busy = true;
+            try {
+              const codes: any[] = await detector.detect(video);
+              for (const code of codes) {
+                if (code.rawValue) {
+                  const id = extractTicketId(code.rawValue);
+                  if (id) await checkIn(id);
+                  else showPopup({ status: "invalid", message: "Not a valid ticket QR." });
+                  break;
+                }
+              }
+            } catch { /* ignore frame errors */ }
+            busy = false;
           }
+          animFrame = requestAnimationFrame(scanFrame);
         }
-      }
+        animFrame = requestAnimationFrame(scanFrame);
 
-      started = true;
+      } else {
+        // ── Fallback path: iOS / Safari / older browsers ─────────────────
+        const { Html5Qrcode } = await import("html5-qrcode");
+        h5scanner = new Html5Qrcode("qr-reader");
+        scannerRef.current = h5scanner;
+        await h5scanner.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 260, height: 260 } },
+          async (decodedText: string) => {
+            const id = extractTicketId(decodedText);
+            if (!id) { showPopup({ status: "invalid", message: "Not a valid ticket QR." }); return; }
+            await checkIn(id);
+          },
+          () => {}
+        );
+        h5started = true;
+      }
     }
 
     startScanner().catch((err: any) => {
-      const msg = err instanceof Error ? err.message : toStr(err);
+      const msg = typeof err === "string" ? err : (err?.message ?? String(err));
       const denied = /NotAllowed|Permission|denied/i.test(msg);
       setCameraError(denied ? "denied" : "unavailable");
       setCameraErrDetail(msg.slice(0, 400));
       setScanning(false);
     });
 
-    // hoist toStr so the catch above can use it
-    function toStr(e: any): string {
-      return typeof e === "string" ? e : (e?.message ?? e?.name ?? JSON.stringify(e) ?? "unknown");
-    }
-
     return () => {
-      // Only stop if we confirmed it started — prevents the double-stop crash
-      if (started) { scanner?.stop().catch(() => {}); }
+      active = false;
+      if (animFrame) cancelAnimationFrame(animFrame);
+      stream?.getTracks().forEach(t => t.stop());
+      if (h5started) h5scanner?.stop().catch(() => {});
       scannerRef.current = null;
     };
   }, [authed, scanning]);
@@ -350,6 +359,15 @@ export default function ScanPage() {
       <div className="flex-1 flex flex-col justify-center px-6 py-8">
         {scanning ? (
           <div>
+            {/* Native BarcodeDetector path (Android Chrome) */}
+            <video
+              id="qr-video"
+              playsInline
+              muted
+              className="w-full rounded-2xl overflow-hidden border border-white/10 block bg-black"
+              style={{ minHeight: "260px" }}
+            />
+            {/* html5-qrcode fallback (iOS / Safari) */}
             <div id="qr-reader" className="w-full rounded-2xl overflow-hidden border border-white/10" />
             <button
               onClick={() => setScanning(false)}
