@@ -111,32 +111,31 @@ export default function ScanPage() {
     async function startScanner() {
       const { Html5Qrcode } = await import("html5-qrcode");
 
-      // getUserMedia triggers the Android permission prompt.
-      // We must stop the stream immediately after — otherwise the camera stays
-      // locked and Html5Qrcode can't open it (causes silent failure on Android).
-      const permStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      permStream.getTracks().forEach(t => t.stop());
-
-      const cameras = await Html5Qrcode.getCameras();
-      if (!cameras.length) throw new Error("No cameras found");
-
-      // Prefer back/rear camera; fall back to the last listed device
-      const cam =
-        cameras.find(c => /back|rear|environment/i.test(c.label)) ??
-        cameras[cameras.length - 1];
+      const config = { fps: 10, qrbox: { width: 260, height: 260 } };
+      const onDecode = async (decodedText: string) => {
+        const id = extractTicketId(decodedText);
+        if (!id) { showPopup({ status: "invalid", message: "Not a valid ticket QR." }); return; }
+        await checkIn(id);
+      };
 
       scanner = new Html5Qrcode("qr-reader");
       scannerRef.current = scanner;
-      await scanner.start(
-        cam.id,
-        { fps: 10, qrbox: { width: 260, height: 260 } },
-        async (decodedText: string) => {
-          const id = extractTicketId(decodedText);
-          if (!id) { showPopup({ status: "invalid", message: "Not a valid ticket QR." }); return; }
-          await checkIn(id);
-        },
-        () => {}
-      );
+
+      try {
+        // First attempt: facingMode directly (works when permission already granted)
+        await scanner.start({ facingMode: "environment" }, config, onDecode, () => {});
+      } catch (firstErr: any) {
+        const isPermission = /NotAllowed|Permission|denied/i.test(firstErr?.name ?? "");
+        if (!isPermission) throw firstErr;
+
+        // Permission not yet granted — trigger the browser popup then retry
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(t => t.stop());
+        // Give the camera hardware time to release before html5-qrcode reopens it
+        await new Promise(r => setTimeout(r, 400));
+        await scanner.start({ facingMode: "environment" }, config, onDecode, () => {});
+      }
+
       started = true;
     }
 
