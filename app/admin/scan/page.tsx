@@ -123,7 +123,7 @@ export default function ScanPage() {
 
       try {
         // First attempt: facingMode directly (works when permission already granted)
-        await scanner.start({ facingMode: "environment" }, config, onDecode, () => {});
+        await scanner.start({ facingMode: { ideal: "environment" } }, config, onDecode, () => {});
       } catch (firstErr: any) {
         const isPermission = /NotAllowed|Permission|denied/i.test(firstErr?.name ?? "");
         if (!isPermission) throw firstErr;
@@ -133,7 +133,7 @@ export default function ScanPage() {
         stream.getTracks().forEach(t => t.stop());
         // Give the camera hardware time to release before html5-qrcode reopens it
         await new Promise(r => setTimeout(r, 400));
-        await scanner.start({ facingMode: "environment" }, config, onDecode, () => {});
+        await scanner.start({ facingMode: { ideal: "environment" } }, config, onDecode, () => {});
       }
 
       started = true;
