@@ -54,6 +54,7 @@ export default function ScanPage() {
   const [popup, setPopup]         = useState<ScanResult | null>(null);
   const [scanning, setScanning]   = useState(false);
   const [cameraError, setCameraError] = useState<"denied" | "unavailable" | null>(null);
+  const [cameraErrDetail, setCameraErrDetail] = useState("");
   const [manualSerial, setManualSerial] = useState("");
   const [manualLookup, setManualLookup] = useState<CachedTicket | null | "notfound">(null);
   const [checkingIn, setCheckingIn] = useState(false);
@@ -121,28 +122,43 @@ export default function ScanPage() {
       scanner = new Html5Qrcode("qr-reader");
       scannerRef.current = scanner;
 
-      try {
-        // First attempt: facingMode directly (works when permission already granted)
-        await scanner.start({ facingMode: { ideal: "environment" } }, config, onDecode, () => {});
-      } catch (firstErr: any) {
-        const isPermission = /NotAllowed|Permission|denied/i.test(firstErr?.name ?? "");
-        if (!isPermission) throw firstErr;
+      const tryStart = async (constraint: any) =>
+        scanner.start(constraint, config, onDecode, () => {});
 
-        // Permission not yet granted — trigger the browser popup then retry
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        stream.getTracks().forEach(t => t.stop());
-        // Give the camera hardware time to release before html5-qrcode reopens it
-        await new Promise(r => setTimeout(r, 400));
-        await scanner.start({ facingMode: { ideal: "environment" } }, config, onDecode, () => {});
+      try {
+        // Attempt 1: back camera preferred
+        await tryStart({ facingMode: { ideal: "environment" } });
+      } catch (e1: any) {
+        const isPermission = /NotAllowed|Permission|denied/i.test(e1?.name ?? "");
+        if (isPermission) {
+          // Trigger permission popup then retry
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          stream.getTracks().forEach(t => t.stop());
+          await new Promise(r => setTimeout(r, 400));
+          await tryStart({ facingMode: { ideal: "environment" } });
+        } else {
+          // Attempt 2: any camera, no constraints
+          try {
+            await tryStart({ video: true });
+          } catch (e2: any) {
+            // Re-throw with full detail so the catch below can show it
+            const detail = `${e1?.name}:${e1?.message} / ${e2?.name}:${e2?.message}`;
+            const err = new Error(detail);
+            (err as any).name = e2?.name ?? e1?.name ?? "UnknownError";
+            throw err;
+          }
+        }
       }
 
       started = true;
     }
 
     startScanner().catch((err: any) => {
-      const name = err?.name ?? err?.message ?? "";
-      const denied = /NotAllowed|Permission|denied/i.test(name);
+      const name = err?.name ?? "";
+      const msg  = err?.message ?? String(err);
+      const denied = /NotAllowed|Permission|denied/i.test(name + msg);
       setCameraError(denied ? "denied" : "unavailable");
+      setCameraErrDetail(`${name}: ${msg}`);
       setScanning(false);
     });
 
@@ -361,9 +377,12 @@ export default function ScanPage() {
             ) : (
               <>
                 <p className="text-[9px] tracking-[0.28em] uppercase text-white/40 mb-3">Camera Unavailable</p>
-                <p className="text-sm text-white/60 leading-relaxed mb-5">
-                  Could not access the camera. Make sure no other app is using it, then try again.
+                <p className="text-sm text-white/60 leading-relaxed mb-3">
+                  Could not access the camera. Close any other app using the camera, then tap Try Again.
                 </p>
+                {cameraErrDetail && (
+                  <p className="text-[10px] text-white/25 font-mono break-all mb-4">{cameraErrDetail}</p>
+                )}
               </>
             )}
             <button
