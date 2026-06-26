@@ -111,9 +111,11 @@ export default function ScanPage() {
     async function startScanner() {
       const { Html5Qrcode } = await import("html5-qrcode");
 
-      // getUserMedia must be called before enumerateDevices (used by getCameras)
-      // otherwise Android Chrome never shows the permission popup.
-      await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      // getUserMedia triggers the Android permission prompt.
+      // We must stop the stream immediately after — otherwise the camera stays
+      // locked and Html5Qrcode can't open it (causes silent failure on Android).
+      const permStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      permStream.getTracks().forEach(t => t.stop());
 
       const cameras = await Html5Qrcode.getCameras();
       if (!cameras.length) throw new Error("No cameras found");
