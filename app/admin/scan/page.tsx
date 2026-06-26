@@ -109,10 +109,21 @@ export default function ScanPage() {
 
     async function startScanner() {
       const { Html5Qrcode } = await import("html5-qrcode");
+
+      // getCameras() triggers the Android permission prompt reliably.
+      // Passing facingMode constraint directly to start() fails on many Android devices.
+      const cameras = await Html5Qrcode.getCameras();
+      if (!cameras.length) throw new Error("No cameras found");
+
+      // Prefer back/rear camera; fall back to the last listed device
+      const cam =
+        cameras.find(c => /back|rear|environment/i.test(c.label)) ??
+        cameras[cameras.length - 1];
+
       scanner = new Html5Qrcode("qr-reader");
       scannerRef.current = scanner;
       await scanner.start(
-        { facingMode: "environment" },
+        cam.id,
         { fps: 10, qrbox: { width: 260, height: 260 } },
         async (decodedText: string) => {
           const id = extractTicketId(decodedText);
@@ -125,7 +136,7 @@ export default function ScanPage() {
     }
 
     startScanner().catch(() => {
-      showPopup({ status: "invalid", message: "Camera unavailable." });
+      showPopup({ status: "invalid", message: "Camera unavailable. Allow camera access and try again." });
       setScanning(false);
     });
 
