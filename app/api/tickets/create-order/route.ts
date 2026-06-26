@@ -5,7 +5,7 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 
 const PRICE_PAISE = 650000; // ₹6,500
-const MAX_TICKETS = 22;
+const MAX_TICKETS = 30;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.inkpotindia.com";
 
 const dbEnabled = () =>
