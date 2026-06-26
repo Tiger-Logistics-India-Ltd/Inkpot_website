@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 
-const MAX_TICKETS = 100;
+const MAX_TICKETS = 22;
 
 export async function GET() {
   try {

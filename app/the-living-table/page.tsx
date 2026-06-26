@@ -259,23 +259,40 @@ export default function LivingTablePage() {
               transition={{ duration: 0.8, delay: 1.3 }}
               style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}
             >
-              <button
-                onClick={scrollToForm}
-                style={{
-                  background: "#901A1C", color: "#ffffff", padding: "14px 44px",
-                  fontFamily: "var(--font-body)", fontSize: "10px",
-                  letterSpacing: "0.24em", textTransform: "uppercase",
-                  border: "none", cursor: "pointer", transition: "background 0.25s",
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = "#7a1517")}
-                onMouseLeave={e => (e.currentTarget.style.background = "#901A1C")}
-              >
-                Reserve Your Seat
-              </button>
-              {available !== null && available > 0 && (
-                <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(244,239,230,0.35)", letterSpacing: "0.08em" }}>
-                  Limited seats available
-                </span>
+              {available === 0 ? (
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
+                  {/* Red filled pill — hard to miss */}
+                  <div style={{
+                    background: "#901A1C", color: "#ffffff",
+                    padding: "14px 52px",
+                    fontFamily: "var(--font-body)", fontSize: "11px",
+                    letterSpacing: "0.28em", textTransform: "uppercase",
+                    boxShadow: "0 0 32px rgba(144,26,28,0.55)",
+                  }}>
+                    Sold Out
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={scrollToForm}
+                    style={{
+                      background: "#901A1C", color: "#ffffff", padding: "14px 44px",
+                      fontFamily: "var(--font-body)", fontSize: "10px",
+                      letterSpacing: "0.24em", textTransform: "uppercase",
+                      border: "none", cursor: "pointer", transition: "background 0.25s",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#7a1517")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "#901A1C")}
+                  >
+                    Reserve Your Seat
+                  </button>
+                  {available !== null && available > 0 && (
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(244,239,230,0.35)", letterSpacing: "0.08em" }}>
+                      Limited seats available
+                    </span>
+                  )}
+                </>
               )}
             </motion.div>
           </div>
@@ -425,13 +442,62 @@ export default function LivingTablePage() {
                     </h2>
 
                     {available === 0 ? (
-                      <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "rgba(0,0,0,0.5)", lineHeight: 1.9 }}>
-                        This event is sold out. Follow{" "}
-                        <a href="https://www.instagram.com/inkpotindia_/" target="_blank" rel="noopener noreferrer" style={{ color: "#901A1C", textDecoration: "none", borderBottom: "1px solid #901A1C" }}>
-                          @inkpotindia_
-                        </a>{" "}
-                        for future dates.
-                      </p>
+                      <div>
+                        {/* Prominent sold-out badge */}
+                        <div style={{
+                          display: "inline-flex", alignItems: "center", gap: "8px",
+                          background: "#901A1C", color: "#ffffff",
+                          padding: "10px 20px", marginBottom: "28px",
+                        }}>
+                          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#fff", flexShrink: 0, display: "inline-block" }} />
+                          <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase" }}>Sold Out</span>
+                        </div>
+
+                        {/* Disabled stepper */}
+                        <div style={{ marginBottom: "24px", opacity: 0.35, pointerEvents: "none" }}>
+                          <label style={{ fontFamily: "var(--font-body)", fontSize: "8.5px", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(0,0,0,0.58)", display: "block", marginBottom: "12px" }}>
+                            Number of Seats
+                          </label>
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <div style={{ width: "36px", height: "36px", border: "1px solid rgba(0,0,0,0.18)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", color: "rgba(0,0,0,0.2)" }}>−</div>
+                            <div style={{ width: "52px", height: "36px", borderTop: "1px solid rgba(0,0,0,0.18)", borderBottom: "1px solid rgba(0,0,0,0.18)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-heading)", fontSize: "20px", color: "#1a1a1a" }}>1</div>
+                            <div style={{ width: "36px", height: "36px", border: "1px solid rgba(0,0,0,0.18)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", color: "rgba(0,0,0,0.2)" }}>+</div>
+                          </div>
+                        </div>
+
+                        {/* Price row — dimmed */}
+                        <div style={{ borderTop: "1px solid rgba(0,0,0,0.1)", padding: "16px 0", marginBottom: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", opacity: 0.35 }}>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "rgba(0,0,0,0.4)", margin: 0 }}>1 seat × ₹6,500</p>
+                          <p style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "22px", color: "#1a1a1a", margin: 0 }}>₹6,500</p>
+                        </div>
+
+                        {/* Disabled button */}
+                        <button disabled style={{
+                          background: "rgba(0,0,0,0.06)", color: "rgba(0,0,0,0.28)",
+                          width: "100%", padding: "18px",
+                          fontFamily: "var(--font-body)", fontSize: "10px",
+                          letterSpacing: "0.24em", textTransform: "uppercase",
+                          border: "1px solid rgba(0,0,0,0.1)", cursor: "not-allowed",
+                          marginBottom: "20px",
+                        }}>
+                          Bookings Closed
+                        </button>
+
+                        <a
+                          href="https://www.instagram.com/inkpotindia_/"
+                          target="_blank" rel="noopener noreferrer"
+                          style={{
+                            display: "block", textAlign: "center",
+                            fontFamily: "var(--font-body)", fontSize: "13px",
+                            color: "#901A1C", textDecoration: "none",
+                            letterSpacing: "0.06em", lineHeight: 1.7,
+                            borderBottom: "1px solid rgba(144,26,28,0.25)",
+                            paddingBottom: "2px",
+                          }}
+                        >
+                          Follow @inkpotindia_ for future events →
+                        </a>
+                      </div>
                     ) : (
                       <div>
                         {/* Seats stepper */}
@@ -840,18 +906,39 @@ export default function LivingTablePage() {
 
         {/* ── CTA strip ── */}
         <div style={{ background: "#F4EFE6", padding: "clamp(36px, 4.5vw, 60px) 24px", textAlign: "center" }}>
-          <button
-            onClick={scrollToForm}
-            style={{ background: "#901A1C", color: "#ffffff", padding: "16px 52px", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", border: "none", cursor: "pointer", transition: "background 0.25s" }}
-            onMouseEnter={e => (e.currentTarget.style.background = "#7a1517")}
-            onMouseLeave={e => (e.currentTarget.style.background = "#901A1C")}
-          >
-            Reserve Your Seat →
-          </button>
-          {available !== null && available > 0 && (
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.5)", marginTop: "12px", letterSpacing: "0.08em" }}>
-              Limited seats available
-            </p>
+          {available === 0 ? (
+            <>
+              <div style={{
+                display: "inline-block", padding: "16px 52px",
+                border: "1px solid rgba(0,0,0,0.18)",
+                fontFamily: "var(--font-body)", fontSize: "10px",
+                letterSpacing: "0.24em", textTransform: "uppercase",
+                color: "rgba(0,0,0,0.3)",
+              }}>
+                Sold Out
+              </div>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.35)", marginTop: "12px", letterSpacing: "0.08em" }}>
+                All seats are taken · Follow{" "}
+                <a href="https://www.instagram.com/inkpotindia_/" target="_blank" rel="noopener noreferrer" style={{ color: "#901A1C", textDecoration: "none" }}>@inkpotindia_</a>
+                {" "}for future events
+              </p>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={scrollToForm}
+                style={{ background: "#901A1C", color: "#ffffff", padding: "16px 52px", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", border: "none", cursor: "pointer", transition: "background 0.25s" }}
+                onMouseEnter={e => (e.currentTarget.style.background = "#7a1517")}
+                onMouseLeave={e => (e.currentTarget.style.background = "#901A1C")}
+              >
+                Reserve Your Seat →
+              </button>
+              {available !== null && available > 0 && (
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.5)", marginTop: "12px", letterSpacing: "0.08em" }}>
+                  Limited seats available
+                </p>
+              )}
+            </>
           )}
         </div>
 
