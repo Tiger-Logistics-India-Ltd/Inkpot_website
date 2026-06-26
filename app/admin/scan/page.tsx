@@ -320,10 +320,10 @@ export default function ScanPage() {
       })()}
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between px-6 pt-8 pb-4">
+      <div className="flex items-center justify-between px-5 pt-5 pb-3">
         <div>
           <p className="text-[8px] tracking-[0.32em] uppercase text-[#901A1C]">Inkpot India</p>
-          <p className="text-sm md:text-base text-white/80 mt-0.5 font-light" style={{ fontFamily: "Georgia,serif", fontStyle: "italic" }}>
+          <p className="text-sm text-white/80 mt-0.5 font-light" style={{ fontFamily: "Georgia,serif", fontStyle: "italic" }}>
             The Living Table — 28 June
           </p>
         </div>
@@ -340,38 +340,38 @@ export default function ScanPage() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="mx-6 mt-2 grid grid-cols-3 gap-3">
-        <div className="bg-white/5 rounded-2xl px-3 py-5 text-center border border-white/8">
-          <p className={`text-4xl font-light mb-1 ${checkedIn > 0 ? "text-green-400" : "text-white/25"}`}>{checkedIn}</p>
-          <p className="text-[8px] tracking-[0.18em] uppercase text-white/30">Checked In</p>
+      <div className="mx-5 grid grid-cols-3 gap-2">
+        <div className="bg-white/5 rounded-xl px-2 py-3 text-center border border-white/8">
+          <p className={`text-3xl font-light mb-0.5 ${checkedIn > 0 ? "text-green-400" : "text-white/25"}`}>{checkedIn}</p>
+          <p className="text-[7px] tracking-[0.16em] uppercase text-white/30">In</p>
         </div>
-        <div className="bg-white/5 rounded-2xl px-3 py-5 text-center border border-white/8">
-          <p className="text-4xl font-light text-white/60 mb-1">{totalPaid}</p>
-          <p className="text-[8px] tracking-[0.18em] uppercase text-white/30">Total</p>
+        <div className="bg-white/5 rounded-xl px-2 py-3 text-center border border-white/8">
+          <p className="text-3xl font-light text-white/60 mb-0.5">{totalPaid}</p>
+          <p className="text-[7px] tracking-[0.16em] uppercase text-white/30">Total</p>
         </div>
-        <div className="bg-white/5 rounded-2xl px-3 py-5 text-center border border-white/8">
-          <p className={`text-4xl font-light mb-1 ${remaining > 0 ? "text-amber-400" : "text-white/25"}`}>{remaining}</p>
-          <p className="text-[8px] tracking-[0.18em] uppercase text-white/30">Remaining</p>
+        <div className="bg-white/5 rounded-xl px-2 py-3 text-center border border-white/8">
+          <p className={`text-3xl font-light mb-0.5 ${remaining > 0 ? "text-amber-400" : "text-white/25"}`}>{remaining}</p>
+          <p className="text-[7px] tracking-[0.16em] uppercase text-white/30">Left</p>
         </div>
       </div>
 
-      {/* ── Camera — flex-1 so it fills the middle of the screen ── */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-8">
+      {/* ── Camera ── */}
+      <div className="flex-1 flex flex-col justify-center px-5 py-4">
         {scanning ? (
-          <div>
+          <div className="flex flex-col gap-3">
             {/* Native BarcodeDetector path (Android Chrome) */}
             <video
               id="qr-video"
               playsInline
               muted
               className="w-full rounded-2xl overflow-hidden border border-white/10 block bg-black"
-              style={{ minHeight: "260px" }}
+              style={{ maxHeight: "52vw", minHeight: "200px", objectFit: "cover" }}
             />
             {/* html5-qrcode fallback (iOS / Safari) */}
             <div id="qr-reader" className="w-full rounded-2xl overflow-hidden border border-white/10" />
             <button
               onClick={() => setScanning(false)}
-              className="w-full mt-4 py-3.5 border border-white/10 rounded-2xl text-[9px] tracking-[0.22em] uppercase text-white/30 hover:border-white/25 hover:text-white/50 transition-colors"
+              className="w-full py-5 bg-white/10 rounded-2xl text-sm tracking-[0.2em] uppercase text-white/80 active:bg-white/20 transition-colors font-medium"
             >
               Stop Camera
             </button>
