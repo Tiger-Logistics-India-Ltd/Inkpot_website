@@ -150,7 +150,7 @@ export async function sendGuidelines({
 
         <p style="margin:0 0 24px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">For any assistance, feel free to reach us at <a href="tel:+918700730130" style="color:#901A1C;text-decoration:none;">+91 8700730130</a></p>
         <p style="margin:0 0 4px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Warm regards,</p>
-        <p style="margin:0;font-size:15px;color:#1a1a1a;font-family:Georgia,serif;font-style:italic;">Team inkpǒt</p>
+        <p style="margin:0;font-size:15px;color:#1a1a1a;font-family:Georgia,serif;font-style:italic;">Inkpot India</p>
       </td></tr>
 
       <tr><td style="padding:40px 48px 0;"><div style="height:1px;background:rgba(0,0,0,0.08);"></div></td></tr>
