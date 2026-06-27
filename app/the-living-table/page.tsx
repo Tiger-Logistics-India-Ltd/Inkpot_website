@@ -18,16 +18,8 @@ interface TicketInfo {
 
 
 
-const menuFrontVariants = {
-  hidden: { opacity: 0, y: 50, rotate: 0, x: 0 },
-  show:   { opacity: 1, y: 0,  rotate: -3, x: 0,  transition: { duration: 0.95, delay: 0.14, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] } },
-  hover:  { y: -8,  rotate: -8, x: -20,           transition: { duration: 0.48, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] } },
-};
-const menuBackVariants = {
-  hidden: { opacity: 0, y: 60, rotate: 0, x: 0 },
-  show:   { opacity: 1, y: 10, rotate: 5,  x: 0,  transition: { duration: 0.95, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] } },
-  hover:  { y: 18,  rotate: 10, x: 20,            transition: { duration: 0.48, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] } },
-};
+// const menuFrontVariants = { hidden: ..., show: ..., hover: ... }; // menu section hidden
+// const menuBackVariants  = { hidden: ..., show: ..., hover: ... }; // menu section hidden
 
 const PROGRAMME = [
   { time: "6:30 PM", label: "Arrival & Welcome" },
@@ -592,55 +584,12 @@ export default function LivingTablePage() {
           </div>
         </section>
 
-        {/* ── 3.5 THE MENU ── always open ── */}
-        <section style={{ background: "#901A1C", padding: "clamp(36px, 4.5vw, 60px) clamp(24px, 8vw, 120px)" }}>
-
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-            style={{ marginBottom: "clamp(28px, 3.5vw, 44px)" }}
-          >
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(255,255,255,0.85)", margin: "0 0 8px" }}>
-              The Menu
-            </p>
-            <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(20px, 2.4vw, 30px)", color: "#ffffff", margin: 0, lineHeight: 1.2 }}>
-              See what&apos;s on the table
-            </p>
-          </motion.div>
-
-          {/* Menu grid */}
-          <div
-            className="tlt-menu-grid"
-            style={{
-              display: "grid", gridTemplateColumns: "1fr 1fr",
-              gap: "clamp(16px, 2.5vw, 40px)",
-            }}
-          >
-            {(["11", "12"] as const).map((n, i) => (
-              <motion.div
-                key={n}
-                initial={{ opacity: 0, y: 36, scale: 0.97 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 0.8, delay: i * 0.14, ease: [0.22, 1, 0.36, 1] }}
-                style={{ boxShadow: "0 4px 40px rgba(0,0,0,0.6)" }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`/images/thelivingtable/${n}.svg`}
-                  alt={`Menu page ${i + 1}`}
-                  style={{ width: "100%", height: "auto", display: "block" }}
-                />
-              </motion.div>
-            ))}
-          </div>
+        {/* ── 3.5 THE MENU ── hidden for now ── */}
+        {/* <section style={{ background: "#901A1C", padding: "clamp(36px, 4.5vw, 60px) clamp(24px, 8vw, 120px)" }}>
+          <motion.div ... />
+          menu grid
         </section>
-
-        {/* white space */}
-        <div style={{ height: "clamp(48px, 6vw, 96px)", background: "#F4EFE6" }} />
+        <div style={{ height: "clamp(48px, 6vw, 96px)", background: "#F4EFE6" }} /> */}
 
         {/* ── 4. WHY THIS EVENING EXISTS — auto-rotate images ── */}
         <div style={{ background: "#F4EFE6" }}>
