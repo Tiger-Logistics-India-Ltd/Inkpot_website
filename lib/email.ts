@@ -36,6 +36,7 @@ export async function sendQrTest({ to, buyerName, ticketId, siteUrl }: QrTestEma
     color: { dark: "#000000", light: "#ffffff" },
   });
   const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const firstName = esc(buyerName.split(" ")[0]);
   const ticketUrl = `${siteUrl}/ticket/${ticketId}`;
 
   await getResend().emails.send({
@@ -59,7 +60,7 @@ export async function sendQrTest({ to, buyerName, ticketId, siteUrl }: QrTestEma
       <tr><td style="padding:28px 40px 0;">
         <div style="background:#F4EFE6;padding:16px 20px;">
           <p style="margin:0 0 4px;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(0,0,0,0.4);">Ticket used for this test</p>
-          <p style="margin:0;font-size:14px;color:#1a1a1a;">${esc(buyerName)}</p>
+          <p style="margin:0;font-size:14px;color:#1a1a1a;">${firstName}</p>
         </div>
       </td></tr>
 
@@ -108,6 +109,7 @@ export async function sendGuidelines({
     path.join(process.cwd(), "public/images/thelivingtable/Guest_Guidelines-TheLivingTable.pdf")
   );
   const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const firstName = esc(buyerName.split(" ")[0]);
 
   await getResend().emails.send({
     from: "Inkpot India <tickets@tickets.inkpotindia.com>",
@@ -134,21 +136,21 @@ export async function sendGuidelines({
       <tr><td style="padding:32px 48px 0;"><div style="height:1px;background:rgba(0,0,0,0.08);"></div></td></tr>
 
       <tr><td style="padding:32px 48px 0;">
-        <p style="margin:0 0 24px;font-size:15px;color:#1a1a1a;line-height:1.7;">Dear ${esc(buyerName)},</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#1a1a1a;line-height:1.7;">Dear ${firstName},</p>
         <p style="margin:0 0 18px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">We look forward to welcoming you to The Living Table on 28th June, from 6:00 PM onwards at Kathika Cultural Centre, Old Delhi.</p>
         <p style="margin:0 0 18px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Please find the attached Guest Guidelines to help make your arrival and experience seamless and enjoyable.</p>
         <p style="margin:0 0 24px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Kindly keep your QR ticket handy at the front desk for a smooth check-in experience.</p>
 
         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4EFE6;padding:20px 24px;margin-bottom:24px;">
           <tr><td>
-            <p style="margin:0 0 10px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Location Pin: <a href="https://maps.app.goo.gl/7QXZVFY21zvjhc3F6" style="color:#901A1C;text-decoration:underline;">https://maps.app.goo.gl/7QXZVFY21zvjhc3F6</a></p>
+            <p style="margin:0 0 10px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Location Pin: <a href="https://www.google.com/maps/place/28%C2%B038'46.0%22N+77%C2%B013'38.8%22E/@28.6461,77.227438,17z" style="color:#901A1C;text-decoration:underline;">https://www.google.com/maps/place/28%C2%B038'46.0%22N+77%C2%B013'38.8%22E/@28.6461,77.227438,17z</a></p>
             <p style="margin:0;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Parking Pin: <a href="https://www.google.com/maps/place/28%C2%B038'35.3%22N+77%C2%B013'40.1%22E" style="color:#901A1C;text-decoration:underline;">https://www.google.com/maps/place/28%C2%B038'35.3%22N+77%C2%B013'40.1%22E</a></p>
           </td></tr>
         </table>
 
         <p style="margin:0 0 24px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">For any assistance, feel free to reach us at <a href="tel:+918700730130" style="color:#901A1C;text-decoration:none;">+91 8700730130</a></p>
         <p style="margin:0 0 4px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Warm regards,</p>
-        <p style="margin:0;font-size:15px;color:#1a1a1a;font-family:Georgia,serif;font-style:italic;">Team inkp&#x01D3;t</p>
+        <p style="margin:0;font-size:15px;color:#1a1a1a;font-family:Georgia,serif;font-style:italic;">Team inkpǒt</p>
       </td></tr>
 
       <tr><td style="padding:40px 48px 0;"><div style="height:1px;background:rgba(0,0,0,0.08);"></div></td></tr>
