@@ -77,6 +77,11 @@ export default function AdminPage() {
   const [markPaidResult, setMarkPaidResult] = useState<Record<string, "ok" | "err">>({});
   const [archiving, setArchiving]           = useState<string | null>(null);
 
+  // Guidelines
+  const [showGuidelines, setShowGuidelines]       = useState(false);
+  const [guidelinesSending, setGuidelinesSending] = useState(false);
+  const [guidelinesResult, setGuidelinesResult]   = useState<{ sent?: number; failed?: number; total?: number; test?: boolean; to?: string; error?: string } | null>(null);
+
   // Notes
   const [expandedNotes, setExpandedNotes] = useState<string | null>(null);
   const [noteDraft, setNoteDraft]         = useState("");
@@ -156,6 +161,29 @@ export default function AdminPage() {
       setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, notes: noteDraft || null } : t));
       setExpandedNotes(null);
     } finally { setSavingNote(null); }
+  }
+
+  async function handleSendGuidelines(testEmail?: string) {
+    const paidCount = tickets.filter(t => !t.archived && t.payment_status === "paid").length;
+    const msg = testEmail
+      ? `Send test to ${testEmail}?`
+      : `Send guidelines to ALL ${paidCount} paid guests. This cannot be undone. Continue?`;
+    if (!confirm(msg)) return;
+    setGuidelinesSending(true);
+    setGuidelinesResult(null);
+    try {
+      const res = await fetch("/api/admin/send-guidelines", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-password": pw },
+        body: JSON.stringify(testEmail ? { test_email: testEmail } : {}),
+      });
+      const data = await res.json();
+      setGuidelinesResult(data);
+    } catch {
+      setGuidelinesResult({ error: "Network error." });
+    } finally {
+      setGuidelinesSending(false);
+    }
   }
 
   function exportCSV() {
@@ -246,9 +274,51 @@ export default function AdminPage() {
               className="text-[9px] tracking-[0.18em] uppercase bg-[#901A1C] text-white px-4 py-2 hover:bg-[#7a1517] transition-colors">
               Export CSV
             </button>
+            <button onClick={() => { setShowGuidelines(v => !v); setGuidelinesResult(null); }}
+              className={`text-[9px] tracking-[0.18em] uppercase px-4 py-2 border transition-colors ${showGuidelines ? "bg-[#901A1C] text-white border-[#901A1C]" : "border-black/15 text-black/45 hover:border-black/40"}`}>
+              Send Guidelines
+            </button>
           </div>
         </div>
       </div>
+
+      {/* ── Send Guidelines Panel ── */}
+      {showGuidelines && (
+        <div className="bg-white border-b border-black/8 px-6 py-5">
+          <div className="max-w-screen-xl mx-auto">
+            <p className="text-[9px] tracking-[0.28em] uppercase text-black/35 mb-3">Send Guest Guidelines Email</p>
+            <p className="text-xs text-black/50 mb-4 leading-relaxed max-w-xl">
+              Sends the event guidelines + QR ticket + PDF attachment to each guest. Use test first to verify.
+            </p>
+            <div className="flex flex-wrap gap-3 items-center">
+              <button
+                onClick={() => handleSendGuidelines("saurav.chaudahry70@gmail.com")}
+                disabled={guidelinesSending}
+                className="text-[9px] tracking-[0.18em] uppercase border border-black/20 px-4 py-2.5 hover:border-black/50 transition-colors disabled:opacity-40"
+              >
+                {guidelinesSending ? "Sending…" : "Send Test → saurav.chaudahry70@gmail.com"}
+              </button>
+              <button
+                onClick={() => handleSendGuidelines()}
+                disabled={guidelinesSending}
+                className="text-[9px] tracking-[0.18em] uppercase bg-[#901A1C] text-white px-4 py-2.5 hover:bg-[#7a1517] transition-colors disabled:opacity-40"
+              >
+                {guidelinesSending ? "Sending…" : `Send to All ${tickets.filter(t => !t.archived && t.payment_status === "paid").length} Guests`}
+              </button>
+            </div>
+            {guidelinesResult && (
+              <div className={`mt-4 inline-flex items-center gap-2 px-4 py-2.5 text-xs ${guidelinesResult.error ? "bg-red-50 text-red-700 border border-red-200" : "bg-green-50 text-green-800 border border-green-200"}`}>
+                {guidelinesResult.error
+                  ? `Error: ${guidelinesResult.error}`
+                  : guidelinesResult.test
+                    ? `✓ Test sent to ${guidelinesResult.to}`
+                    : `✓ Sent ${guidelinesResult.sent} / ${guidelinesResult.total}${guidelinesResult.failed ? ` · ${guidelinesResult.failed} failed` : ""}`
+                }
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="max-w-screen-xl mx-auto px-6 py-6">
 
