@@ -76,6 +76,7 @@ export default function AdminPage() {
   const [markingPaid, setMarkingPaid]       = useState<string | null>(null);
   const [markPaidResult, setMarkPaidResult] = useState<Record<string, "ok" | "err">>({});
   const [archiving, setArchiving]           = useState<string | null>(null);
+  const [unchecking, setUnchecking]         = useState<string | null>(null);
 
   // Guidelines
   const [showGuidelines, setShowGuidelines]       = useState(false);
@@ -136,6 +137,19 @@ export default function AdminPage() {
       if (res.ok) setTimeout(refresh, 800);
     } catch { setMarkPaidResult(prev => ({ ...prev, [ticketId]: "err" })); }
     finally { setMarkingPaid(null); }
+  }
+
+  async function handleUncheck(ticketId: string) {
+    if (!confirm("Remove check-in for this guest?")) return;
+    setUnchecking(ticketId);
+    try {
+      const res = await fetch("/api/admin/uncheck", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-password": pw },
+        body: JSON.stringify({ ticket_id: ticketId }),
+      });
+      if (res.ok) setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, checked_in: false, checked_in_at: null } : t));
+    } finally { setUnchecking(null); }
   }
 
   async function handleArchive(ticketId: string, isArchived: boolean) {
@@ -355,7 +369,7 @@ export default function AdminPage() {
           <div className="max-w-screen-xl mx-auto">
             <p className="text-[9px] tracking-[0.28em] uppercase text-black/35 mb-3">Send Scanner Test QR</p>
             <p className="text-xs text-black/50 mb-4 leading-relaxed max-w-xl">
-              Sends an email with a real scannable QR code (attached as PNG + ticket link). Open on one device, scan with the door scanner on another. Can be sent multiple times.
+              Sends a scannable QR to any address. Uses a dummy archived ticket (Saurav Chaudhary) — no real guest is affected. Safe to scan multiple times. If it checks in, hit <strong>Uncheck</strong> in the guest list to reset.
             </p>
             <div className="flex flex-wrap gap-3 items-center">
               <input
@@ -525,6 +539,15 @@ export default function AdminPage() {
                           className={`p-1 rounded transition-colors hover:bg-black/5 ${expandedNotes === t.id ? "text-[#C9A84C]" : t.notes ? "text-[#C9A84C]" : "text-black/25 hover:text-black/50"}`}>
                           <NoteIcon filled={!!t.notes} />
                         </button>
+
+                        {/* Uncheck — only when checked in */}
+                        {t.checked_in && (
+                          <button onClick={() => handleUncheck(t.id)} disabled={unchecking === t.id}
+                            title="Remove check-in"
+                            className="text-[8px] tracking-[0.14em] uppercase px-2 py-1 border border-amber-300 text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-30">
+                            {unchecking === t.id ? "…" : "Uncheck"}
+                          </button>
+                        )}
 
                         {/* Archive / restore icon */}
                         <button onClick={() => handleArchive(t.id, !!t.archived)} disabled={archiving === t.id}

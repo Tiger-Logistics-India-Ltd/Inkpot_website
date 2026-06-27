@@ -1,8 +1,11 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.inkpotindia.com";
+const TEST_EMAIL = "saurav.chaudhary70@gmail.com";
+const TEST_NAME  = "Saurav Chaudhary";
 
 export async function POST(req: Request) {
   const password = req.headers.get("x-admin-password");
@@ -19,25 +22,50 @@ export async function POST(req: Request) {
   const { sendQrTest } = await import("@/lib/email");
   const supabase = getSupabase();
 
-  // Pick the first paid non-archived ticket to generate a real scannable QR
-  const { data: tickets, error } = await supabase
+  // Find or create a permanent dummy test ticket (archived, never counts toward cap)
+  let testTicket: { id: string; buyer_name: string } | null = null;
+
+  const { data: existing } = await supabase
     .from("living_table_tickets")
     .select("id, buyer_name")
+    .eq("buyer_email", TEST_EMAIL)
     .eq("payment_status", "paid")
-    .eq("archived", false)
+    .eq("archived", true)
     .order("created_at", { ascending: true })
     .limit(1);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  if (!tickets?.length) return NextResponse.json({ error: "No paid tickets found to generate a QR." }, { status: 400 });
+  if (existing?.length) {
+    testTicket = existing[0];
+  } else {
+    // Create dummy ticket and immediately archive it
+    const { data: created, error: insertError } = await supabase
+      .from("living_table_tickets")
+      .insert({
+        buyer_name: TEST_NAME,
+        buyer_email: TEST_EMAIL,
+        buyer_phone: "+910000000000",
+        razorpay_order_id: "test_dummy",
+        payment_status: "paid",
+        archived: true,
+        amount: 0,
+        qty: 1,
+        seat_numbers: [],
+        qr_token: crypto.randomUUID(),
+        notes: "Dummy ticket for scanner testing — safe to scan",
+      })
+      .select("id, buyer_name")
+      .single();
 
-  const ticket = tickets[0];
+    if (insertError) return NextResponse.json({ error: insertError.message }, { status: 500 });
+    testTicket = created;
+  }
+
   await sendQrTest({
     to: email.trim(),
-    buyerName: ticket.buyer_name,
-    ticketId: ticket.id,
+    buyerName: testTicket.buyer_name,
+    ticketId: testTicket.id,
     siteUrl: SITE_URL,
   });
 
-  return NextResponse.json({ ok: true, to: email.trim() });
+  return NextResponse.json({ ok: true, to: email.trim(), ticketId: testTicket.id });
 }
