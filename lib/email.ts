@@ -22,6 +22,70 @@ interface TicketEmailParams {
   mealPreferences?: string[];
 }
 
+interface QrTestEmailParams {
+  to: string;
+  buyerName: string;
+  ticketId: string;
+  siteUrl: string;
+}
+
+export async function sendQrTest({ to, buyerName, ticketId, siteUrl }: QrTestEmailParams): Promise<void> {
+  const qrBuffer = await QRCode.toBuffer(`${siteUrl}/ticket/${ticketId}`, {
+    width: 500,
+    margin: 3,
+    color: { dark: "#000000", light: "#ffffff" },
+  });
+  const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const ticketUrl = `${siteUrl}/ticket/${ticketId}`;
+
+  await getResend().emails.send({
+    from: "Inkpot India <tickets@tickets.inkpotindia.com>",
+    to,
+    subject: "Scanner Test QR — The Living Table",
+    attachments: [{ filename: "scan-test-qr.png", content: qrBuffer, contentType: "image/png" }],
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><title>Scanner Test QR</title></head>
+<body style="margin:0;padding:0;background:#F4EFE6;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4EFE6;padding:48px 16px;">
+  <tr><td align="center">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;background:#ffffff;border-top:3px solid #901A1C;">
+
+      <tr><td style="padding:40px 40px 0;text-align:center;">
+        <p style="margin:0 0 4px;font-size:9px;letter-spacing:0.32em;text-transform:uppercase;color:#901A1C;">Inkpot India · Admin</p>
+        <h1 style="margin:0;font-size:22px;font-weight:400;color:#1a1a1a;font-family:Georgia,serif;font-style:italic;line-height:1.3;">Scanner Test QR</h1>
+      </td></tr>
+
+      <tr><td style="padding:28px 40px 0;">
+        <div style="background:#F4EFE6;padding:16px 20px;">
+          <p style="margin:0 0 4px;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(0,0,0,0.4);">Ticket used for this test</p>
+          <p style="margin:0;font-size:14px;color:#1a1a1a;">${esc(buyerName)}</p>
+        </div>
+      </td></tr>
+
+      <tr><td style="padding:28px 40px 0;text-align:center;">
+        <p style="margin:0 0 16px;font-size:12px;color:rgba(0,0,0,0.5);line-height:1.6;">
+          Open the attached <strong>scan-test-qr.png</strong> on one device,<br/>
+          then scan it with the door scanner on another.
+        </p>
+        <a href="${ticketUrl}" style="display:inline-block;background:#901A1C;color:#ffffff;text-decoration:none;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;padding:13px 28px;">
+          Open Ticket Page &rarr;
+        </a>
+        <p style="margin:14px 0 0;font-size:10px;color:rgba(0,0,0,0.3);word-break:break-all;">${ticketUrl}</p>
+      </td></tr>
+
+      <tr><td style="padding:32px 40px 40px;text-align:center;">
+        <p style="margin:0;font-size:10px;color:rgba(0,0,0,0.3);">This is a test email from the Inkpot admin dashboard.</p>
+      </td></tr>
+
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`,
+  });
+}
+
 interface GuidelinesEmailParams {
   to: string;
   buyerName: string;

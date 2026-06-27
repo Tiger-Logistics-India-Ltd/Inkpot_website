@@ -82,6 +82,12 @@ export default function AdminPage() {
   const [guidelinesSending, setGuidelinesSending] = useState(false);
   const [guidelinesResult, setGuidelinesResult]   = useState<{ sent?: number; failed?: number; total?: number; test?: boolean; to?: string; error?: string } | null>(null);
 
+  // QR Test
+  const [showQrTest, setShowQrTest]         = useState(false);
+  const [qrTestEmail, setQrTestEmail]       = useState("saurav.chaudahry70@gmail.com");
+  const [qrTestSending, setQrTestSending]   = useState(false);
+  const [qrTestResult, setQrTestResult]     = useState<{ ok?: boolean; to?: string; error?: string } | null>(null);
+
   // Notes
   const [expandedNotes, setExpandedNotes] = useState<string | null>(null);
   const [noteDraft, setNoteDraft]         = useState("");
@@ -186,6 +192,25 @@ export default function AdminPage() {
     }
   }
 
+  async function handleSendQrTest() {
+    if (!qrTestEmail.trim()) return;
+    setQrTestSending(true);
+    setQrTestResult(null);
+    try {
+      const res = await fetch("/api/admin/send-qr-test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-password": pw },
+        body: JSON.stringify({ email: qrTestEmail.trim() }),
+      });
+      const data = await res.json();
+      setQrTestResult(data);
+    } catch {
+      setQrTestResult({ error: "Network error." });
+    } finally {
+      setQrTestSending(false);
+    }
+  }
+
   function exportCSV() {
     const SITE = "https://www.inkpotindia.com";
     const headers = ["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Meals", "Status", "Checked In", "Check-in Time", "Archived", "Notes", "Booked At", "Ticket URL (for QR)"];
@@ -274,9 +299,13 @@ export default function AdminPage() {
               className="text-[9px] tracking-[0.18em] uppercase bg-[#901A1C] text-white px-4 py-2 hover:bg-[#7a1517] transition-colors">
               Export CSV
             </button>
-            <button onClick={() => { setShowGuidelines(v => !v); setGuidelinesResult(null); }}
+            <button onClick={() => { setShowGuidelines(v => !v); setGuidelinesResult(null); setShowQrTest(false); }}
               className={`text-[9px] tracking-[0.18em] uppercase px-4 py-2 border transition-colors ${showGuidelines ? "bg-[#901A1C] text-white border-[#901A1C]" : "border-black/15 text-black/45 hover:border-black/40"}`}>
               Send Guidelines
+            </button>
+            <button onClick={() => { setShowQrTest(v => !v); setQrTestResult(null); setShowGuidelines(false); }}
+              className={`text-[9px] tracking-[0.18em] uppercase px-4 py-2 border transition-colors ${showQrTest ? "bg-black text-white border-black" : "border-black/15 text-black/45 hover:border-black/40"}`}>
+              QR Test
             </button>
           </div>
         </div>
@@ -314,6 +343,39 @@ export default function AdminPage() {
                     ? `✓ Test sent to ${guidelinesResult.to}`
                     : `✓ Sent ${guidelinesResult.sent} / ${guidelinesResult.total}${guidelinesResult.failed ? ` · ${guidelinesResult.failed} failed` : ""}`
                 }
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── QR Test Panel ── */}
+      {showQrTest && (
+        <div className="bg-white border-b border-black/8 px-6 py-5">
+          <div className="max-w-screen-xl mx-auto">
+            <p className="text-[9px] tracking-[0.28em] uppercase text-black/35 mb-3">Send Scanner Test QR</p>
+            <p className="text-xs text-black/50 mb-4 leading-relaxed max-w-xl">
+              Sends an email with a real scannable QR code (attached as PNG + ticket link). Open on one device, scan with the door scanner on another. Can be sent multiple times.
+            </p>
+            <div className="flex flex-wrap gap-3 items-center">
+              <input
+                type="email"
+                value={qrTestEmail}
+                onChange={e => { setQrTestEmail(e.target.value); setQrTestResult(null); }}
+                placeholder="Enter email address"
+                className="border border-black/20 px-4 py-2.5 text-sm text-black outline-none focus:border-black/50 w-72 bg-transparent placeholder-black/30"
+              />
+              <button
+                onClick={handleSendQrTest}
+                disabled={qrTestSending || !qrTestEmail.trim()}
+                className="text-[9px] tracking-[0.18em] uppercase bg-black text-white px-5 py-2.5 hover:bg-black/80 transition-colors disabled:opacity-40"
+              >
+                {qrTestSending ? "Sending…" : "Send QR →"}
+              </button>
+            </div>
+            {qrTestResult && (
+              <div className={`mt-4 inline-flex items-center gap-2 px-4 py-2.5 text-xs ${qrTestResult.error ? "bg-red-50 text-red-700 border border-red-200" : "bg-green-50 text-green-800 border border-green-200"}`}>
+                {qrTestResult.error ? `Error: ${qrTestResult.error}` : `✓ QR sent to ${qrTestResult.to}`}
               </div>
             )}
           </div>
