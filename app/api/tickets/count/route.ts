@@ -4,8 +4,12 @@ import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 
 const MAX_TICKETS = 30;
+const SOLD_OUT = true;
 
 export async function GET() {
+  if (SOLD_OUT) {
+    return NextResponse.json({ sold: MAX_TICKETS, total: MAX_TICKETS, available: 0 });
+  }
   try {
     const { count, error } = await getSupabase()
       .from("living_table_tickets")

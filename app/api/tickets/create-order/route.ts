@@ -6,6 +6,7 @@ import crypto from "crypto";
 
 const PRICE_PAISE = 650000; // ₹6,500
 const MAX_TICKETS = 30;
+const SOLD_OUT = true;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.inkpotindia.com";
 
 const dbEnabled = () =>
@@ -14,6 +15,9 @@ const dbEnabled = () =>
 const emailEnabled = () => !!process.env.RESEND_API_KEY?.trim();
 
 export async function POST(req: Request) {
+  if (SOLD_OUT) {
+    return NextResponse.json({ error: "Bookings are now closed. All seats are taken." }, { status: 400 });
+  }
   try {
     const { name, email, phone, qty = 1, coupon_code, meals = [], terms_accepted } = await req.json();
 
