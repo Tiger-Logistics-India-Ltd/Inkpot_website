@@ -84,7 +84,7 @@ export default function AdminPage() {
 
   // QR Test
   const [showQrTest, setShowQrTest]         = useState(false);
-  const [qrTestEmail, setQrTestEmail]       = useState("saurav.chaudahry70@gmail.com");
+  const [qrTestEmail, setQrTestEmail]       = useState("saurav.chaudhary70@gmail.com");
   const [qrTestSending, setQrTestSending]   = useState(false);
   const [qrTestResult, setQrTestResult]     = useState<{ ok?: boolean; to?: string; error?: string } | null>(null);
 
@@ -321,11 +321,11 @@ export default function AdminPage() {
             </p>
             <div className="flex flex-wrap gap-3 items-center">
               <button
-                onClick={() => handleSendGuidelines("saurav.chaudahry70@gmail.com")}
+                onClick={() => handleSendGuidelines("saurav.chaudhary70@gmail.com")}
                 disabled={guidelinesSending}
                 className="text-[9px] tracking-[0.18em] uppercase border border-black/20 px-4 py-2.5 hover:border-black/50 transition-colors disabled:opacity-40"
               >
-                {guidelinesSending ? "Sending…" : "Send Test → saurav.chaudahry70@gmail.com"}
+                {guidelinesSending ? "Sending…" : "Send Test → saurav.chaudhary70@gmail.com"}
               </button>
               <button
                 onClick={() => handleSendGuidelines()}
