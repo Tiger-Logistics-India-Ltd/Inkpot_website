@@ -29,7 +29,17 @@ interface Stats {
   checked_in_count: number;
 }
 
+interface Interest {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  source: string | null;
+  created_at: string;
+}
+
 type FilterType = "all" | "paid" | "pending" | "checked_in" | "archived";
+type ViewType = "guests" | "interest";
 
 function fmtSeats(t: Ticket): string {
   if (!t.seat_numbers?.length) return t.ticket_number ? `TLT-${String(t.ticket_number).padStart(4, "0")}` : "—";
@@ -70,6 +80,12 @@ export default function AdminPage() {
   const [filter, setFilter]       = useState<FilterType>("all");
   const [search, setSearch]       = useState("");
 
+  // Interest list
+  const [view, setView]                     = useState<ViewType>("guests");
+  const [interest, setInterest]             = useState<Interest[]>([]);
+  const [interestSearch, setInterestSearch] = useState("");
+  const [interestError, setInterestError]   = useState("");
+
   // Action states
   const [resending, setResending]           = useState<string | null>(null);
   const [resendResult, setResendResult]     = useState<Record<string, "ok" | "err">>({});
@@ -105,11 +121,23 @@ export default function AdminPage() {
       setStats(data.stats);
       setAuthed(true);
       setPw(p);
+      fetchInterest(p);
     } catch { setError("Failed to connect."); }
     finally { setLoading(false); }
   }, []);
 
-  const refresh = () => fetchData(pw);
+  // Non-fatal — a missing interest table must never block the guest list
+  const fetchInterest = useCallback(async (p: string) => {
+    setInterestError("");
+    try {
+      const res = await fetch("/api/admin/interest", { headers: { "x-admin-password": p } });
+      const data = await res.json();
+      if (!res.ok) { setInterestError(data.error ?? "Failed to load interest list."); setInterest([]); return; }
+      setInterest(data.interest ?? []);
+    } catch { setInterestError("Failed to load interest list."); }
+  }, []);
+
+  const refresh = () => { fetchData(pw); };
 
   async function handleResend(ticketId: string) {
     setResending(ticketId);
@@ -242,6 +270,22 @@ export default function AdminPage() {
     URL.revokeObjectURL(url);
   }
 
+  function exportInterestCSV() {
+    const headers = ["Name", "Email", "Phone", "Source", "Received"];
+    const rows = interest.map(r => [r.name, r.email, r.phone ?? "", r.source ?? "", fmtDate(r.created_at)]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a"); a.href = url; a.download = "living-table-interest.csv"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const filteredInterest = interest.filter(r => {
+    if (!interestSearch) return true;
+    const q = interestSearch.toLowerCase();
+    return r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q) || (r.phone ?? "").includes(q);
+  });
+
   const filtered = tickets.filter(t => {
     if (filter === "archived") return !!t.archived;
     if (t.archived) return false;
@@ -301,7 +345,7 @@ export default function AdminPage() {
           <div>
             <p className="text-[9px] tracking-[0.32em] uppercase text-[#901A1C]">Inkpot India</p>
             <h1 className="text-xl text-black mt-0.5" style={{ fontFamily: "Georgia,serif", fontStyle: "italic", fontWeight: 400 }}>
-              The Living Table &mdash; Guest List
+              The Living Table &mdash; {view === "interest" ? "Interest List" : "Guest List"}
             </h1>
           </div>
           <div className="flex gap-2">
@@ -309,24 +353,28 @@ export default function AdminPage() {
               className="text-[9px] tracking-[0.18em] uppercase text-black/45 border border-black/15 px-4 py-2 hover:border-black/40 transition-colors">
               Refresh
             </button>
-            <button onClick={exportCSV}
-              className="text-[9px] tracking-[0.18em] uppercase bg-[#901A1C] text-white px-4 py-2 hover:bg-[#7a1517] transition-colors">
-              Export CSV
-            </button>
-            <button onClick={() => { setShowGuidelines(v => !v); setGuidelinesResult(null); setShowQrTest(false); }}
-              className={`text-[9px] tracking-[0.18em] uppercase px-4 py-2 border transition-colors ${showGuidelines ? "bg-[#901A1C] text-white border-[#901A1C]" : "border-black/15 text-black/45 hover:border-black/40"}`}>
-              Send Guidelines
-            </button>
-            <button onClick={() => { setShowQrTest(v => !v); setQrTestResult(null); setShowGuidelines(false); }}
-              className={`text-[9px] tracking-[0.18em] uppercase px-4 py-2 border transition-colors ${showQrTest ? "bg-black text-white border-black" : "border-black/15 text-black/45 hover:border-black/40"}`}>
-              QR Test
-            </button>
+            {view === "guests" && (
+              <>
+                <button onClick={exportCSV}
+                  className="text-[9px] tracking-[0.18em] uppercase bg-[#901A1C] text-white px-4 py-2 hover:bg-[#7a1517] transition-colors">
+                  Export CSV
+                </button>
+                <button onClick={() => { setShowGuidelines(v => !v); setGuidelinesResult(null); setShowQrTest(false); }}
+                  className={`text-[9px] tracking-[0.18em] uppercase px-4 py-2 border transition-colors ${showGuidelines ? "bg-[#901A1C] text-white border-[#901A1C]" : "border-black/15 text-black/45 hover:border-black/40"}`}>
+                  Send Guidelines
+                </button>
+                <button onClick={() => { setShowQrTest(v => !v); setQrTestResult(null); setShowGuidelines(false); }}
+                  className={`text-[9px] tracking-[0.18em] uppercase px-4 py-2 border transition-colors ${showQrTest ? "bg-black text-white border-black" : "border-black/15 text-black/45 hover:border-black/40"}`}>
+                  QR Test
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
 
       {/* ── Send Guidelines Panel ── */}
-      {showGuidelines && (
+      {view === "guests" && showGuidelines && (
         <div className="bg-white border-b border-black/8 px-6 py-5">
           <div className="max-w-screen-xl mx-auto">
             <p className="text-[9px] tracking-[0.28em] uppercase text-black/35 mb-3">Send Guest Guidelines Email</p>
@@ -364,7 +412,7 @@ export default function AdminPage() {
       )}
 
       {/* ── QR Test Panel ── */}
-      {showQrTest && (
+      {view === "guests" && showQrTest && (
         <div className="bg-white border-b border-black/8 px-6 py-5">
           <div className="max-w-screen-xl mx-auto">
             <p className="text-[9px] tracking-[0.28em] uppercase text-black/35 mb-3">Send Scanner Test QR</p>
@@ -398,6 +446,23 @@ export default function AdminPage() {
 
       <div className="max-w-screen-xl mx-auto px-6 py-6">
 
+        {/* ── View tabs ── */}
+        <div className="flex gap-2 mb-6">
+          {([
+            { key: "guests",   label: "Guest List" },
+            { key: "interest", label: `Interest${interest.length ? ` (${interest.length})` : ""}` },
+          ] as { key: ViewType; label: string }[]).map(v => (
+            <button key={v.key} onClick={() => setView(v.key)}
+              className={`text-[9px] tracking-[0.18em] uppercase px-4 py-2 transition-colors ${
+                view === v.key ? "bg-[#901A1C] text-white" : "bg-white text-black/40 border border-black/12 hover:border-black/35"
+              }`}>
+              {v.label}
+            </button>
+          ))}
+        </div>
+
+        {view === "guests" && (
+        <>
         {/* ── Stats ── */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           {[
@@ -601,6 +666,69 @@ export default function AdminPage() {
           </p>
           <p className="text-[10px] text-black/28">28th June 2026 · The Living Table</p>
         </div>
+        </>
+        )}
+
+        {/* ── Interest List ── */}
+        {view === "interest" && (
+          <div>
+            {/* Toolbar */}
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <div className="bg-white px-5 py-4 border-t-2 border-[#901A1C] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+                <p className="text-[8px] tracking-[0.28em] uppercase text-black/35 mb-1.5">Total Signups</p>
+                <p className="text-2xl font-light text-black" style={{ fontFamily: "Georgia,serif" }}>{interest.length}</p>
+              </div>
+              <input type="text" placeholder="Search name / email / phone"
+                value={interestSearch} onChange={e => setInterestSearch(e.target.value)}
+                className="ml-auto border-b border-black/18 pb-1.5 text-sm text-black outline-none focus:border-[#901A1C] bg-transparent w-60 placeholder-black/28"
+              />
+              <button onClick={exportInterestCSV} disabled={!interest.length}
+                className="text-[9px] tracking-[0.18em] uppercase bg-[#901A1C] text-white px-4 py-2 hover:bg-[#7a1517] transition-colors disabled:opacity-40">
+                Export CSV
+              </button>
+            </div>
+
+            {interestError && (
+              <p className="text-[#901A1C] text-xs mb-4">{interestError}</p>
+            )}
+
+            {/* Table */}
+            <div className="bg-white shadow-[0_1px_8px_rgba(0,0,0,0.06)] overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-black/8">
+                    {["Name", "Email", "Phone", "Received"].map(h => (
+                      <th key={h} className="text-left px-4 py-3 text-[8px] tracking-[0.24em] uppercase text-black/30 font-normal whitespace-nowrap bg-white sticky top-0">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredInterest.length === 0 && (
+                    <tr><td colSpan={4} className="px-4 py-12 text-center text-sm text-black/25">
+                      {interestError ? "Could not load — run create_interest_table.sql in Supabase." : interestSearch ? "No matches." : "No signups yet."}
+                    </td></tr>
+                  )}
+                  {filteredInterest.map(r => (
+                    <tr key={r.id} className="border-b border-black/5 hover:bg-[#F4EFE6]/40 transition-colors">
+                      <td className="px-4 py-3 text-black font-medium text-[13px] whitespace-nowrap">{r.name}</td>
+                      <td className="px-4 py-3 text-black/55 text-[12px] whitespace-nowrap">{r.email}</td>
+                      <td className="px-4 py-3 text-black/55 text-[12px] whitespace-nowrap">{r.phone ?? "—"}</td>
+                      <td className="px-4 py-3 text-black/35 text-[11px] whitespace-nowrap">{fmtDate(r.created_at)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between mt-3">
+              <p className="text-[10px] text-black/28">{filteredInterest.length} of {interest.length} shown</p>
+              <p className="text-[10px] text-black/28">Register Your Interest · The Living Table</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,26 +1,25 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "The Living Table — Inkpot India | Dinner Event 28th June 2026",
+  title: "The Living Table — Inkpot India | A Curated Dining Experience",
   description:
-    "A one-night curated dining experience at Kathika Cultural Centre, Old Delhi. Food, stories, and the people who make them. 28th June 2026 · ₹6,500 per seat.",
+    "The Living Table is Inkpot India's dining experience where food, stories and cultural memory meet. Register your interest for the next edition.",
   keywords: [
     "The Living Table",
     "Inkpot India dinner",
     "cultural dinner Delhi",
     "curated dining experience Delhi",
-    "Old Delhi food event",
-    "Kathika Cultural Centre",
-    "intimate dinner event 2026",
+    "food and stories event",
     "Inkpot India event",
+    "next edition The Living Table",
   ],
   alternates: {
     canonical: "https://www.inkpotindia.com/the-living-table",
   },
   openGraph: {
-    title: "The Living Table — A Curated Sit-Down Dinner with Inkpot India",
+    title: "The Living Table — A Curated Dining Experience by Inkpot India",
     description:
-      "A curated dining experience at Kathika Cultural Centre, Old Delhi. 28th June 2026 · Very Limited Seats · ₹6,500 per person.",
+      "Where stories find their way onto the plate. Register your interest for the next edition of The Living Table.",
     url: "https://www.inkpotindia.com/the-living-table",
     siteName: "Inkpot India",
     locale: "en_IN",
@@ -28,19 +27,17 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Living Table — A Curated Sit-Down Dinner with Inkpot India",
-    description: "28th June 2026 · Old Delhi · Very Limited Seats · ₹6,500 per person.",
+    title: "The Living Table — A Curated Dining Experience by Inkpot India",
+    description: "Where stories find their way onto the plate. Register your interest for the next edition.",
   },
 };
 
 export default function LivingTableLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      {/* Preconnect to Razorpay origins — est. 860ms LCP savings */}
-      <link rel="preconnect" href="https://api.razorpay.com" />
-      <link rel="preconnect" href="https://cdn.razorpay.com" />
-      <link rel="preconnect" href="https://checkout-static-next.razorpay.com" />
-      {/* Preload the hero LCP image so the browser finds it immediately */}
+      {/* Preload the hero LCP logo so the browser finds it immediately.
+          (No Razorpay preconnects here — the evergreen page has no checkout;
+           the archived /inaugural-edition keeps them.) */}
       <link
         rel="preload"
         as="image"

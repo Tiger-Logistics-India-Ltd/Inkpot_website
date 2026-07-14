@@ -3,7 +3,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 
 export const runtime = "nodejs";
-export const alt = "The Living Table — A One-Night Dinner by Inkpot India";
+export const alt = "The Living Table — An Inkpot India Dining Experience";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -83,7 +83,7 @@ export default function OGImage() {
               display: "flex",
             }}
           >
-            28 June 2026 &nbsp;·&nbsp; Kathika Cultural Centre, Delhi
+            Where stories find their way onto the plate
           </p>
 
           <p
@@ -96,7 +96,7 @@ export default function OGImage() {
               display: "flex",
             }}
           >
-            ₹6,500 per seat &nbsp;·&nbsp; Very Limited Seats
+            The Next Edition &nbsp;·&nbsp; Register Your Interest
           </p>
         </div>
 
