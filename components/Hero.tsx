@@ -123,7 +123,7 @@ export default function Hero() {
         }}
       >
         <motion.a
-          href="/the-living-table"
+          href="#events"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.7, ease: "easeOut" }}
@@ -141,10 +141,10 @@ export default function Hero() {
           onMouseLeave={(e) => (e.currentTarget.style.background = "var(--primary-red)")}
         >
           <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.65)" }}>
-            Reserve Your Experience
+            What&apos;s On
           </span>
           <span style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "18px", color: "#ffffff", letterSpacing: "0.02em" }}>
-            The Living Table →
+            Reserve your Experience →
           </span>
         </motion.a>
       </div>

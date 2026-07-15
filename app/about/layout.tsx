@@ -13,6 +13,15 @@ export const metadata: Metadata = {
       "Inkpot India curates intimate, thoughtfully crafted cultural experiences rooted in cultural stewardship, artistic integrity, community, and radical accessibility.",
     url: "https://www.inkpotindia.com/about",
     siteName: "Inkpot India",
+    images: [
+      {
+        url: "/images/preview_real.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Inkpot India — Re-Inking Our Cultural Heritage",
+        type: "image/jpeg",
+      },
+    ],
     locale: "en_IN",
     type: "website",
   },
@@ -21,6 +30,7 @@ export const metadata: Metadata = {
     title: "About Us — Inkpot India",
     description:
       "Inkpot India curates intimate, thoughtfully crafted cultural experiences rooted in cultural stewardship, artistic integrity, community, and radical accessibility.",
+    images: ["/images/preview_real.jpg"],
   },
 };
 

@@ -2,11 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import emailjs from "@emailjs/browser";
-
-const EMAILJS_SERVICE  = "service_kc85ggl";
-const EMAILJS_TEMPLATE = "template_0haei3c";
-const EMAILJS_PUBLIC   = "hU7gdDpwzNyOeHzah";
 
 const vp = { once: true, amount: 0.25 };
 const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping: 20, delay });
@@ -41,12 +36,12 @@ export default function Newsletter() {
 
     setStatus("loading");
     try {
-      await emailjs.send(
-        EMAILJS_SERVICE,
-        EMAILJS_TEMPLATE,
-        { from_email: email },
-        { publicKey: EMAILJS_PUBLIC }
-      );
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      if (!res.ok) throw new Error();
       setStatus("success");
       setEmail("");
     } catch {

@@ -15,7 +15,7 @@ const experiences = [
   {
     label: "The Living Table",
     href: "/the-living-table",
-    image: "/images/thelivingtable/navbar.png",
+    image: "/images/thelivingtable/Menu.png",
     links: [{ label: "Reserve Your Seat", href: "/the-living-table" }],
   },
   {

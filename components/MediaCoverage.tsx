@@ -22,6 +22,24 @@ const pressItems = [
     headline: "Cleanliness drive at Mehrauli Archaeological Park brings Delhiites together",
     href: "https://timesofindia.indiatimes.com/entertainment/events/delhi/cleanliness-drive-at-mehrauli-archaeological-park-brings-delhiites-together/articleshow/130625613.cms",
   },
+  {
+    pub: "Times of India",
+    pubShort: "TIMES OF INDIA",
+    headline: "Tracing the journey of North Indian cuisine through conversation and cuisine",
+    href: "https://timesofindia.indiatimes.com/entertainment/events/delhi/tracing-the-journey-of-north-indian-cuisine-through-conversation-and-cuisine/articleshow/132182313.cms",
+  },
+  {
+    pub: "Slurrp",
+    pubShort: "SLURRP",
+    headline: "The Living Table in Old Delhi: a dinner that celebrated the journey of North Indian cuisine",
+    href: "https://www.slurrp.com/article/the-living-table-in-old-delhi-a-dinner-that-celebrated-the-journey-of-north-indian-cuisine-1782979627889",
+  },
+  {
+    pub: "Homegrown",
+    pubShort: "HOMEGROWN",
+    headline: "Songs of the Stone returns to Qutub Minar with Grammy winner Rakesh Chaurasia",
+    href: "https://homegrown.co.in/homegrown-explore/songs-of-the-stone-returns-to-qutub-minar-with-grammy-winner-rakesh-chaurasia",
+  },
 ];
 
 const vp = { once: true, amount: 0.2 };

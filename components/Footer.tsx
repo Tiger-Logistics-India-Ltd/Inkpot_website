@@ -10,7 +10,7 @@ const cols = [
     links: [
       { label: "Home", href: "/" },
       { label: "About", href: "/about" },
-      { label: "Our Experiences", href: "#experiences" },
+      { label: "Our Experiences", href: "/#experiences" },
       // { label: "Newsroom", href: "/newsroom" }, // TODO: develop later
       { label: "Contact Us", href: "/contact" },
       { label: "Privacy Policy", href: "/privacy-policy" },
@@ -21,9 +21,9 @@ const cols = [
     label: "OUR EXPERIENCES",
     links: [
       { label: "Songs of the Stone", href: "https://www.songsofthestone.com/" },
-      { label: "Antarnaad", href: "#experiences" },
+      { label: "The Living Table", href: "/the-living-table" },
       { label: "Inkpot India Conclave", href: "https://www.inkpotindiaconclave.com/" },
-      { label: "Heritage Cleanliness Project", href: "/#experiences" },
+      { label: "Heritage Cleanliness Project", href: "/events/heritage-cleanliness" },
     ],
   },
   // TODO: Work With Us (GET INVOLVED) — develop later
@@ -174,8 +174,8 @@ export default function Footer() {
                 <nav className="flex flex-col">
                   {col.links.map((link) => (
                     <a key={link.label} href={link.href}
-                      target={link.href !== "#" && link.href !== "/" ? "_blank" : undefined}
-                      rel={link.href !== "#" && link.href !== "/" ? "noopener noreferrer" : undefined}
+                      target={link.href.startsWith("http") ? "_blank" : undefined}
+                      rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
                       className="transition-colors duration-200"
                       style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "#000000", lineHeight: "2.2", textDecoration: "none" }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-mustard)")}

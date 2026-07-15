@@ -38,8 +38,25 @@ interface Interest {
   created_at: string;
 }
 
+interface Volunteer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  affiliation: string | null;
+  source: string | null;
+  created_at: string;
+}
+
+interface Subscriber {
+  id: string;
+  email: string;
+  source: string | null;
+  created_at: string;
+}
+
 type FilterType = "all" | "paid" | "pending" | "checked_in" | "archived";
-type ViewType = "guests" | "interest";
+type ViewType = "guests" | "interest" | "volunteers" | "subscribers";
 
 function fmtSeats(t: Ticket): string {
   if (!t.seat_numbers?.length) return t.ticket_number ? `TLT-${String(t.ticket_number).padStart(4, "0")}` : "—";
@@ -86,6 +103,16 @@ export default function AdminPage() {
   const [interestSearch, setInterestSearch] = useState("");
   const [interestError, setInterestError]   = useState("");
 
+  // Heritage Cleanliness volunteers
+  const [volunteers, setVolunteers]         = useState<Volunteer[]>([]);
+  const [volSearch, setVolSearch]           = useState("");
+  const [volError, setVolError]             = useState("");
+
+  // Newsletter subscribers
+  const [subscribers, setSubscribers]       = useState<Subscriber[]>([]);
+  const [subSearch, setSubSearch]           = useState("");
+  const [subError, setSubError]             = useState("");
+
   // Action states
   const [resending, setResending]           = useState<string | null>(null);
   const [resendResult, setResendResult]     = useState<Record<string, "ok" | "err">>({});
@@ -122,6 +149,8 @@ export default function AdminPage() {
       setAuthed(true);
       setPw(p);
       fetchInterest(p);
+      fetchVolunteers(p);
+      fetchSubscribers(p);
     } catch { setError("Failed to connect."); }
     finally { setLoading(false); }
   }, []);
@@ -135,6 +164,28 @@ export default function AdminPage() {
       if (!res.ok) { setInterestError(data.error ?? "Failed to load interest list."); setInterest([]); return; }
       setInterest(data.interest ?? []);
     } catch { setInterestError("Failed to load interest list."); }
+  }, []);
+
+  // Non-fatal — a missing volunteers table must never block the guest list
+  const fetchVolunteers = useCallback(async (p: string) => {
+    setVolError("");
+    try {
+      const res = await fetch("/api/admin/heritage", { headers: { "x-admin-password": p } });
+      const data = await res.json();
+      if (!res.ok) { setVolError(data.error ?? "Failed to load volunteers."); setVolunteers([]); return; }
+      setVolunteers(data.volunteers ?? []);
+    } catch { setVolError("Failed to load volunteers."); }
+  }, []);
+
+  // Non-fatal — a missing subscribers table must never block the guest list
+  const fetchSubscribers = useCallback(async (p: string) => {
+    setSubError("");
+    try {
+      const res = await fetch("/api/admin/newsletter", { headers: { "x-admin-password": p } });
+      const data = await res.json();
+      if (!res.ok) { setSubError(data.error ?? "Failed to load subscribers."); setSubscribers([]); return; }
+      setSubscribers(data.subscribers ?? []);
+    } catch { setSubError("Failed to load subscribers."); }
   }, []);
 
   const refresh = () => { fetchData(pw); };
@@ -280,10 +331,41 @@ export default function AdminPage() {
     URL.revokeObjectURL(url);
   }
 
+  function exportVolunteersCSV() {
+    const headers = ["Name", "Email", "Phone", "University / Workplace", "Source", "Received"];
+    const rows = volunteers.map(r => [r.name, r.email, r.phone ?? "", r.affiliation ?? "", r.source ?? "", fmtDate(r.created_at)]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a"); a.href = url; a.download = "heritage-volunteers.csv"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
   const filteredInterest = interest.filter(r => {
     if (!interestSearch) return true;
     const q = interestSearch.toLowerCase();
     return r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q) || (r.phone ?? "").includes(q);
+  });
+
+  const filteredVolunteers = volunteers.filter(r => {
+    if (!volSearch) return true;
+    const q = volSearch.toLowerCase();
+    return r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q) || (r.phone ?? "").includes(q) || (r.affiliation ?? "").toLowerCase().includes(q);
+  });
+
+  function exportSubscribersCSV() {
+    const headers = ["Email", "Source", "Subscribed"];
+    const rows = subscribers.map(r => [r.email, r.source ?? "", fmtDate(r.created_at)]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a"); a.href = url; a.download = "newsletter-subscribers.csv"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const filteredSubscribers = subscribers.filter(r => {
+    if (!subSearch) return true;
+    return r.email.toLowerCase().includes(subSearch.toLowerCase());
   });
 
   const filtered = tickets.filter(t => {
@@ -345,7 +427,13 @@ export default function AdminPage() {
           <div>
             <p className="text-[9px] tracking-[0.32em] uppercase text-[#901A1C]">Inkpot India</p>
             <h1 className="text-xl text-black mt-0.5" style={{ fontFamily: "Georgia,serif", fontStyle: "italic", fontWeight: 400 }}>
-              The Living Table &mdash; {view === "interest" ? "Interest List" : "Guest List"}
+              {view === "volunteers"
+                ? "Heritage Cleanliness — Volunteers"
+                : view === "subscribers"
+                  ? "Newsletter — Subscribers"
+                  : view === "interest"
+                    ? "The Living Table — Interest List"
+                    : "The Living Table — Guest List"}
             </h1>
           </div>
           <div className="flex gap-2">
@@ -449,8 +537,10 @@ export default function AdminPage() {
         {/* ── View tabs ── */}
         <div className="flex gap-2 mb-6">
           {([
-            { key: "guests",   label: "Guest List" },
-            { key: "interest", label: `Interest${interest.length ? ` (${interest.length})` : ""}` },
+            { key: "guests",      label: "Guest List" },
+            { key: "interest",    label: `Interest${interest.length ? ` (${interest.length})` : ""}` },
+            { key: "volunteers",  label: `Volunteers${volunteers.length ? ` (${volunteers.length})` : ""}` },
+            { key: "subscribers", label: `Subscribers${subscribers.length ? ` (${subscribers.length})` : ""}` },
           ] as { key: ViewType; label: string }[]).map(v => (
             <button key={v.key} onClick={() => setView(v.key)}
               className={`text-[9px] tracking-[0.18em] uppercase px-4 py-2 transition-colors ${
@@ -726,6 +816,128 @@ export default function AdminPage() {
             <div className="flex items-center justify-between mt-3">
               <p className="text-[10px] text-black/28">{filteredInterest.length} of {interest.length} shown</p>
               <p className="text-[10px] text-black/28">Register Your Interest · The Living Table</p>
+            </div>
+          </div>
+        )}
+
+        {/* ── Volunteers List (Heritage Cleanliness) ── */}
+        {view === "volunteers" && (
+          <div>
+            {/* Toolbar */}
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <div className="bg-white px-5 py-4 border-t-2 border-[#8B1E20] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+                <p className="text-[8px] tracking-[0.28em] uppercase text-black/35 mb-1.5">Total Volunteers</p>
+                <p className="text-2xl font-light text-black" style={{ fontFamily: "Georgia,serif" }}>{volunteers.length}</p>
+              </div>
+              <input type="text" placeholder="Search name / email / phone / workplace"
+                value={volSearch} onChange={e => setVolSearch(e.target.value)}
+                className="ml-auto border-b border-black/18 pb-1.5 text-sm text-black outline-none focus:border-[#8B1E20] bg-transparent w-64 placeholder-black/28"
+              />
+              <button onClick={exportVolunteersCSV} disabled={!volunteers.length}
+                className="text-[9px] tracking-[0.18em] uppercase bg-[#8B1E20] text-white px-4 py-2 hover:bg-[#6d1719] transition-colors disabled:opacity-40">
+                Export CSV
+              </button>
+            </div>
+
+            {volError && (
+              <p className="text-[#8B1E20] text-xs mb-4">{volError}</p>
+            )}
+
+            {/* Table */}
+            <div className="bg-white shadow-[0_1px_8px_rgba(0,0,0,0.06)] overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-black/8">
+                    {["Name", "Email", "Phone", "University / Workplace", "Received"].map(h => (
+                      <th key={h} className="text-left px-4 py-3 text-[8px] tracking-[0.24em] uppercase text-black/30 font-normal whitespace-nowrap bg-white sticky top-0">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredVolunteers.length === 0 && (
+                    <tr><td colSpan={5} className="px-4 py-12 text-center text-sm text-black/25">
+                      {volError ? "Could not load — run create_heritage_volunteers_table.sql in Supabase." : volSearch ? "No matches." : "No volunteers yet."}
+                    </td></tr>
+                  )}
+                  {filteredVolunteers.map(r => (
+                    <tr key={r.id} className="border-b border-black/5 hover:bg-[#F4EFE6]/40 transition-colors">
+                      <td className="px-4 py-3 text-black font-medium text-[13px] whitespace-nowrap">{r.name}</td>
+                      <td className="px-4 py-3 text-black/55 text-[12px] whitespace-nowrap">{r.email}</td>
+                      <td className="px-4 py-3 text-black/55 text-[12px] whitespace-nowrap">{r.phone ?? "—"}</td>
+                      <td className="px-4 py-3 text-black/55 text-[12px] whitespace-nowrap">{r.affiliation ?? "—"}</td>
+                      <td className="px-4 py-3 text-black/35 text-[11px] whitespace-nowrap">{fmtDate(r.created_at)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between mt-3">
+              <p className="text-[10px] text-black/28">{filteredVolunteers.length} of {volunteers.length} shown</p>
+              <p className="text-[10px] text-black/28">Register as a Changemaker · Heritage Cleanliness Project</p>
+            </div>
+          </div>
+        )}
+
+        {/* ── Newsletter Subscribers ── */}
+        {view === "subscribers" && (
+          <div>
+            {/* Toolbar */}
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <div className="bg-white px-5 py-4 border-t-2 border-[#901A1C] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+                <p className="text-[8px] tracking-[0.28em] uppercase text-black/35 mb-1.5">Total Subscribers</p>
+                <p className="text-2xl font-light text-black" style={{ fontFamily: "Georgia,serif" }}>{subscribers.length}</p>
+              </div>
+              <input type="text" placeholder="Search email"
+                value={subSearch} onChange={e => setSubSearch(e.target.value)}
+                className="ml-auto border-b border-black/18 pb-1.5 text-sm text-black outline-none focus:border-[#901A1C] bg-transparent w-60 placeholder-black/28"
+              />
+              <button onClick={exportSubscribersCSV} disabled={!subscribers.length}
+                className="text-[9px] tracking-[0.18em] uppercase bg-[#901A1C] text-white px-4 py-2 hover:bg-[#7a1517] transition-colors disabled:opacity-40">
+                Export CSV
+              </button>
+            </div>
+
+            {subError && (
+              <p className="text-[#901A1C] text-xs mb-4">{subError}</p>
+            )}
+
+            {/* Table */}
+            <div className="bg-white shadow-[0_1px_8px_rgba(0,0,0,0.06)] overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-black/8">
+                    {["Email", "Source", "Subscribed"].map(h => (
+                      <th key={h} className="text-left px-4 py-3 text-[8px] tracking-[0.24em] uppercase text-black/30 font-normal whitespace-nowrap bg-white sticky top-0">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredSubscribers.length === 0 && (
+                    <tr><td colSpan={3} className="px-4 py-12 text-center text-sm text-black/25">
+                      {subError ? "Could not load — run create_newsletter_subscribers_table.sql in Supabase." : subSearch ? "No matches." : "No subscribers yet."}
+                    </td></tr>
+                  )}
+                  {filteredSubscribers.map(r => (
+                    <tr key={r.id} className="border-b border-black/5 hover:bg-[#F4EFE6]/40 transition-colors">
+                      <td className="px-4 py-3 text-black font-medium text-[13px] whitespace-nowrap">{r.email}</td>
+                      <td className="px-4 py-3 text-black/55 text-[12px] whitespace-nowrap">{r.source ?? "—"}</td>
+                      <td className="px-4 py-3 text-black/35 text-[11px] whitespace-nowrap">{fmtDate(r.created_at)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between mt-3">
+              <p className="text-[10px] text-black/28">{filteredSubscribers.length} of {subscribers.length} shown</p>
+              <p className="text-[10px] text-black/28">Stay Connected · Newsletter</p>
             </div>
           </div>
         )}

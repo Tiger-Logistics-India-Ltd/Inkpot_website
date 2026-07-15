@@ -110,32 +110,29 @@ function PanelSOTS({ isMobile }: { isMobile: boolean }) {
 }
 
 /* ─────────────────────────────────────────────────────────
-   Panel 2 — Antarnaad
+   Panel 2 — The Living Table
 ──────────────────────────────────────────────────────────*/
-function PanelAntarnaad({ isMobile }: { isMobile: boolean }) {
+function PanelLivingTable({ isMobile }: { isMobile: boolean }) {
   if (isMobile) {
     return (
       <section style={{ background: "#F4EFE6" }}>
         <div style={{ padding: "20px 20px 0" }}>
           <div style={{ position: "relative", height: "210px", overflow: "hidden" }}>
-            <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 10, background: "rgba(144,26,28,0.9)", padding: "4px 12px", fontFamily: "var(--font-body)", fontSize: "7px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#ffffff" }}>
-              Coming Soon
-            </div>
-            <Image src="/images/Homepage/anatarnaad_landscpae_real.svg" alt="Antarnaad" fill unoptimized sizes="calc(100vw - 40px)" style={{ objectFit: "cover", objectPosition: "center" }} />
+            <Image src="/images/thelivingtable/gallery%20images/TLT-03.jpg" alt="The Living Table" fill sizes="calc(100vw - 40px)" style={{ objectFit: "cover", objectPosition: "center" }} />
           </div>
         </div>
         <motion.div {...fadeUp} style={{ padding: "28px 24px 40px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
             <div style={{ width: "16px", height: "1px", background: "var(--primary-red)" }} />
             <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(0,0,0,0.45)" }}>
-              7 Art Forms · 4 Spaces · One Journey
+              Food · Culture · Memory
             </span>
           </div>
           <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "36px", lineHeight: 1.08, color: "#1a1a1a", marginBottom: "14px" }}>
-            Antarnaad
+            The Living<br />Table
           </h2>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.78, color: "rgba(0,0,0,0.5)", marginBottom: "8px" }}>
-            Arrive fully into the moment, where the noise of elsewhere begins to dissolve. In this state, we do not rush to interpret or define; instead, we allow ourselves to linger, to feel, and to notice what unfolds naturally.
+            Long before culture found its way into galleries, it lived around tables — where food, conversation, and long dinners became vessels for memory and tradition. On 28th June, we set the table for the first time. A new edition is being set.
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "24px" }}>
             <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
@@ -143,9 +140,9 @@ function PanelAntarnaad({ isMobile }: { isMobile: boolean }) {
             </svg>
             <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", color: "rgba(0,0,0,0.28)", letterSpacing: "0.08em" }}>New Delhi</span>
           </div>
-          <a href="#join"
+          <a href="/the-living-table"
             style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.2em", textTransform: "uppercase", color: "#1a1a1a", textDecoration: "none", fontWeight: 700, borderBottom: "1px solid rgba(0,0,0,0.35)", paddingBottom: "2px" }}>
-            Notify Me When Live
+            Explore Experience
             <svg width="10" height="7" viewBox="0 0 14 10" fill="none">
               <path d="M1 5h12M8 1l5 4-5 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -158,23 +155,20 @@ function PanelAntarnaad({ isMobile }: { isMobile: boolean }) {
   return (
     <section style={{ position: "relative", width: "100%", height: "100vh", background: "#F4EFE6", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "54%", zIndex: 0 }}>
-        <Image src="/images/Homepage/anatarnaad_landscpae_real.svg" alt="Antarnaad — summer programme"
-          fill unoptimized sizes="54vw" style={{ objectFit: "cover", objectPosition: "center" }} />
-      </div>
-      <div style={{ position: "absolute", top: "28px", left: "28px", zIndex: 10, background: "rgba(144,26,28,0.9)", padding: "5px 14px", fontFamily: "var(--font-body)", fontSize: "8px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#ffffff" }}>
-        Coming Soon
+        <Image src="/images/thelivingtable/gallery%20images/TLT-03.jpg" alt="The Living Table — dinner experience"
+          fill sizes="54vw" style={{ objectFit: "cover", objectPosition: "center" }} />
       </div>
       <div style={{ position: "absolute", right: "8%", top: "50%", transform: "translateY(-50%)", zIndex: 2, maxWidth: "370px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "22px" }}>
           <div style={{ width: "20px", height: "1px", background: "var(--primary-red)" }} />
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(0,0,0,0.55)" }}>7 Art Forms · 4 Spaces · One Journey</span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(0,0,0,0.55)" }}>Food · Culture · Memory</span>
         </div>
         <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(42px, 5vw, 76px)", lineHeight: 1.03, color: "#1a1a1a", marginBottom: "24px" }}>
-          Antarnaad
+          The Living Table
         </h2>
         <div style={{ width: "28px", height: "1px", background: "var(--primary-red)", marginBottom: "24px" }} />
         <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.85, color: "rgba(0,0,0,0.48)", marginBottom: "14px" }}>
-          Arrive fully into the moment, where the noise of elsewhere begins to dissolve. In this state, we do not rush to interpret or define; instead, we allow ourselves to linger, to feel, and to notice what unfolds naturally.
+          Long before culture found its way into galleries, it lived around tables — where food, conversation, and long dinners became vessels for memory and tradition. On 28th June, we set the table for the first time. A new edition is being set.
         </p>
         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "38px" }}>
           <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
@@ -182,12 +176,12 @@ function PanelAntarnaad({ isMobile }: { isMobile: boolean }) {
           </svg>
           <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.28)", letterSpacing: "0.08em" }}>New Delhi</span>
         </div>
-        <a href="#join"
+        <a href="/the-living-table"
           style={{ display: "inline-flex", alignItems: "center", gap: "10px", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", color: "#1a1a1a", textDecoration: "none", fontWeight: 700, borderBottom: "1px solid rgba(0,0,0,0.4)", paddingBottom: "3px", transition: "color 0.25s, border-color 0.25s" }}
           onMouseEnter={(e) => { e.currentTarget.style.color = "var(--primary-red)"; e.currentTarget.style.borderBottomColor = "var(--primary-red)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.color = "#1a1a1a"; e.currentTarget.style.borderBottomColor = "rgba(0,0,0,0.4)"; }}
         >
-          Notify Me When Live
+          Explore Experience
           <svg width="12" height="8" viewBox="0 0 14 10" fill="none">
             <path d="M1 5h12M8 1l5 4-5 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -229,7 +223,7 @@ function PanelHCP({ isMobile }: { isMobile: boolean }) {
             </svg>
             <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", color: "rgba(255,255,255,0.35)", letterSpacing: "0.08em" }}>Mehrauli Archaeological Park, Delhi</span>
           </div>
-          <a href="#join"
+          <a href="/events/heritage-cleanliness"
             style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#ffffff", color: "#8B1E20", fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.18em", textTransform: "uppercase", padding: "12px 24px", textDecoration: "none", fontWeight: 600 }}>
             Volunteer Now
             <svg width="10" height="7" viewBox="0 0 14 10" fill="none">
@@ -266,7 +260,7 @@ function PanelHCP({ isMobile }: { isMobile: boolean }) {
           </svg>
           <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(255,255,255,0.32)", letterSpacing: "0.08em" }}>Mehrauli Archaeological Park, Delhi</span>
         </div>
-        <a href="#join"
+        <a href="/events/heritage-cleanliness"
           style={{ display: "inline-flex", alignItems: "center", gap: "10px", background: "#ffffff", color: "#8B1E20", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", padding: "14px 32px", textDecoration: "none", fontWeight: 600, transition: "background 0.25s, color 0.25s" }}
           onMouseEnter={(e) => { e.currentTarget.style.background = "#0D0B09"; e.currentTarget.style.color = "#ffffff"; }}
           onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; e.currentTarget.style.color = "#8B1E20"; }}
@@ -398,7 +392,7 @@ export default function OurExperiences() {
 
       {/* ── Four panels ── */}
       <PanelSOTS isMobile={isMobile} />
-      <PanelAntarnaad isMobile={isMobile} />
+      <PanelLivingTable isMobile={isMobile} />
       <PanelHCP isMobile={isMobile} />
       <PanelConclave isMobile={isMobile} />
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
 
@@ -81,7 +81,15 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +116,7 @@ export default function ContactPage() {
       <main style={{ background: "#ffffff" }}>
 
         {/* ── PAGE HEADER ── */}
-        <section style={{ background: "#0D0D0D", padding: "180px 64px 100px", textAlign: "center" }}>
+        <section style={{ background: "#0D0D0D", padding: isMobile ? "128px 24px 72px" : "180px 64px 100px", textAlign: "center" }}>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -128,7 +136,7 @@ export default function ContactPage() {
         </section>
 
         {/* ── MAIN CONTENT ── */}
-        <section style={{ maxWidth: "1280px", margin: "0 auto", padding: "112px 64px 128px", display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "100px", alignItems: "start" }}>
+        <section style={{ maxWidth: "1280px", margin: "0 auto", padding: isMobile ? "56px 24px 72px" : "112px 64px 128px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1.4fr", gap: isMobile ? "56px" : "100px", alignItems: "start" }}>
 
           {/* Left — info */}
           <motion.div
@@ -157,6 +165,11 @@ export default function ContactPage() {
                   href: "mailto:info@inkpotindia.com",
                 },
                 {
+                  label: "WhatsApp",
+                  value: "Inkpot India · +91 92053 04666",
+                  href: "https://wa.me/919205304666",
+                },
+                {
                   label: "Location",
                   value: "New Delhi, India",
                   href: undefined,
@@ -169,6 +182,8 @@ export default function ContactPage() {
                   {item.href ? (
                     <a
                       href={item.href}
+                      target={item.href.startsWith("http") ? "_blank" : undefined}
+                      rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
                       style={{ fontFamily: "var(--font-body)", fontSize: "16px", color: "#1a1a1a", textDecoration: "none", transition: "color 0.2s" }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary-red)")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "#1a1a1a")}
@@ -231,7 +246,7 @@ export default function ContactPage() {
               </div>
             ) : (
               <form ref={formRef} onSubmit={handleSubmit}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 40px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? "0" : "0 40px" }}>
                   <Field label="First Name" name="first_name" placeholder="First name" />
                   <Field label="Last Name" name="last_name" placeholder="Last name" />
                 </div>
@@ -261,7 +276,7 @@ export default function ContactPage() {
         </section>
 
         {/* ── DIVIDER STRIP ── */}
-        <div style={{ background: "var(--bg-linen)", borderTop: "1px solid rgba(0,0,0,0.07)", padding: "64px", textAlign: "center" }}>
+        <div style={{ background: "var(--bg-linen)", borderTop: "1px solid rgba(0,0,0,0.07)", padding: isMobile ? "48px 24px" : "64px", textAlign: "center" }}>
           <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(20px, 2.2vw, 30px)", color: "rgba(0,0,0,0.35)", maxWidth: "700px", margin: "0 auto", lineHeight: 1.5 }}>
             &ldquo;Culture lives in the space between people. Come find us there.&rdquo;
           </p>
