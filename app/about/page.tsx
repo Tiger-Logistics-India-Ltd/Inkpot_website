@@ -236,13 +236,13 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.75, ease: "easeOut" }}
-              style={{ position: "relative", height: isMobile ? "300px" : "600px", overflow: "hidden" }}
+              style={{ position: "relative", width: "100%", height: isMobile ? "auto" : "600px", aspectRatio: isMobile ? "300 / 450" : undefined, maxWidth: isMobile ? "360px" : undefined, margin: isMobile ? "0 auto" : undefined, overflow: "hidden" }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/Homepage/about/About_founder_image.svg"
                 alt="Simar Malhotra — Founder, Inkpot India"
-                style={{ display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+                style={{ display: "block", width: "100%", height: "100%", objectFit: isMobile ? "contain" : "cover", objectPosition: "center top" }}
               />
             </motion.div>
 
