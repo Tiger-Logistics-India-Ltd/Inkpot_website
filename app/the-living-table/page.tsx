@@ -222,8 +222,7 @@ export default function LivingTablePage() {
             poster="/images/thelivingtable/banner_1.png"
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
           >
-            <source src="/images/thelivingtable/hero.webm" type="video/webm" />
-            <source src="/images/thelivingtable/Dining_table_in_Old_Delhi_202606091648.mp4" type="video/mp4" />
+            <source src="/images/thelivingtable/Hero_video.mp4" type="video/mp4" />
             <track kind="captions" src="/empty.vtt" srcLang="en" label="No dialogue" />
           </video>
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,8,6,0.22) 0%, rgba(10,8,6,0.52) 55%, rgba(10,8,6,0.94) 100%)" }} />
