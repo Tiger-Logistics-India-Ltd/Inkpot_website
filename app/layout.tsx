@@ -49,11 +49,6 @@ export const metadata: Metadata = {
   verification: {
     google: "LQH8vAq0nSU5algX4s87wYYv9DFQPbkT_C81lM7EmYE",
   },
-  icons: {
-    icon: "/fav%20icon.svg",
-    apple: "/fav%20icon.svg",
-    shortcut: "/fav%20icon.svg",
-  },
   openGraph: {
     title: "Inkpot India — Culture, Reimagined",
     description:
