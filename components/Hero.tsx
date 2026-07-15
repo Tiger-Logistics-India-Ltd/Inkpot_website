@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useGsapParallax } from "@/hooks/useGsapParallax";
+import AutoplayVideo from "@/components/AutoplayVideo";
 
 export default function Hero() {
   const { wrapperRef, layerRef } = useGsapParallax(0.4);
   const [isMobile, setIsMobile] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -16,38 +16,14 @@ export default function Hero() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.setAttribute("muted", "");
-    v.setAttribute("playsinline", "");
-    v.muted = true;
-    const tryPlay = () => { v.play().catch(() => {}); };
-    tryPlay();
-    v.addEventListener("loadedmetadata", tryPlay, { once: true });
-    v.addEventListener("canplay", tryPlay, { once: true });
-    const handleFirstTouch = () => tryPlay();
-    document.addEventListener("touchstart", handleFirstTouch, { once: true, passive: true });
-    return () => {
-      v.removeEventListener("loadedmetadata", tryPlay);
-      v.removeEventListener("canplay", tryPlay);
-      document.removeEventListener("touchstart", handleFirstTouch);
-    };
-  }, []);
-
   return (
     <section className="relative w-full overflow-hidden" style={{ height: isMobile ? "60vh" : "100vh", minHeight: isMobile ? "420px" : "700px" }}>
 
       {/* Parallax video layer */}
       <div className="parallax-wrapper" ref={wrapperRef}>
         <div className="parallax-layer" ref={layerRef}>
-          <video
-            ref={videoRef}
+          <AutoplayVideo
             src="/images/Homepage/hero_banner_3.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
             style={{
               position: "absolute",
               top: 0,

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import AutoplayVideo from "@/components/AutoplayVideo";
 
 const vp = { once: true, amount: 0.25 };
 const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping: 20, delay });
@@ -9,26 +10,6 @@ const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping
 export default function Newsletter() {
   const [email, setEmail]     = useState("");
   const [status, setStatus]   = useState<"idle" | "loading" | "success" | "error">("idle");
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.setAttribute("muted", "");
-    v.setAttribute("playsinline", "");
-    v.muted = true;
-    const tryPlay = () => { v.play().catch(() => {}); };
-    tryPlay();
-    v.addEventListener("loadedmetadata", tryPlay, { once: true });
-    v.addEventListener("canplay", tryPlay, { once: true });
-    const handleFirstTouch = () => tryPlay();
-    document.addEventListener("touchstart", handleFirstTouch, { once: true, passive: true });
-    return () => {
-      v.removeEventListener("loadedmetadata", tryPlay);
-      v.removeEventListener("canplay", tryPlay);
-      document.removeEventListener("touchstart", handleFirstTouch);
-    };
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,10 +32,8 @@ export default function Newsletter() {
 
   return (
     <section id="join" style={{ position: "relative", overflow: "hidden", padding: "120px 0" }}>
-      <video
-        ref={videoRef}
+      <AutoplayVideo
         src="/images/Homepage/Newsletter/hero_second.mp4"
-        autoPlay loop muted playsInline
         style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", zIndex: 0 }}
       />
       <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1 }} />

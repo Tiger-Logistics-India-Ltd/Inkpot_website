@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AutoplayVideo from "@/components/AutoplayVideo";
 
 /* ── Flags — flip live without a redesign ── */
 const PRESS_ENABLED = false; // set true once real coverage exists
@@ -217,14 +218,13 @@ export default function LivingTablePage() {
 
         {/* ── 1. HERO ── */}
         <section className="tlt-hero" style={{ position: "relative", height: "100dvh", minHeight: "480px", overflow: "hidden" }}>
-          <video
-            autoPlay muted loop playsInline
+          <AutoplayVideo
             poster="/images/thelivingtable/banner_1.png"
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
           >
             <source src="/images/thelivingtable/Hero_video.mp4" type="video/mp4" />
             <track kind="captions" src="/empty.vtt" srcLang="en" label="No dialogue" />
-          </video>
+          </AutoplayVideo>
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,8,6,0.22) 0%, rgba(10,8,6,0.52) 55%, rgba(10,8,6,0.94) 100%)" }} />
 
           <div style={{ position: "absolute", inset: 0, zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 24px" }}>

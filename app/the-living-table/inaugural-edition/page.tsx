@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AutoplayVideo from "@/components/AutoplayVideo";
 
 type Flow = "browse" | "form" | "paying" | "confirmed";
 
@@ -202,14 +203,13 @@ export default function LivingTablePage() {
 
         {/* ── 1. HERO ── */}
         <section className="tlt-hero" style={{ position: "relative", height: "100dvh", minHeight: "480px", overflow: "hidden" }}>
-          <video
-            autoPlay muted loop playsInline
+          <AutoplayVideo
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
           >
             <source src="/images/thelivingtable/hero.webm" type="video/webm" />
             <source src="/images/thelivingtable/Dining_table_in_Old_Delhi_202606091648.mp4" type="video/mp4" />
             <track kind="captions" src="/empty.vtt" srcLang="en" label="No dialogue" />
-          </video>
+          </AutoplayVideo>
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,8,6,0.18) 0%, rgba(10,8,6,0.52) 55%, rgba(10,8,6,0.96) 100%)" }} />
 
           {/* Back-link — returns to the evergreen main page */}
@@ -662,14 +662,13 @@ export default function LivingTablePage() {
           }}>
             {/* Left — venue video */}
             <div className="tlt-why-video" style={{ position: "relative", overflow: "hidden" }}>
-              <video
-                autoPlay muted loop playsInline
+              <AutoplayVideo
                 style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
               >
                 <source src="/images/thelivingtable/VenueRevel_Video.webm" type="video/webm" />
                 <source src="/images/thelivingtable/VenueRevel_Video.mp4" type="video/mp4" />
                 <track kind="captions" src="/empty.vtt" srcLang="en" label="No dialogue" />
-              </video>
+              </AutoplayVideo>
             </div>
 
             {/* Right — quote + paragraph, white bg */}
