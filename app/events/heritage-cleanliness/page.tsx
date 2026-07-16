@@ -104,7 +104,7 @@ export default function HeritageCleanlinessPage() {
           <div style={{ position: "absolute", right: isMobile ? "-14%" : "-4%", top: "54%", transform: "translateY(-50%)", width: isMobile ? "78%" : "44%", aspectRatio: "3 / 4", border: "1px solid rgba(201,168,76,0.16)", borderBottom: "none", borderRadius: "50% 50% 0 0 / 64% 64% 0 0", pointerEvents: "none" }} />
           <div style={{ position: "absolute", right: isMobile ? "0%" : "6%", top: "56%", transform: "translateY(-50%)", width: isMobile ? "54%" : "31%", aspectRatio: "3 / 4", border: "1px solid rgba(201,168,76,0.11)", borderBottom: "none", borderRadius: "50% 50% 0 0 / 64% 64% 0 0", pointerEvents: "none" }} />
           {/* Heritage monument illustration — ghosted into the ink */}
-          <div style={{ position: "absolute", right: 0, bottom: isMobile ? "40%" : 0, width: isMobile ? "104%" : "68%", height: isMobile ? "44%" : "76%", pointerEvents: "none", opacity: isMobile ? 0.5 : 0.62, mixBlendMode: "screen", filter: "contrast(1.12) saturate(1.08)", maskImage: "linear-gradient(180deg, transparent 0%, #000 34%, #000 78%, transparent 100%)", WebkitMaskImage: "linear-gradient(180deg, transparent 0%, #000 34%, #000 78%, transparent 100%)" }}>
+          <div style={{ position: "absolute", right: 0, bottom: 0, width: isMobile ? "104%" : "68%", height: isMobile ? "46%" : "76%", pointerEvents: "none", opacity: isMobile ? 0.5 : 0.62, mixBlendMode: "screen", filter: "contrast(1.12) saturate(1.08)", maskImage: "linear-gradient(180deg, transparent 0%, #000 34%, #000 78%, transparent 100%)", WebkitMaskImage: "linear-gradient(180deg, transparent 0%, #000 34%, #000 78%, transparent 100%)" }}>
             <Image
               src="/images/heritage cleaning/hero_poster.png"
               alt=""
@@ -120,7 +120,7 @@ export default function HeritageCleanlinessPage() {
           <div style={{ position: "absolute", inset: 0, opacity: 0.05, mixBlendMode: "overlay", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
           {/* Bottom fade for text legibility */}
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 42%, rgba(13,11,9,0.6) 100%)" }} />
-          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: isMobile ? "0 24px 44px" : "0 64px 72px", maxWidth: "1280px", margin: "0 auto", left: 0, right: 0 }}>
+          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: isMobile ? "flex-start" : "flex-end", padding: isMobile ? "96px 24px 0" : "0 64px 72px", maxWidth: "1280px", margin: "0 auto", left: 0, right: 0 }}>
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
