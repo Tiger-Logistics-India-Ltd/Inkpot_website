@@ -104,14 +104,15 @@ export default function HeritageCleanlinessPage() {
           <div style={{ position: "absolute", right: isMobile ? "-14%" : "-4%", top: "54%", transform: "translateY(-50%)", width: isMobile ? "78%" : "44%", aspectRatio: "3 / 4", border: "1px solid rgba(201,168,76,0.16)", borderBottom: "none", borderRadius: "50% 50% 0 0 / 64% 64% 0 0", pointerEvents: "none" }} />
           <div style={{ position: "absolute", right: isMobile ? "0%" : "6%", top: "56%", transform: "translateY(-50%)", width: isMobile ? "54%" : "31%", aspectRatio: "3 / 4", border: "1px solid rgba(201,168,76,0.11)", borderBottom: "none", borderRadius: "50% 50% 0 0 / 64% 64% 0 0", pointerEvents: "none" }} />
           {/* Heritage monument illustration — ghosted into the ink */}
-          <div style={{ position: "absolute", right: 0, bottom: isMobile ? "40%" : 0, width: isMobile ? "104%" : "68%", height: isMobile ? "44%" : "76%", pointerEvents: "none", opacity: isMobile ? 0.2 : 0.22, mixBlendMode: "screen", maskImage: "linear-gradient(180deg, transparent 0%, #000 34%, #000 78%, transparent 100%)", WebkitMaskImage: "linear-gradient(180deg, transparent 0%, #000 34%, #000 78%, transparent 100%)" }}>
+          <div style={{ position: "absolute", right: 0, bottom: isMobile ? "40%" : 0, width: isMobile ? "104%" : "68%", height: isMobile ? "44%" : "76%", pointerEvents: "none", opacity: isMobile ? 0.5 : 0.62, mixBlendMode: "screen", filter: "contrast(1.12) saturate(1.08)", maskImage: "linear-gradient(180deg, transparent 0%, #000 34%, #000 78%, transparent 100%)", WebkitMaskImage: "linear-gradient(180deg, transparent 0%, #000 34%, #000 78%, transparent 100%)" }}>
             <Image
               src="/images/heritage cleaning/hero_poster.png"
               alt=""
               aria-hidden="true"
               fill
               loading="eager"
-              sizes="(max-width: 768px) 112vw, 68vw"
+              quality={90}
+              sizes="(max-width: 768px) 104vw, 68vw"
               style={{ objectFit: "contain", objectPosition: "bottom right" }}
             />
           </div>
