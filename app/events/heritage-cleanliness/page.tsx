@@ -95,16 +95,16 @@ export default function HeritageCleanlinessPage() {
       <main style={{ background: "#ffffff" }}>
 
         {/* ── HERO ── */}
-        <section style={{ position: "relative", height: isMobile ? "62vh" : "78vh", minHeight: isMobile ? "440px" : "560px", overflow: "hidden", background: "#0D0B09" }}>
-          {/* Base ink → oxblood gradient */}
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, #2c0f10 0%, #1a1210 52%, #0D0B09 100%)" }} />
-          {/* Warm glow, upper-left */}
-          <div style={{ position: "absolute", inset: 0, background: "radial-gradient(85% 120% at 10% 6%, rgba(139,30,32,0.5) 0%, rgba(139,30,32,0) 55%)" }} />
-          {/* Faint gold arch motifs — a monument gateway */}
-          <div style={{ position: "absolute", right: isMobile ? "-14%" : "-4%", top: "54%", transform: "translateY(-50%)", width: isMobile ? "78%" : "44%", aspectRatio: "3 / 4", border: "1px solid rgba(201,168,76,0.16)", borderBottom: "none", borderRadius: "50% 50% 0 0 / 64% 64% 0 0", pointerEvents: "none" }} />
-          <div style={{ position: "absolute", right: isMobile ? "0%" : "6%", top: "56%", transform: "translateY(-50%)", width: isMobile ? "54%" : "31%", aspectRatio: "3 / 4", border: "1px solid rgba(201,168,76,0.11)", borderBottom: "none", borderRadius: "50% 50% 0 0 / 64% 64% 0 0", pointerEvents: "none" }} />
-          {/* Heritage monument illustration — ghosted into the ink */}
-          <div style={{ position: "absolute", right: 0, bottom: 0, width: isMobile ? "104%" : "68%", height: isMobile ? "46%" : "76%", pointerEvents: "none", opacity: isMobile ? 0.5 : 0.62, mixBlendMode: "screen", filter: "contrast(1.12) saturate(1.08)", maskImage: "linear-gradient(180deg, transparent 0%, #000 34%, #000 78%, transparent 100%)", WebkitMaskImage: "linear-gradient(180deg, transparent 0%, #000 34%, #000 78%, transparent 100%)" }}>
+        <section style={{ position: "relative", height: isMobile ? "62vh" : "78vh", minHeight: isMobile ? "440px" : "560px", overflow: "hidden", background: "#FBF9F5" }}>
+          {/* Warm paper base, settling into the linen of the section below */}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(150deg, #FDFBF8 0%, #F8F5EF 58%, var(--bg-linen, #F5F5F0) 100%)" }} />
+          {/* Faint warm wash, upper-left */}
+          <div style={{ position: "absolute", inset: 0, background: "radial-gradient(85% 120% at 10% 6%, rgba(144,26,28,0.07) 0%, rgba(144,26,28,0) 58%)" }} />
+          {/* Faint arch motifs — a monument gateway */}
+          <div style={{ position: "absolute", right: isMobile ? "-14%" : "-4%", top: "54%", transform: "translateY(-50%)", width: isMobile ? "78%" : "44%", aspectRatio: "3 / 4", border: "1px solid rgba(144,26,28,0.13)", borderBottom: "none", borderRadius: "50% 50% 0 0 / 64% 64% 0 0", pointerEvents: "none" }} />
+          <div style={{ position: "absolute", right: isMobile ? "0%" : "6%", top: "56%", transform: "translateY(-50%)", width: isMobile ? "54%" : "31%", aspectRatio: "3 / 4", border: "1px solid rgba(144,26,28,0.09)", borderBottom: "none", borderRadius: "50% 50% 0 0 / 64% 64% 0 0", pointerEvents: "none" }} />
+          {/* Heritage monument illustration — multiply so the cream drops into the paper and only the linework and colour stay */}
+          <div style={{ position: "absolute", right: 0, bottom: 0, width: isMobile ? "104%" : "68%", height: isMobile ? "46%" : "76%", pointerEvents: "none", opacity: isMobile ? 0.95 : 0.92, mixBlendMode: "multiply", maskImage: "linear-gradient(180deg, transparent 0%, #000 26%, #000 88%, transparent 100%)", WebkitMaskImage: "linear-gradient(180deg, transparent 0%, #000 26%, #000 88%, transparent 100%)" }}>
             <Image
               src="/images/heritage cleaning/hero_poster.png"
               alt=""
@@ -116,25 +116,25 @@ export default function HeritageCleanlinessPage() {
               style={{ objectFit: "contain", objectPosition: "bottom right" }}
             />
           </div>
-          {/* Fine film grain */}
-          <div style={{ position: "absolute", inset: 0, opacity: 0.05, mixBlendMode: "overlay", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
-          {/* Bottom fade for text legibility */}
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 42%, rgba(13,11,9,0.6) 100%)" }} />
+          {/* Paper grain */}
+          <div style={{ position: "absolute", inset: 0, opacity: 0.5, mixBlendMode: "multiply", pointerEvents: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='0.14'/%3E%3C/svg%3E\")" }} />
+          {/* Bottom fade into the linen section below */}
+          <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, transparent ${isMobile ? "82%" : "68%"}, var(--bg-linen, #F5F5F0) 100%)` }} />
           <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: isMobile ? "flex-start" : "flex-end", padding: isMobile ? "96px 24px 0" : "0 64px 72px", maxWidth: "1280px", margin: "0 auto", left: 0, right: 0 }}>
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "18px" }}>
-                <div style={{ width: "24px", height: "1px", background: "rgba(255,255,255,0.6)" }} />
-                <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(255,255,255,0.82)" }}>
+                <div style={{ width: "24px", height: "1px", background: "var(--primary-red, #901A1C)" }} />
+                <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.28em", textTransform: "uppercase", color: "var(--primary-red, #901A1C)" }}>
                   Community Initiative · #NoLitterLegacy
                 </span>
               </div>
-              <h1 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: isMobile ? "40px" : "clamp(48px, 6.5vw, 92px)", lineHeight: 1.03, color: "#ffffff", margin: "0 0 16px", maxWidth: "900px" }}>
-                The Heritage<br />Cleanliness Project
+              <h1 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: isMobile ? "40px" : "clamp(48px, 6.5vw, 92px)", lineHeight: 1.03, color: "#141210", margin: "0 0 16px", maxWidth: "900px" }}>
+                The Heritage<br /><span style={{ color: "var(--primary-red, #901A1C)" }}>Cleanliness Project</span>
               </h1>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "14px" : "17px", lineHeight: 1.7, color: "rgba(255,255,255,0.78)", maxWidth: "520px", margin: 0 }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "14px" : "17px", lineHeight: 1.7, color: "rgba(20,18,16,0.68)", maxWidth: "520px", margin: 0 }}>
                 We walk alongside history — and clean alongside it. One Sunday a month, at Delhi&rsquo;s heritage sites.
               </p>
             </motion.div>
