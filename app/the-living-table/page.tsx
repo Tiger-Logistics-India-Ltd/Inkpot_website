@@ -248,12 +248,13 @@ export default function LivingTablePage() {
               />
             </motion.div>
 
-            <motion.p
+            <motion.h1
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, delay: 1.0 }}
-              style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontSize: "clamp(14px, 3.5vw, 21px)", color: "rgba(244,239,230,0.66)", letterSpacing: "0.02em", margin: "0 0 34px" }}
+              style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(14px, 3.5vw, 21px)", color: "rgba(244,239,230,0.66)", letterSpacing: "0.02em", margin: "0 0 34px" }}
             >
+              <span className="sr-only">The Living Table — </span>
               Where stories find their way onto the plate.
-            </motion.p>
+            </motion.h1>
 
             <motion.div
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 1.3 }}

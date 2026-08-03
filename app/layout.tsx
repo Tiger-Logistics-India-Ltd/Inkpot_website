@@ -77,6 +77,41 @@ export const metadata: Metadata = {
   },
 };
 
+const SITE = "https://www.inkpotindia.com";
+
+// Site-wide structured data. Rendered as a native <script> per the Next.js
+// JSON-LD guide — it is data, not executable code, so next/script is not used.
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE}/#organization`,
+      name: "Inkpot India",
+      url: `${SITE}/`,
+      email: "info@inkpotindia.com",
+      description:
+        "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE}/images/Inkpot/Inkpot%20Final%20logo-01.png`,
+      },
+      sameAs: [
+        "https://www.instagram.com/inkpotindia_/",
+        "https://www.linkedin.com/company/inkpotindia/",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE}/#website`,
+      url: `${SITE}/`,
+      name: "Inkpot India",
+      inLanguage: "en-IN",
+      publisher: { "@id": `${SITE}/#organization` },
+    },
+  ],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -84,6 +119,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${ebGaramond.variable} ${montserrat.variable} ${belleza.variable}`}
     >
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+          }}
+        />
         <SmoothScroll>{children}</SmoothScroll>
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-B2CM1HZXB0" strategy="afterInteractive" />
         <Script id="ga4-init" strategy="afterInteractive">{`
