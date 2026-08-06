@@ -277,7 +277,7 @@ export default function AboutPage() {
                   href="/simar-malhotra"
                   style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginTop: "18px", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--primary-red)", textDecoration: "none", borderBottom: "1px solid rgba(144,26,28,0.3)", paddingBottom: "4px" }}
                 >
-                  Full biography
+                  About Founder
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>

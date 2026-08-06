@@ -30,12 +30,15 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+<!-- /simar-malhotra is temporarily omitted: the biography is placeholder copy
+     and the page is noindex. Re-add this entry when the real bio ships.
   <url>
     <loc>https://www.inkpotindia.com/simar-malhotra</loc>
     <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+-->
   <url>
     <loc>https://www.inkpotindia.com/contact</loc>
     <lastmod>2026-08-03</lastmod>

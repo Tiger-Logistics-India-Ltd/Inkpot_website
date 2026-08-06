@@ -31,6 +31,11 @@ export const metadata: Metadata = {
   title: "Simar Malhotra — Author & Founder of Inkpot India",
   description: LEAD,
   keywords: ["Simar Malhotra", "Inkpot India", "Founder of Inkpot India"],
+  // ⚠️ TEMPORARY — the Biography section is Lorem ipsum placeholder right now.
+  // Letting Google index Latin filler on a real person's profile would poison
+  // the exact entity signal this page exists to build. DELETE this `robots`
+  // block (and re-add the URL to public/sitemap.xml) the moment real copy lands.
+  robots: { index: false, follow: true },
   alternates: { canonical: PAGE_URL },
   openGraph: {
     title: "Simar Malhotra — Author & Founder of Inkpot India",
@@ -291,31 +296,31 @@ export default function SimarMalhotraPage() {
           <section className="sm-sec" aria-labelledby="biography">
             <h2 className="sm-h2" id="biography">Biography</h2>
             <div className="sm-rule" />
+            {/* ⚠️ PLACEHOLDER COPY — replace with the real biography.
+                While this filler is here the page is noindex (see `robots` in
+                the metadata above) and is pulled from sitemap.xml. Restoring
+                real copy means: swap these three paragraphs, delete the
+                `robots` block, and re-add the URL to public/sitemap.xml. */}
             <p className="sm-p">
-              Simar Malhotra is an author and the founder of{" "}
-              <a href="/about">Inkpot India</a>, a cultural organisation based in Delhi. Inkpot works
-              across music, literature, architecture and performance, producing programmes intended to
-              return India&rsquo;s cultural inheritance to public life as something people take part in
-              rather than something they observe from a distance.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
             </p>
             <p className="sm-p">
-              Malhotra studied at Stanford University and Columbia University. That academic grounding
-              shapes Inkpot&rsquo;s method, which the organisation describes as producing work that is
-              &ldquo;at once scholarly and sensorial, rooted yet experimental&rdquo; — research-led
-              programming delivered as live, sensory experience rather than as lecture or archive.
+              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+              officia deserunt mollit anim id est laborum.
             </p>
             <p className="sm-p">
-              Under Malhotra&rsquo;s direction Inkpot India has staged concerts inside Delhi&rsquo;s
-              heritage monuments, convened dinners tracing the history of North Indian cuisine, and
-              organised recurring volunteer drives at archaeological sites in the capital. The
-              organisation&rsquo;s work has been covered by The Wire, Condé Nast Traveller, The Times of
-              India, Homegrown and Slurrp.
+              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+              laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+              architecto beatae vitae dicta sunt explicabo.
             </p>
           </section>
 
           {/* ── APPROACH ── */}
-          <section className="sm-sec" aria-labelledby="approach">
-            <h2 className="sm-h2" id="approach">Approach</h2>
+          <section className="sm-sec" aria-labelledby="philosophy">
+            <h2 className="sm-h2" id="philosophy">Philosophy</h2>
             <div className="sm-rule" />
             <div className="sm-quote">
               <p>
@@ -334,8 +339,8 @@ export default function SimarMalhotraPage() {
           </section>
 
           {/* ── WORK ── */}
-          <section className="sm-sec" aria-labelledby="work">
-            <h2 className="sm-h2" id="work">Work and initiatives</h2>
+          <section className="sm-sec" aria-labelledby="programmes">
+            <h2 className="sm-h2" id="programmes">Signature programmes</h2>
             <div className="sm-rule" />
             {WORK.map((w) => (
               <div className="sm-work" key={w.name}>
