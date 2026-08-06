@@ -171,14 +171,14 @@ export default function SimarMalhotraPage() {
         .sm-h1 { font-family:var(--font-heading); font-weight:400; font-size:clamp(30px,3.4vw,44px);
                  line-height:1.1; color:var(--ink); margin:0 0 10px; }
         .sm-role { font-family:var(--font-body); font-size:14px; letter-spacing:0.06em;
-                   color:var(--muted); margin:0 0 28px; }
+                   color:var(--ink); margin:0 0 28px; }
         .sm-lead { font-family:var(--font-body); font-size:16px; line-height:1.85;
-                   color:rgba(0,0,0,0.75); margin:0; max-width:60ch; }
+                   color:var(--ink); margin:0 0 20px; max-width:60ch; }
         .sm-h2 { font-family:var(--font-heading); font-style:italic; font-weight:400;
                  font-size:clamp(22px,2.4vw,29px); color:var(--ink); margin:44px 0 8px; }
         .sm-rule { width:36px; height:1px; background:var(--red); margin-bottom:24px; }
         .sm-p { font-family:var(--font-body); font-size:15.5px; line-height:1.9;
-                color:var(--muted); margin:0 0 20px; max-width:68ch; }
+                color:var(--ink); margin:0 0 20px; max-width:68ch; }
         .sm-p:last-of-type { margin-bottom:0; }
         .sm-p em { font-style:italic; color:var(--ink); }
         .sm-social { display:inline-flex; align-items:center; gap:9px; margin-top:26px;
@@ -191,9 +191,12 @@ export default function SimarMalhotraPage() {
         @media (max-width:860px) {
           .sm-hero { padding-top:64px; }
           .sm-hero-grid { grid-template-columns:1fr; }
-          /* Full width, still uncropped. Capped so the portrait cannot push the
-             copy entirely below the fold on a small screen. */
-          .sm-portrait { aspect-ratio:1067/1600; max-height:62vh; margin:0 auto; }
+          /* No auto side margins here: on a grid item they switch the box from
+             stretch to shrink-to-fit, and because the <Image fill> inside is
+             absolutely positioned there is no intrinsic width to shrink to — the
+             box collapses to zero and the photograph disappears. Full width,
+             capped so it cannot push the copy off screen. */
+          .sm-portrait { aspect-ratio:1067/1600; max-height:62vh; }
           .sm-hero-text { padding:32px 22px 56px; }
           .sm-h1 { font-size:clamp(28px,7.5vw,36px); }
           .sm-p, .sm-lead { font-size:15px; line-height:1.85; }
