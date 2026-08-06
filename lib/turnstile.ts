@@ -1,10 +1,10 @@
 // Server-side Cloudflare Turnstile verification, shared by the three public
 // forms (newsletter, heritage volunteers, Living Table interest).
 //
-// The check activates as soon as TURNSTILE_SECRET_KEY exists in the
-// environment. While it is unset verification is skipped, so adding the key in
-// Vercel switches protection on without a deploy and the forms never break in
-// the window between shipping this and creating the key.
+// The check activates as soon as the secret exists in the environment
+// (TURNSTILE_SECRET_KEY or TURNSTILE_SECRET). While it is unset verification is
+// skipped, so adding the key in Vercel switches protection on and the forms
+// never break in the window between shipping this and creating the key.
 
 const VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
@@ -16,7 +16,8 @@ export function clientIp(req: Request): string | undefined {
 }
 
 export async function verifyTurnstile(token: unknown, ip?: string): Promise<TurnstileResult> {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
+  // Accepts either name — the Vercel project uses TURNSTILE_SECRET.
+  const secret = process.env.TURNSTILE_SECRET_KEY || process.env.TURNSTILE_SECRET;
   if (!secret) {
     console.warn("[turnstile] TURNSTILE_SECRET_KEY not set — bot check skipped");
     return { ok: true };

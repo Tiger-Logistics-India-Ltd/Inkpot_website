@@ -210,16 +210,16 @@ export default function HeritageCleanlinessPage() {
                 Coffee tastes better after you&rsquo;ve done something good.
               </h2>
               <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "14px" : "15.5px", lineHeight: 1.8, color: "rgba(0,0,0,0.6)", margin: "0 0 12px" }}>
-                On Sunday, 26th July, swap your usual café catch-up for something more meaningful. Join us as a changemaker for a morning of cleaning &amp; restoring a heritage site — alongside storytelling, meeting interesting people, great conversations, and cold coffee.
+                On Sunday, 30th August, swap your usual café catch-up for something more meaningful. Join us as a changemaker for an afternoon of cleaning &amp; restoring a heritage site — alongside storytelling, meeting interesting people, great conversations, and cold coffee.
               </p>
               <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: isMobile ? "17px" : "20px", color: OXBLOOD, margin: "0 0 24px", letterSpacing: "0.02em" }}>
                 Show up. Pick up. Sip up.
               </p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "34px" }}>
                 {[
-                  { icon: "📍", text: "Mehrauli Archaeological Park" },
-                  { icon: "🗓️", text: "Sunday, 26 July" },
-                  { icon: "🕖", text: "7:00 AM onwards" },
+                  { icon: "📍", text: "Sultan Garhi Archaeological Park" },
+                  { icon: "🗓️", text: "Sunday, 30 August 2026" },
+                  { icon: "🕖", text: "4:00 PM onwards" },
                 ].map((d) => (
                   <div key={d.text} style={{ display: "flex", alignItems: "center", gap: "7px", border: "1px solid rgba(139,30,32,0.3)", borderRadius: "999px", padding: "8px 15px", fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.02em", color: "rgba(0,0,0,0.7)" }}>
                     <span aria-hidden="true">{d.icon}</span>{d.text}
@@ -238,7 +238,7 @@ export default function HeritageCleanlinessPage() {
                     You&rsquo;re in, changemaker
                   </h3>
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "rgba(0,0,0,0.5)", lineHeight: 1.8 }}>
-                    We&rsquo;ll be in touch with the details for the 26th July drive. See you at the site.
+                    We&rsquo;ll be in touch with the details for the 30th August drive. See you at the site.
                   </p>
                 </div>
               ) : (

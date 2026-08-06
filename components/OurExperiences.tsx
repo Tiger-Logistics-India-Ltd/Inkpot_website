@@ -221,7 +221,7 @@ function PanelHCP({ isMobile }: { isMobile: boolean }) {
             <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
               <path d="M4.5 0C2.567 0 1 1.567 1 3.5c0 2.625 3.5 7.5 3.5 7.5S8 6.125 8 3.5C8 1.567 6.433 0 4.5 0zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="rgba(255,255,255,0.3)" />
             </svg>
-            <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", color: "rgba(255,255,255,0.35)", letterSpacing: "0.08em" }}>Mehrauli Archaeological Park, Delhi</span>
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", color: "rgba(255,255,255,0.35)", letterSpacing: "0.08em" }}>Sultan Garhi Archaeological Park, Delhi</span>
           </div>
           <a href="/events/heritage-cleanliness"
             style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#ffffff", color: "#8B1E20", fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.18em", textTransform: "uppercase", padding: "12px 24px", textDecoration: "none", fontWeight: 600 }}>
@@ -258,7 +258,7 @@ function PanelHCP({ isMobile }: { isMobile: boolean }) {
           <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
             <path d="M4.5 0C2.567 0 1 1.567 1 3.5c0 2.625 3.5 7.5 3.5 7.5S8 6.125 8 3.5C8 1.567 6.433 0 4.5 0zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="rgba(255,255,255,0.3)" />
           </svg>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(255,255,255,0.32)", letterSpacing: "0.08em" }}>Mehrauli Archaeological Park, Delhi</span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(255,255,255,0.32)", letterSpacing: "0.08em" }}>Sultan Garhi Archaeological Park, Delhi</span>
         </div>
         <a href="/events/heritage-cleanliness"
           style={{ display: "inline-flex", alignItems: "center", gap: "10px", background: "#ffffff", color: "#8B1E20", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", padding: "14px 32px", textDecoration: "none", fontWeight: 600, transition: "background 0.25s, color 0.25s" }}

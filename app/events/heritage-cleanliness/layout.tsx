@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 const title = "The Heritage Cleanliness Project — Inkpot India";
 const description =
-  "A #NoLitterLegacy. The Heritage Cleanliness Project brings volunteers together every month at Mehrauli Archaeological Park to clean, walk, and care for Delhi's shared heritage. Join a drive.";
+  "A #NoLitterLegacy. The Heritage Cleanliness Project brings volunteers together every month at Delhi's heritage sites to clean, walk, and care for what we share. Next drive: Sunday 30 August 2026, 4 PM, Sultan Garhi Archaeological Park.";
 
 export const metadata: Metadata = {
   title,
