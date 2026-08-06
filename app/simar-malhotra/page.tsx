@@ -160,9 +160,12 @@ export default function SimarMalhotraPage() {
            otherwise sit underneath. */
         .sm-hero { background:#F4EFE6; padding-top:96px; }
         .sm-hero-grid { display:grid; grid-template-columns:clamp(300px,30vw,430px) 1fr;
-                        align-items:stretch; min-height:620px; }
-        .sm-portrait { position:relative; overflow:hidden; }
-        .sm-hero-text { align-self:center; padding:72px 48px 72px 60px; max-width:780px; }
+                        align-items:start; }
+        /* The frame keeps the photograph's own 1067x1600 ratio, so object-fit
+           cover has nothing to crop. A fixed height here would crop into the
+           sides of the frame at narrower viewports. */
+        .sm-portrait { position:relative; overflow:hidden; aspect-ratio:1067/1600; }
+        .sm-hero-text { padding:64px 56px 88px 60px; max-width:820px; }
         .sm-eyebrow { font-family:var(--font-body); font-size:10px; letter-spacing:0.3em;
                       text-transform:uppercase; color:var(--red); margin-bottom:18px; }
         .sm-h1 { font-family:var(--font-heading); font-weight:400; font-size:clamp(30px,3.4vw,44px);
@@ -171,15 +174,12 @@ export default function SimarMalhotraPage() {
                    color:var(--muted); margin:0 0 28px; }
         .sm-lead { font-family:var(--font-body); font-size:16px; line-height:1.85;
                    color:rgba(0,0,0,0.75); margin:0; max-width:60ch; }
-        .sm-body { padding:76px 0 96px; }
-        .sm-sec { margin-bottom:56px; scroll-margin-top:88px; }
-        .sm-sec:last-child { margin-bottom:0; }
         .sm-h2 { font-family:var(--font-heading); font-style:italic; font-weight:400;
-                 font-size:clamp(24px,2.6vw,32px); color:var(--ink); margin:0 0 8px; }
-        .sm-rule { width:36px; height:1px; background:var(--red); margin-bottom:26px; }
+                 font-size:clamp(22px,2.4vw,29px); color:var(--ink); margin:44px 0 8px; }
+        .sm-rule { width:36px; height:1px; background:var(--red); margin-bottom:24px; }
         .sm-p { font-family:var(--font-body); font-size:15.5px; line-height:1.9;
-                color:var(--muted); margin:0 0 20px; max-width:72ch; }
-        .sm-p:last-child { margin-bottom:0; }
+                color:var(--muted); margin:0 0 20px; max-width:68ch; }
+        .sm-p:last-of-type { margin-bottom:0; }
         .sm-p em { font-style:italic; color:var(--ink); }
         .sm-social { display:inline-flex; align-items:center; gap:9px; margin-top:26px;
                      font-family:var(--font-body); font-size:11px; letter-spacing:0.16em;
@@ -190,10 +190,15 @@ export default function SimarMalhotraPage() {
         .sm-social:focus-visible { outline:2px solid var(--red); outline-offset:4px; }
         @media (max-width:860px) {
           .sm-hero { padding-top:64px; }
-          .sm-hero-grid { grid-template-columns:1fr; min-height:0; }
-          .sm-portrait { height:min(82vw,440px); }
-          .sm-hero-text { padding:36px 24px 52px; }
-          .sm-body { padding:52px 0 72px; }
+          .sm-hero-grid { grid-template-columns:1fr; }
+          /* Full width, still uncropped. Capped so the portrait cannot push the
+             copy entirely below the fold on a small screen. */
+          .sm-portrait { aspect-ratio:1067/1600; max-height:62vh; margin:0 auto; }
+          .sm-hero-text { padding:32px 22px 56px; }
+          .sm-h1 { font-size:clamp(28px,7.5vw,36px); }
+          .sm-p, .sm-lead { font-size:15px; line-height:1.85; }
+          .sm-h2 { margin-top:36px; }
+          .sm-social { padding:10px 0; }
         }
       `}</style>
 
@@ -220,53 +225,47 @@ export default function SimarMalhotraPage() {
                 history should be witnessed beyond textbooks and museum walls, transforming monuments,
                 traditions, and stories into living experiences that inspire curiosity and connection.
               </p>
+
+              <p className="sm-p">
+                After establishing Inkpot India, Simar pursued advanced studies at Stanford University
+                and Columbia University, where she further explored the intersections of culture,
+                leadership, and public engagement. These experiences strengthened her conviction that
+                heritage is not simply something to preserve, but something to actively experience and
+                celebrate.
+              </p>
+              <p className="sm-p">
+                With her vision, Inkpot India has grown into a cultural platform that brings together
+                art, music, architecture, literature, and storytelling through thoughtfully curated
+                experiences. By collaborating with artists, institutions, and partners, the
+                organization continues to create immersive cultural initiatives that bridge
+                India&rsquo;s past with its present.
+              </p>
+
+              <h2 className="sm-h2" id="about-simar">About Simar Malhotra</h2>
+              <div className="sm-rule" />
+              <p className="sm-p">
+                Simar Malhotra is an author, cultural entrepreneur, and advocate for India&rsquo;s art
+                and heritage. She began writing as a teenager and is the author of two books,{" "}
+                <em>There is a Tide</em> and <em>Tides Don&rsquo;t Cross</em>. She frequently speaks at
+                cultural institutions and forums, where she shares her perspectives on heritage,
+                storytelling, and the role of culture in shaping contemporary society.
+              </p>
+              {/* A real anchor as well as the schema `sameAs` — a crawlable link
+                  corroborates the entity more strongly than structured data alone. */}
+              <a
+                className="sm-social"
+                href="https://www.linkedin.com/in/simar-malhotra-b77a53124/"
+                target="_blank"
+                rel="me noopener noreferrer"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 21h4V9H3v12zM10 21h4v-6.4c0-1.7.32-3.35 2.43-3.35 2.08 0 2.1 1.95 2.1 3.46V21h4v-7.1c0-3.5-.75-6.2-4.84-6.2-1.97 0-3.29 1.08-3.83 2.1h-.05V9H10v12z" />
+                </svg>
+                Simar Malhotra on LinkedIn
+              </a>
             </div>
           </div>
         </section>
-
-        <div className="sm-inner sm-body">
-          <section className="sm-sec">
-            <p className="sm-p">
-              After establishing Inkpot India, Simar pursued advanced studies at Stanford University
-              and Columbia University, where she further explored the intersections of culture,
-              leadership, and public engagement. These experiences strengthened her conviction that
-              heritage is not simply something to preserve, but something to actively experience and
-              celebrate.
-            </p>
-            <p className="sm-p">
-              With her vision, Inkpot India has grown into a cultural platform that brings together
-              art, music, architecture, literature, and storytelling through thoughtfully curated
-              experiences. By collaborating with artists, institutions, and partners, the organization
-              continues to create immersive cultural initiatives that bridge India&rsquo;s past with
-              its present.
-            </p>
-          </section>
-
-          <section className="sm-sec" aria-labelledby="about-simar">
-            <h2 className="sm-h2" id="about-simar">About Simar Malhotra</h2>
-            <div className="sm-rule" />
-            <p className="sm-p">
-              Simar Malhotra is an author, cultural entrepreneur, and advocate for India&rsquo;s art
-              and heritage. She began writing as a teenager and is the author of two books,{" "}
-              <em>There is a Tide</em> and <em>Tides Don&rsquo;t Cross</em>. She frequently speaks at
-              cultural institutions and forums, where she shares her perspectives on heritage,
-              storytelling, and the role of culture in shaping contemporary society.
-            </p>
-            {/* A real anchor as well as the schema `sameAs` — a crawlable link
-                corroborates the entity more strongly than structured data alone. */}
-            <a
-              className="sm-social"
-              href="https://www.linkedin.com/in/simar-malhotra-b77a53124/"
-              target="_blank"
-              rel="me noopener noreferrer"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 21h4V9H3v12zM10 21h4v-6.4c0-1.7.32-3.35 2.43-3.35 2.08 0 2.1 1.95 2.1 3.46V21h4v-7.1c0-3.5-.75-6.2-4.84-6.2-1.97 0-3.29 1.08-3.83 2.1h-.05V9H10v12z" />
-              </svg>
-              Simar Malhotra on LinkedIn
-            </a>
-          </section>
-        </div>
       </main>
       <Footer />
     </>
