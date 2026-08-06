@@ -154,10 +154,15 @@ export default function SimarMalhotraPage() {
       <style>{`
         .sm-wrap { --ink:#1a1a1a; --muted:rgba(0,0,0,0.62); --red:#901A1C; background:#fff; }
         .sm-inner { max-width:1080px; margin:0 auto; padding:0 24px; }
-        .sm-hero { background:#F4EFE6; padding:120px 0 84px; }
-        .sm-hero-grid { display:grid; grid-template-columns:300px 1fr; gap:56px; align-items:start; }
-        .sm-portrait { position:relative; width:100%; aspect-ratio:1067/1600; overflow:hidden;
-                       box-shadow:0 18px 52px rgba(0,0,0,0.18); }
+        /* Portrait is full-bleed: flush to the left edge of the viewport and to
+           the top and bottom of the band. The only top offset is the height of
+           the fixed navbar (96px desktop / 64px mobile), which the image would
+           otherwise sit underneath. */
+        .sm-hero { background:#F4EFE6; padding-top:96px; }
+        .sm-hero-grid { display:grid; grid-template-columns:clamp(300px,30vw,430px) 1fr;
+                        align-items:stretch; min-height:620px; }
+        .sm-portrait { position:relative; overflow:hidden; }
+        .sm-hero-text { align-self:center; padding:72px 48px 72px 60px; max-width:780px; }
         .sm-eyebrow { font-family:var(--font-body); font-size:10px; letter-spacing:0.3em;
                       text-transform:uppercase; color:var(--red); margin-bottom:18px; }
         .sm-h1 { font-family:var(--font-heading); font-weight:400; font-size:clamp(30px,3.4vw,44px);
@@ -184,27 +189,28 @@ export default function SimarMalhotraPage() {
         .sm-social:hover { border-bottom-color:var(--red); }
         .sm-social:focus-visible { outline:2px solid var(--red); outline-offset:4px; }
         @media (max-width:860px) {
-          .sm-hero { padding:96px 0 56px; }
-          .sm-hero-grid { grid-template-columns:1fr; gap:32px; }
-          .sm-portrait { max-width:260px; }
+          .sm-hero { padding-top:64px; }
+          .sm-hero-grid { grid-template-columns:1fr; min-height:0; }
+          .sm-portrait { height:min(82vw,440px); }
+          .sm-hero-text { padding:36px 24px 52px; }
           .sm-body { padding:52px 0 72px; }
         }
       `}</style>
 
       <main className="sm-wrap">
         <section className="sm-hero">
-          <div className="sm-inner sm-hero-grid">
+          <div className="sm-hero-grid">
             <div className="sm-portrait">
               <Image
                 src="/images/Simar%20Malhotra%2C%20Founder%20of%20Inkpot%20India.jpeg"
                 alt="Simar Malhotra, Founder of Inkpot India"
                 fill
                 priority
-                sizes="(max-width: 860px) 260px, 300px"
+                sizes="(max-width: 860px) 100vw, 430px"
                 style={{ objectFit: "cover", objectPosition: "center top" }}
               />
             </div>
-            <div>
+            <div className="sm-hero-text">
               <p className="sm-eyebrow">Author &amp; Founder</p>
               <h1 className="sm-h1">Simar Malhotra</h1>
               <p className="sm-role">Founder, Inkpot India</p>
