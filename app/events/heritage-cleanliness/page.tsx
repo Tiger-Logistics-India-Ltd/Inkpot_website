@@ -238,7 +238,7 @@ export default function HeritageCleanlinessPage() {
                     You&rsquo;re in, changemaker
                   </h3>
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "rgba(0,0,0,0.5)", lineHeight: 1.8 }}>
-                    We&rsquo;ll be in touch with the details for the 26th July drive. See you at the site — coffee&rsquo;s on us.
+                    We&rsquo;ll be in touch with the details for the 26th July drive. See you at the site.
                   </p>
                 </div>
               ) : (
