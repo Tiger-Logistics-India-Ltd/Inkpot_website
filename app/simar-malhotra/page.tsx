@@ -21,7 +21,7 @@ import Footer from "@/components/Footer";
 
 const SITE = "https://www.inkpotindia.com";
 const PAGE_URL = `${SITE}/simar-malhotra`;
-const PORTRAIT = `${SITE}/images/simar-malhotra-founder-inkpot-india.jpg`;
+const PORTRAIT = `${SITE}/images/Simar%20Malhotra%2C%20Founder%20of%20Inkpot%20India.jpeg`;
 
 const LEAD =
   "Simar Malhotra is an Indian author and the founder of Inkpot India, a cultural platform that produces concerts, heritage experiences, dining experiences, storytelling and community-led initiatives rooted in India's cultural legacy.";
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     siteName: "Inkpot India",
     type: "profile",
     locale: "en_IN",
-    images: [{ url: PORTRAIT, width: 682, height: 1024, alt: "Simar Malhotra, Founder of Inkpot India" }],
+    images: [{ url: PORTRAIT, width: 1067, height: 1600, alt: "Simar Malhotra, Founder of Inkpot India" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -202,7 +202,7 @@ export default function SimarMalhotraPage() {
         .sm-inner { max-width:1080px; margin:0 auto; padding:0 24px; }
         .sm-hero { background:#F4EFE6; padding:120px 0 72px; }
         .sm-hero-grid { display:grid; grid-template-columns:300px 1fr; gap:56px; align-items:start; }
-        .sm-portrait { position:relative; width:100%; aspect-ratio:682/1024; overflow:hidden;
+        .sm-portrait { position:relative; width:100%; aspect-ratio:1067/1600; overflow:hidden;
                        box-shadow:0 18px 52px rgba(0,0,0,0.18); }
         .sm-eyebrow { font-family:var(--font-body); font-size:10px; letter-spacing:0.3em;
                       text-transform:uppercase; color:var(--red); margin-bottom:18px; }
@@ -255,7 +255,7 @@ export default function SimarMalhotraPage() {
           <div className="sm-inner sm-hero-grid">
             <div className="sm-portrait">
               <Image
-                src="/images/simar-malhotra-founder-inkpot-india.jpg"
+                src="/images/Simar%20Malhotra%2C%20Founder%20of%20Inkpot%20India.jpeg"
                 alt="Simar Malhotra, Founder of Inkpot India"
                 fill
                 priority

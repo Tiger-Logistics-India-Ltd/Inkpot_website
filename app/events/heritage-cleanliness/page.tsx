@@ -9,6 +9,43 @@ import Turnstile, { HoneypotField } from "@/components/Turnstile";
 
 const OXBLOOD = "#8B1E20";
 
+/* Photographs from past drives, compressed to WebP (22.2MB of PNG -> 3.3MB).
+   Interleaved portrait/landscape so the masonry columns stay balanced.
+   To add more: drop them in public/images/heritage cleaning/gallery/ and
+   append here with their real pixel dimensions. */
+const GALLERY = [
+  { src: "p-45.webp", w: 1080, h: 1440 },
+  { src: "l-32.webp", w: 397, h: 240 },
+  { src: "p-46.webp", w: 1080, h: 1440 },
+  { src: "l-33.webp", w: 397, h: 240 },
+  { src: "p-47.webp", w: 1080, h: 1440 },
+  { src: "l-34.webp", w: 397, h: 240 },
+  { src: "p-48.webp", w: 1080, h: 1440 },
+  { src: "l-35.webp", w: 397, h: 240 },
+  { src: "p-49.webp", w: 1080, h: 1440 },
+  { src: "l-36.webp", w: 397, h: 240 },
+  { src: "p-50.webp", w: 1080, h: 1440 },
+  { src: "l-37.webp", w: 397, h: 240 },
+  { src: "p-51.webp", w: 1080, h: 1440 },
+].map((g, i) => ({
+  ...g,
+  src: `/images/heritage cleaning/gallery/${g.src}`,
+  alt: `Volunteers at a Heritage Cleanliness Project drive in Delhi — photograph ${i + 1}`,
+}));
+
+/* Files live in public/images/heritage cleaning/Logos/ */
+const PARTNERS = [
+  { file: "Inkpot Final logo-01.png", name: "Inkpot India" },
+  { file: "DDA Logo.png", name: "Delhi Development Authority" },
+  { file: "Kaash Magic Foundation.png", name: "Kaash Magic Foundation" },
+  { file: "Umeed Logo.png", name: "Umeed" },
+  { file: "Ila Green.png", name: "Ila Green" },
+  { file: "Delhi Drum Circle.png", name: "Delhi Drum Circle" },
+  { file: "BECOZMUSIC.png", name: "Becoz Music" },
+  { file: "Mai3tra logo.png", name: "Mai3tra" },
+  { file: "Shot in the Dark.png", name: "Shot in the Dark" },
+];
+
 function Field({
   label,
   name,
@@ -274,6 +311,84 @@ export default function HeritageCleanlinessPage() {
                 </form>
               )}
             </motion.div>
+          </div>
+        </section>
+
+        {/* ── GALLERY ── */}
+        <section style={{ background: "#ffffff", padding: isMobile ? "56px 24px" : "104px 64px" }}>
+          <div style={{ maxWidth: "1180px", margin: "0 auto" }}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7, ease: "easeOut" }}
+              style={{ marginBottom: isMobile ? "28px" : "44px" }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
+                <div style={{ width: "22px", height: "1px", background: OXBLOOD }} />
+                <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: OXBLOOD }}>
+                  From the drives
+                </span>
+              </div>
+              <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: isMobile ? "29px" : "clamp(32px, 3.4vw, 46px)", lineHeight: 1.1, color: "#1a1a1a", margin: 0 }}>
+                What a morning looks like
+              </h2>
+            </motion.div>
+
+            {/* Masonry via CSS columns — lets portrait and landscape shots sit
+                together without cropping either. Columns are capped at ~370px
+                so the 397px-wide landscape frames are never upscaled. */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.08 }} transition={{ duration: 0.8, ease: "easeOut" }}
+              style={{ columnCount: isMobile ? 2 : 3, columnGap: isMobile ? "10px" : "18px" }}
+            >
+              {GALLERY.map((g) => (
+                <figure
+                  key={g.src}
+                  style={{ breakInside: "avoid", margin: `0 0 ${isMobile ? "10px" : "18px"}`, overflow: "hidden", background: "#EFEAE1" }}
+                >
+                  <Image
+                    src={g.src}
+                    alt={g.alt}
+                    width={g.w}
+                    height={g.h}
+                    sizes={isMobile ? "50vw" : "(max-width: 1180px) 33vw, 370px"}
+                    style={{ display: "block", width: "100%", height: "auto" }}
+                  />
+                </figure>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ── PARTNERS ── */}
+        <section style={{ background: "var(--bg-linen, #F4EFE6)", padding: isMobile ? "48px 24px" : "80px 64px" }}>
+          <div style={{ maxWidth: "1180px", margin: "0 auto", textAlign: "center" }}>
+            <motion.p
+              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.6 }}
+              style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(0,0,0,0.42)", margin: "0 0 34px" }}
+            >
+              In collaboration with
+            </motion.p>
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: isMobile ? "22px 26px" : "40px 52px" }}>
+              {PARTNERS.map((p, i) => (
+                <motion.div
+                  key={p.file}
+                  initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.5, delay: Math.min(i * 0.05, 0.4), ease: "easeOut" }}
+                  style={{ position: "relative", width: isMobile ? "84px" : "116px", height: isMobile ? "50px" : "68px" }}
+                >
+                  <Image
+                    src={`/images/heritage cleaning/Logos/${p.file}`}
+                    alt={p.name}
+                    fill
+                    sizes="116px"
+                    style={{ objectFit: "contain", objectPosition: "center" }}
+                  />
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 
