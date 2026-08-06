@@ -26,22 +26,16 @@ const belleza = Belleza({
   display: "swap",
 });
 
+const SITE_TITLE = "Inkpot India — Reinking Our Cultural Heritage";
+const SITE_DESCRIPTION =
+  "Discover Inkpot India, a cultural platform curating concerts, heritage experiences, dining experiences, storytelling, exhibitions, and community-led initiatives that reconnect people with India's rich cultural legacy.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.inkpotindia.com"),
-  title: "Inkpot India — Culture, Reimagined",
-  description:
-    "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   keywords: [
-    "Inkpot India",
-    "Indian culture",
-    "heritage experiences Delhi",
-    "Songs of the Stone",
-    "The Living Table",
-    "Inkpot India Conclave",
-    "Heritage Cleanliness Project",
-    "cultural events India",
-    "Indian performing arts",
-    "Delhi heritage monuments",
+    "Inkpot India"
   ],
   alternates: {
     canonical: "https://www.inkpotindia.com",
@@ -50,9 +44,8 @@ export const metadata: Metadata = {
     google: "LQH8vAq0nSU5algX4s87wYYv9DFQPbkT_C81lM7EmYE",
   },
   openGraph: {
-    title: "Inkpot India — Culture, Reimagined",
-    description:
-      "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     url: "https://www.inkpotindia.com",
     siteName: "Inkpot India",
     images: [
@@ -69,9 +62,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Inkpot India — Culture, Reimagined",
-    description:
-      "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     images: ["/images/preview_real.jpg"],
     site: "@inkpotindia_",
   },
@@ -90,8 +82,7 @@ const structuredData = {
       name: "Inkpot India",
       url: `${SITE}/`,
       email: "info@inkpotindia.com",
-      description:
-        "Bringing India's music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.",
+      description: SITE_DESCRIPTION,
       logo: {
         "@type": "ImageObject",
         url: `${SITE}/images/Inkpot/Inkpot%20Final%20logo-01.png`,

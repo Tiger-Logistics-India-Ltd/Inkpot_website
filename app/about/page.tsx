@@ -240,8 +240,8 @@ export default function AboutPage() {
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/Homepage/about/About_founder_image.svg"
-                alt="Simar Malhotra — Founder, Inkpot India"
+                src="/images/Homepage/about/About_founder_image.webp"
+                alt="Simar Malhotra, Founder of Inkpot India"
                 style={{ display: "block", width: "100%", height: "100%", objectFit: isMobile ? "contain" : "cover", objectPosition: "center top" }}
               />
             </motion.div>

@@ -4,7 +4,13 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-const categories = [
+const categories: {
+  label: string;
+  href: string;
+  image: string;
+  offset: string;
+  alt?: string;
+}[] = [
   {
     label: "About Inkpot",
     href: "/about#our-story",
@@ -14,7 +20,8 @@ const categories = [
   {
     label: "Leadership",
     href: "/about#leadership",
-    image: "/images/Homepage/about/About_founder_image.svg",
+    image: "/images/Homepage/about/About_founder_image.webp",
+    alt: "Simar Malhotra, Founder of Inkpot India",
     offset: "0px",
   },
   {
@@ -54,7 +61,7 @@ export default function AboutBelief() {
           >
             <Image
               src={cat.image}
-              alt={cat.label}
+              alt={cat.alt ?? cat.label}
               fill
               unoptimized={cat.image.endsWith(".svg")}
               style={{ objectFit: "cover", objectPosition: "center", transition: "transform 0.5s ease" }}
