@@ -190,8 +190,8 @@ export default function HeritageCleanlinessPage() {
               style={{ position: "relative", width: "100%", maxWidth: isMobile ? "340px" : "none", margin: isMobile ? "0 auto" : "0", aspectRatio: "1080 / 1350", overflow: "hidden", boxShadow: "0 14px 48px rgba(0,0,0,0.16)" }}
             >
               <Image
-                src="/images/heritage cleaning/newposter.png"
-                alt="The Heritage Cleanliness Project — Sunday 26 July drive"
+                src="/images/heritage cleaning/Feature_section.png"
+                alt="Coffee, Culture and Cleanliness — Sunday 30 August 2026, 4 PM onwards, Sultan Garhi Archaeological Park"
                 fill sizes="(max-width: 768px) 340px, 440px"
                 style={{ objectFit: "cover", objectPosition: "center" }}
               />

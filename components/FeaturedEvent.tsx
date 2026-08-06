@@ -34,7 +34,7 @@ const events: EventItem[] = [
     title: "The Heritage Cleanliness Project",
     chapter: null,
     body: "Every last Sunday, we gather at a heritage site — not just to clean, but to listen. To the stories that stone remembers.",
-    image: "/images/heritage cleaning/newposter.png",
+    image: "/images/heritage cleaning/Feature_section.png",
     status: "active",
     location: "Mehrauli Archaeological Park",
     cta: { label: "Volunteer Now", href: "/events/heritage-cleanliness" },
