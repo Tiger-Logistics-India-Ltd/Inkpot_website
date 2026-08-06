@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -10,33 +10,39 @@ import Turnstile, { HoneypotField } from "@/components/Turnstile";
 const OXBLOOD = "#8B1E20";
 
 /* Photographs from past drives, compressed to WebP (22.2MB of PNG -> 3.3MB).
-   Interleaved portrait/landscape so the masonry columns stay balanced.
-   To add more: drop them in public/images/heritage cleaning/gallery/ and
-   append here with their real pixel dimensions. */
-const GALLERY = [
-  { src: "p-45.webp", w: 1080, h: 1440 },
-  { src: "l-32.webp", w: 397, h: 240 },
-  { src: "p-46.webp", w: 1080, h: 1440 },
-  { src: "l-33.webp", w: 397, h: 240 },
-  { src: "p-47.webp", w: 1080, h: 1440 },
-  { src: "l-34.webp", w: 397, h: 240 },
-  { src: "p-48.webp", w: 1080, h: 1440 },
-  { src: "l-35.webp", w: 397, h: 240 },
-  { src: "p-49.webp", w: 1080, h: 1440 },
-  { src: "l-36.webp", w: 397, h: 240 },
-  { src: "p-50.webp", w: 1080, h: 1440 },
-  { src: "l-37.webp", w: 397, h: 240 },
-  { src: "p-51.webp", w: 1080, h: 1440 },
-].map((g, i) => ({
-  ...g,
-  src: `/images/heritage cleaning/gallery/${g.src}`,
-  alt: `Volunteers at a Heritage Cleanliness Project drive in Delhi — photograph ${i + 1}`,
+ *
+ * `size` drives the mosaic, and it is a resolution decision as much as a
+ * design one. The portraits are 1080px wide natively so they can carry a
+ * large tile; the landscapes are only 397px, so they are kept to the small
+ * one-cell tiles where they are never upscaled. Ordering is hand-set for a
+ * balanced composition — `grid-auto-flow: dense` packs the rest. */
+/* The viewer slides one panel at a time. Each panel groups two or three
+ * photographs, alternating a portrait-led trio with a portrait pair so the
+ * rhythm changes as you move across.
+ *
+ * Layout "a" = one tall portrait beside two stacked landscapes; "b" = two
+ * portraits. The landscape cells are the narrow ones on purpose: those files
+ * are only 397px wide, so they sit in ~400px slots and are never enlarged,
+ * while the 1080px portraits take the big cells. */
+const PANEL_SOURCE: { layout: "a" | "b"; shots: string[] }[] = [
+  { layout: "a", shots: ["p-48.webp", "l-32.webp", "l-33.webp"] },
+  { layout: "b", shots: ["p-45.webp", "p-46.webp"] },
+  { layout: "a", shots: ["p-47.webp", "l-34.webp", "l-35.webp"] },
+  { layout: "b", shots: ["p-49.webp", "p-50.webp"] },
+  { layout: "a", shots: ["p-51.webp", "l-36.webp", "l-37.webp"] },
+];
+
+const PANELS = PANEL_SOURCE.map((p) => ({
+  ...p,
+  shots: p.shots.map((f) => `/images/heritage cleaning/gallery/${f}`),
 }));
 
-/* Files live in public/images/heritage cleaning/Logos/ */
+const SHOT_ALT = "Volunteers at a Heritage Cleanliness Project drive in Delhi";
+
+/* Files live in public/images/heritage cleaning/Logos/
+   Inkpot's own logo is deliberately not here — this row is collaborators. */
 const PARTNERS = [
-  { file: "Inkpot Final logo-01.png", name: "Inkpot India" },
-  { file: "DDA Logo.png", name: "Delhi Development Authority" },
+  { file: "DDA.png", name: "Delhi Development Authority" },
   { file: "Kaash Magic Foundation.png", name: "Kaash Magic Foundation" },
   { file: "Umeed Logo.png", name: "Umeed" },
   { file: "Ila Green.png", name: "Ila Green" },
@@ -99,6 +105,12 @@ export default function HeritageCleanlinessPage() {
   const [error, setError] = useState("");
   const [botToken, setBotToken] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState("");
+
+  /* Gallery viewer */
+  const [slide, setSlide] = useState(0);
+  const touchX = useRef<number | null>(null);
+  const goSlide = (d: number) =>
+    setSlide((s) => (s + d + PANELS.length) % PANELS.length);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -315,47 +327,146 @@ export default function HeritageCleanlinessPage() {
         </section>
 
         {/* ── GALLERY ── */}
-        <section style={{ background: "#ffffff", padding: isMobile ? "56px 24px" : "104px 64px" }}>
-          <div style={{ maxWidth: "1180px", margin: "0 auto" }}>
+        <section style={{ background: "#FBF9F5", padding: isMobile ? "64px 20px" : "116px 64px" }}>
+          {/*
+            Single-window viewer. The set mixes 3:4 portraits with 1.65 landscapes,
+            so the sharp image sits `contain` inside a fixed frame and a blurred,
+            scaled copy of the same photo fills the space beside it. Nothing is
+            cropped and nothing is letterboxed against dead space — which also
+            keeps the 397px-wide landscapes off any large sharp surface.
+          */}
+          <style>{`
+            .hcp-stage { position:relative; overflow:hidden; }
+            .hcp-track { display:flex; will-change:transform;
+                         transition:transform .72s cubic-bezier(.22,1,.36,1); }
+            .hcp-panel { flex:0 0 100%; display:grid; gap:14px; height:520px; }
+            .hcp-panel-a { grid-template-columns:1.32fr 1fr; grid-template-rows:1fr 1fr; }
+            .hcp-panel-a > :first-child { grid-row:span 2; }
+            .hcp-panel-b { grid-template-columns:1fr 1fr; grid-template-rows:1fr; }
+            .hcp-cell { position:relative; overflow:hidden; margin:0; background:#EFEAE1; }
+            .hcp-cell::after { content:""; position:absolute; inset:0; pointer-events:none;
+                               box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06); }
+            .hcp-nav { position:absolute; top:50%; transform:translateY(-50%);
+                       width:46px; height:46px; border-radius:50%; border:none; cursor:pointer;
+                       background:rgba(255,255,255,0.86); color:#1a1a1a;
+                       display:flex; align-items:center; justify-content:center;
+                       transition:background .22s, transform .22s; z-index:3;
+                       box-shadow:0 3px 16px rgba(0,0,0,0.20); }
+            .hcp-nav:hover { background:#ffffff; transform:translateY(-50%) scale(1.07); }
+            .hcp-nav:focus-visible { outline:2px solid #8B1E20; outline-offset:3px; }
+            .hcp-prev { left:18px; } .hcp-next { right:18px; }
+            .hcp-count { position:absolute; right:18px; bottom:16px; z-index:3;
+                         font-family:var(--font-body); font-size:11px; letter-spacing:0.18em;
+                         color:#fff; background:rgba(20,16,13,0.55); padding:7px 13px;
+                         font-variant-numeric:tabular-nums; }
+            .hcp-dots { display:flex; justify-content:center; gap:7px; margin-top:22px; flex-wrap:wrap; }
+            .hcp-dot { width:22px; height:2px; border:none; padding:0; cursor:pointer;
+                       background:rgba(0,0,0,0.16); transition:background .25s; }
+            .hcp-dot[aria-current="true"] { background:#8B1E20; }
+            .hcp-dot:focus-visible { outline:2px solid #8B1E20; outline-offset:3px; }
+            @media (max-width:900px) {
+              .hcp-panel { height:400px; gap:10px; }
+              .hcp-panel-a { grid-template-columns:1.2fr 1fr; }
+            }
+            @media (max-width:640px) {
+              .hcp-panel { height:330px; gap:8px; }
+              .hcp-nav { width:38px; height:38px; }
+              .hcp-prev { left:10px; } .hcp-next { right:10px; }
+              .hcp-dot { width:14px; }
+            }
+            @media (prefers-reduced-motion:reduce) {
+              .hcp-nav { transition:none; }
+              .hcp-track { transition:none; }
+            }
+          `}</style>
+          <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
             <motion.div
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7, ease: "easeOut" }}
-              style={{ marginBottom: isMobile ? "28px" : "44px" }}
+              style={{ textAlign: "center", maxWidth: "620px", margin: `0 auto ${isMobile ? "40px" : "68px"}` }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
-                <div style={{ width: "22px", height: "1px", background: OXBLOOD }} />
-                <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: OXBLOOD }}>
-                  From the drives
-                </span>
-              </div>
-              <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: isMobile ? "29px" : "clamp(32px, 3.4vw, 46px)", lineHeight: 1.1, color: "#1a1a1a", margin: 0 }}>
-                What a morning looks like
+              <h2 style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: OXBLOOD, margin: "0 0 18px", fontWeight: 400 }}>
+                From the drives
               </h2>
+              <div style={{ width: "40px", height: "1px", background: "rgba(139,30,32,0.4)", margin: "0 auto 20px" }} />
+              <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "13px" : "14.5px", lineHeight: 1.85, color: "rgba(0,0,0,0.55)", margin: 0 }}>
+                Students, families, first-timers and regulars — gathered at Delhi&rsquo;s monuments
+                with gloves, bags and a morning to give.
+              </p>
             </motion.div>
 
-            {/* Masonry via CSS columns — lets portrait and landscape shots sit
-                together without cropping either. Columns are capped at ~370px
-                so the 397px-wide landscape frames are never upscaled. */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.08 }} transition={{ duration: 0.8, ease: "easeOut" }}
-              style={{ columnCount: isMobile ? 2 : 3, columnGap: isMobile ? "10px" : "18px" }}
+              initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              {GALLERY.map((g) => (
-                <figure
-                  key={g.src}
-                  style={{ breakInside: "avoid", margin: `0 0 ${isMobile ? "10px" : "18px"}`, overflow: "hidden", background: "#EFEAE1" }}
-                >
-                  <Image
-                    src={g.src}
-                    alt={g.alt}
-                    width={g.w}
-                    height={g.h}
-                    sizes={isMobile ? "50vw" : "(max-width: 1180px) 33vw, 370px"}
-                    style={{ display: "block", width: "100%", height: "auto" }}
+              <div
+                className="hcp-stage"
+                role="region"
+                aria-roledescription="carousel"
+                aria-label="Photographs from past drives"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowLeft") { e.preventDefault(); goSlide(-1); }
+                  if (e.key === "ArrowRight") { e.preventDefault(); goSlide(1); }
+                }}
+                onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
+                onTouchEnd={(e) => {
+                  if (touchX.current === null) return;
+                  const dx = e.changedTouches[0].clientX - touchX.current;
+                  if (Math.abs(dx) > 45) goSlide(dx < 0 ? 1 : -1);
+                  touchX.current = null;
+                }}
+              >
+                <div className="hcp-track" style={{ transform: `translateX(-${slide * 100}%)` }}>
+                  {PANELS.map((panel, pi) => (
+                    <div
+                      key={pi}
+                      className={`hcp-panel hcp-panel-${panel.layout}`}
+                      aria-hidden={pi !== slide}
+                    >
+                      {panel.shots.map((src, si) => (
+                        <figure className="hcp-cell" key={src}>
+                          <Image
+                            src={src}
+                            alt={`${SHOT_ALT} — panel ${pi + 1}, photograph ${si + 1}`}
+                            fill
+                            sizes={
+                              panel.layout === "a" && si === 0
+                                ? "(max-width: 640px) 55vw, 620px"
+                                : "(max-width: 640px) 45vw, 420px"
+                            }
+                            style={{ objectFit: "cover", objectPosition: "center" }}
+                          />
+                        </figure>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+
+                <button type="button" className="hcp-nav hcp-prev" onClick={() => goSlide(-1)} aria-label="Previous photographs">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+                </button>
+                <button type="button" className="hcp-nav hcp-next" onClick={() => goSlide(1)} aria-label="Next photographs">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+                </button>
+
+                <div className="hcp-count" aria-live="polite">
+                  {String(slide + 1).padStart(2, "0")} / {String(PANELS.length).padStart(2, "0")}
+                </div>
+              </div>
+
+              <div className="hcp-dots">
+                {PANELS.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className="hcp-dot"
+                    aria-current={i === slide}
+                    aria-label={`Go to group ${i + 1}`}
+                    onClick={() => setSlide(i)}
                   />
-                </figure>
-              ))}
+                ))}
+              </div>
             </motion.div>
           </div>
         </section>

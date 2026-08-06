@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "The Living Table — Inkpot India | A Curated Dining Experience",
+  // No apostrophe by design: React escapes ' to &#x27; in the meta attribute,
+  // and that entity has shown up literally in Google's snippet. Rewording to
+  // avoid the possessive removes the problem at source rather than masking it.
   description:
-    "The Living Table is Inkpot India's dining experience where food, stories and cultural memory meet. Register your interest for the next edition.",
+    "The Living Table is a curated dining experience from Inkpot India, where food, stories and cultural memory meet. Register your interest for the next edition.",
   keywords: [
     "The Living Table",
     "Inkpot India dinner",

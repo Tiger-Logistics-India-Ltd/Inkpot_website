@@ -270,7 +270,7 @@ export default function LivingTablePage() {
                 Register Your Interest
               </a>
               <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12px, 2.8vw, 15px)", fontWeight: 700, color: "#C9A84C", letterSpacing: "0.22em", textTransform: "uppercase" }}>
-                Returns August 2026
+                The next edition is being set
               </span>
             </motion.div>
           </div> 
@@ -338,7 +338,7 @@ export default function LivingTablePage() {
                 A new evening is being set.
               </p>
               <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12px, 1.3vw, 14px)", letterSpacing: "0.06em", color: "rgba(244,239,230,0.45)", margin: "0 0 40px" }}>
-                Returns August 2026.
+                Dates announced soon.
               </p>
               <a
                 href="#register"
