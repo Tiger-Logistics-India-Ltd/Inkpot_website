@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AutoplayVideo from "@/components/AutoplayVideo";
+import Turnstile, { HoneypotField } from "@/components/Turnstile";
 
 const vp = { once: true, amount: 0.25 };
 const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping: 20, delay });
@@ -10,22 +11,32 @@ const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping
 export default function Newsletter() {
   const [email, setEmail]     = useState("");
   const [status, setStatus]   = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [botToken, setBotToken] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim()) return;
 
     setStatus("loading");
+    setErrorMsg("");
     try {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({
+          email: email.trim(),
+          turnstileToken: botToken ?? "",
+          company: honeypot,
+        }),
       });
-      if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "");
       setStatus("success");
       setEmail("");
-    } catch {
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "");
       setStatus("error");
     }
   }
@@ -101,13 +112,20 @@ export default function Newsletter() {
               >
                 {status === "loading" ? "Sending…" : "Subscribe"}
               </button>
+              <HoneypotField value={honeypot} onChange={setHoneypot} />
             </motion.form>
           )}
         </AnimatePresence>
 
+        {status !== "success" && (
+          <div style={{ marginTop: "16px" }}>
+            <Turnstile onVerify={setBotToken} theme="dark" />
+          </div>
+        )}
+
         {status === "error" && (
           <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "rgba(220,80,80,0.85)", marginTop: "12px" }}>
-            Something went wrong. Please try again.
+            {errorMsg || "Something went wrong. Please try again."}
           </p>
         )}
 

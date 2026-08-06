@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Turnstile, { HoneypotField } from "@/components/Turnstile";
 
 const OXBLOOD = "#8B1E20";
 
@@ -59,6 +60,8 @@ export default function HeritageCleanlinessPage() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [botToken, setBotToken] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState("");
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -77,7 +80,7 @@ export default function HeritageCleanlinessPage() {
       const res = await fetch("/api/heritage-register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, turnstileToken: botToken ?? "", company: honeypot }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
@@ -255,6 +258,9 @@ export default function HeritageCleanlinessPage() {
                       {error}
                     </p>
                   )}
+
+                  <HoneypotField value={honeypot} onChange={setHoneypot} />
+                  <Turnstile onVerify={setBotToken} theme="light" />
 
                   <button
                     type="submit"

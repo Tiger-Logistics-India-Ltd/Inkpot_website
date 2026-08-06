@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getSupabase } from "@/lib/supabase";
+import { verifyTurnstile, isHoneypotFilled, clientIp, BOT_CHECK_MESSAGE } from "@/lib/turnstile";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NOTIFY_TO = ["saurav.chaudhary70@gmail.com", "info@inkpotindia.com"];
@@ -13,6 +14,17 @@ export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+
+    // Silent drop: report success so the bot has no signal to adapt to.
+    if (isHoneypotFilled(body)) {
+      console.warn("[newsletter] honeypot triggered");
+      return NextResponse.json({ ok: true });
+    }
+
+    const bot = await verifyTurnstile(body.turnstileToken, clientIp(req));
+    if (!bot.ok) {
+      return NextResponse.json({ error: BOT_CHECK_MESSAGE }, { status: 400 });
+    }
 
     if (!EMAIL_RE.test(email) || email.length > 200) {
       return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });

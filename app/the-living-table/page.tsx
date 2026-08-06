@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AutoplayVideo from "@/components/AutoplayVideo";
+import Turnstile, { HoneypotField } from "@/components/Turnstile";
 
 /* ── Flags — flip live without a redesign ── */
 const PRESS_ENABLED = false; // set true once real coverage exists
@@ -504,6 +505,8 @@ function RegisterInterest() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
   const [errors, setErrors] = useState<{ name?: string; email?: string; phone?: string }>({});
   const [submitError, setSubmitError] = useState("");
+  const [botToken, setBotToken] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState("");
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -524,7 +527,13 @@ function RegisterInterest() {
       const res = await fetch("/api/interest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), email: email.trim(), phone: phone.trim() }),
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          turnstileToken: botToken ?? "",
+          company: honeypot,
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
@@ -566,6 +575,9 @@ function RegisterInterest() {
           {submitError}
         </p>
       )}
+
+      <HoneypotField value={honeypot} onChange={setHoneypot} />
+      <Turnstile onVerify={setBotToken} theme="dark" />
 
       <button
         type="submit"
