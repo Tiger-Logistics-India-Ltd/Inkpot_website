@@ -6,37 +6,38 @@ import Footer from "@/components/Footer";
 /*
  * Deliberately a SERVER component (no "use client").
  *
- * The page exists to be read by Google and by AI systems, so everything ships
+ * The page exists to be read by Google and by AI systems, so every word ships
  * in the initial HTML with no JavaScript required. That also lets `metadata`
  * live here instead of in a sibling layout.tsx, which is the workaround the
  * client pages elsewhere in this app need.
  *
- * The visible page is currently the introduction only — the biography and the
- * sections beneath it were removed at the client's request pending real copy.
- * The structured data below is the substantive payload in the meantime.
+ * All biographical copy below is supplied by Inkpot India. Nothing is invented.
  */
 
 const SITE = "https://www.inkpotindia.com";
 const PAGE_URL = `${SITE}/simar-malhotra`;
 const PORTRAIT = `${SITE}/images/Simar%20Malhotra%2C%20Founder%20of%20Inkpot%20India.jpeg`;
 
-const LEAD =
-  "Simar Malhotra is an Indian author and the founder of Inkpot India, a cultural platform that produces concerts, heritage experiences, dining experiences, storytelling and community-led initiatives rooted in India's cultural legacy.";
+// No apostrophe by design: React escapes ' to &#x27; in meta attributes, and
+// that entity has surfaced literally in Google snippets before.
+const DESCRIPTION =
+  "Simar Malhotra is an author and cultural entrepreneur who founded Inkpot India in 2019, transforming monuments, traditions and stories into living cultural experiences. Author of There is a Tide and Tides Don't Cross.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: "Simar Malhotra — Author & Founder of Inkpot India",
-  description: LEAD,
-  keywords: ["Simar Malhotra", "Inkpot India", "Founder of Inkpot India"],
-  // ⚠️ TEMPORARY — the page carries no biography copy yet, so it is thin.
-  // Letting Google index it in this state works against the entity signal the
-  // page exists to build. DELETE this `robots` block (and re-add the URL to
-  // public/sitemap.xml) once the real biography is in.
-  robots: { index: false, follow: true },
+  description: DESCRIPTION,
+  keywords: [
+    "Simar Malhotra",
+    "Inkpot India",
+    "Founder of Inkpot India",
+    "There is a Tide",
+    "Tides Don't Cross",
+  ],
   alternates: { canonical: PAGE_URL },
   openGraph: {
     title: "Simar Malhotra — Author & Founder of Inkpot India",
-    description: LEAD,
+    description: DESCRIPTION,
     url: PAGE_URL,
     siteName: "Inkpot India",
     type: "profile",
@@ -46,24 +47,23 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Simar Malhotra — Author & Founder of Inkpot India",
-    description: LEAD,
+    description: DESCRIPTION,
     images: [PORTRAIT],
   },
 };
 
 /*
- * ── TODO: facts only Inkpot can supply ───────────────────────────────────
- *   1. `sameAs` below — LinkedIn, Instagram, X, Wikipedia, Amazon author page.
- *      THE most important missing piece: it is how Google resolves
- *      "Simar Malhotra" to one specific person rather than a name string.
- *   2. Published book titles + years (she is credited as an author).
- *   3. The year Inkpot India was founded -> `foundingDate`.
- *   4. The biography copy for the body of the page.
- * Until supplied, they are intentionally absent rather than guessed.
+ * `sameAs` is how Google resolves "Simar Malhotra" to one specific person
+ * rather than a name string — the strongest single lever for entity
+ * recognition. Worth adding when available: Instagram, X, and a Goodreads or
+ * Amazon author page (the last would also strengthen the Book entities below,
+ * along with publication years).
  */
 const SAME_AS: string[] = [
-  // e.g. "https://www.linkedin.com/in/…", "https://www.instagram.com/…"
+  "https://www.linkedin.com/in/simar-malhotra-b77a53124/",
 ];
+
+const BOOKS = ["There is a Tide", "Tides Don't Cross"];
 
 const person = {
   "@type": "Person",
@@ -71,14 +71,16 @@ const person = {
   name: "Simar Malhotra",
   url: PAGE_URL,
   image: PORTRAIT,
-  jobTitle: ["Founder", "Author"],
-  description: LEAD,
+  gender: "Female",
+  jobTitle: ["Founder", "Author", "Cultural entrepreneur"],
+  description: DESCRIPTION,
   knowsAbout: [
     "Indian cultural heritage",
     "Heritage conservation",
     "Indian classical music",
     "Cultural programming",
     "Literature",
+    "Storytelling",
   ],
   alumniOf: [
     {
@@ -109,13 +111,22 @@ const structuredData = {
       isPartOf: { "@id": `${SITE}/#website` },
     },
     person,
-    // Restates the organisation with the founder edge, so the person and the
-    // company resolve to each other from either direction.
+    // Each book as its own entity, authored by the person above — this is what
+    // lets "author of There is a Tide" resolve back to this profile.
+    ...BOOKS.map((name) => ({
+      "@type": "Book",
+      "@id": `${PAGE_URL}#${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+      name,
+      author: { "@id": `${PAGE_URL}#person` },
+    })),
+    // Restates the organisation with the founder edge and founding year, so
+    // the person and the company resolve to each other from either direction.
     {
       "@type": "Organization",
       "@id": `${SITE}/#organization`,
       name: "Inkpot India",
       url: `${SITE}/`,
+      foundingDate: "2019",
       founder: { "@id": `${PAGE_URL}#person` },
     },
     {
@@ -143,7 +154,7 @@ export default function SimarMalhotraPage() {
       <style>{`
         .sm-wrap { --ink:#1a1a1a; --muted:rgba(0,0,0,0.62); --red:#901A1C; background:#fff; }
         .sm-inner { max-width:1080px; margin:0 auto; padding:0 24px; }
-        .sm-hero { background:#F4EFE6; padding:120px 0 110px; }
+        .sm-hero { background:#F4EFE6; padding:120px 0 84px; }
         .sm-hero-grid { display:grid; grid-template-columns:300px 1fr; gap:56px; align-items:start; }
         .sm-portrait { position:relative; width:100%; aspect-ratio:1067/1600; overflow:hidden;
                        box-shadow:0 18px 52px rgba(0,0,0,0.18); }
@@ -155,10 +166,28 @@ export default function SimarMalhotraPage() {
                    color:var(--muted); margin:0 0 28px; }
         .sm-lead { font-family:var(--font-body); font-size:16px; line-height:1.85;
                    color:rgba(0,0,0,0.75); margin:0; max-width:60ch; }
+        .sm-body { padding:76px 0 96px; }
+        .sm-sec { margin-bottom:56px; scroll-margin-top:88px; }
+        .sm-sec:last-child { margin-bottom:0; }
+        .sm-h2 { font-family:var(--font-heading); font-style:italic; font-weight:400;
+                 font-size:clamp(24px,2.6vw,32px); color:var(--ink); margin:0 0 8px; }
+        .sm-rule { width:36px; height:1px; background:var(--red); margin-bottom:26px; }
+        .sm-p { font-family:var(--font-body); font-size:15.5px; line-height:1.9;
+                color:var(--muted); margin:0 0 20px; max-width:72ch; }
+        .sm-p:last-child { margin-bottom:0; }
+        .sm-p em { font-style:italic; color:var(--ink); }
+        .sm-social { display:inline-flex; align-items:center; gap:9px; margin-top:26px;
+                     font-family:var(--font-body); font-size:11px; letter-spacing:0.16em;
+                     text-transform:uppercase; color:var(--red); text-decoration:none;
+                     border-bottom:1px solid rgba(144,26,28,0.3); padding-bottom:5px;
+                     transition:border-color 0.2s; }
+        .sm-social:hover { border-bottom-color:var(--red); }
+        .sm-social:focus-visible { outline:2px solid var(--red); outline-offset:4px; }
         @media (max-width:860px) {
-          .sm-hero { padding:96px 0 72px; }
+          .sm-hero { padding:96px 0 56px; }
           .sm-hero-grid { grid-template-columns:1fr; gap:32px; }
           .sm-portrait { max-width:260px; }
+          .sm-body { padding:52px 0 72px; }
         }
       `}</style>
 
@@ -179,10 +208,59 @@ export default function SimarMalhotraPage() {
               <p className="sm-eyebrow">Author &amp; Founder</p>
               <h1 className="sm-h1">Simar Malhotra</h1>
               <p className="sm-role">Founder, Inkpot India</p>
-              <p className="sm-lead">{LEAD}</p>
+              <p className="sm-lead">
+                Simar Malhotra founded Inkpot India in 2019 with the vision of reimagining how people
+                experience India&rsquo;s rich artistic and cultural heritage. With the belief that
+                history should be witnessed beyond textbooks and museum walls, transforming monuments,
+                traditions, and stories into living experiences that inspire curiosity and connection.
+              </p>
             </div>
           </div>
         </section>
+
+        <div className="sm-inner sm-body">
+          <section className="sm-sec">
+            <p className="sm-p">
+              After establishing Inkpot India, Simar pursued advanced studies at Stanford University
+              and Columbia University, where she further explored the intersections of culture,
+              leadership, and public engagement. These experiences strengthened her conviction that
+              heritage is not simply something to preserve, but something to actively experience and
+              celebrate.
+            </p>
+            <p className="sm-p">
+              With her vision, Inkpot India has grown into a cultural platform that brings together
+              art, music, architecture, literature, and storytelling through thoughtfully curated
+              experiences. By collaborating with artists, institutions, and partners, the organization
+              continues to create immersive cultural initiatives that bridge India&rsquo;s past with
+              its present.
+            </p>
+          </section>
+
+          <section className="sm-sec" aria-labelledby="about-simar">
+            <h2 className="sm-h2" id="about-simar">About Simar Malhotra</h2>
+            <div className="sm-rule" />
+            <p className="sm-p">
+              Simar Malhotra is an author, cultural entrepreneur, and advocate for India&rsquo;s art
+              and heritage. She began writing as a teenager and is the author of two books,{" "}
+              <em>There is a Tide</em> and <em>Tides Don&rsquo;t Cross</em>. She frequently speaks at
+              cultural institutions and forums, where she shares her perspectives on heritage,
+              storytelling, and the role of culture in shaping contemporary society.
+            </p>
+            {/* A real anchor as well as the schema `sameAs` — a crawlable link
+                corroborates the entity more strongly than structured data alone. */}
+            <a
+              className="sm-social"
+              href="https://www.linkedin.com/in/simar-malhotra-b77a53124/"
+              target="_blank"
+              rel="me noopener noreferrer"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 21h4V9H3v12zM10 21h4v-6.4c0-1.7.32-3.35 2.43-3.35 2.08 0 2.1 1.95 2.1 3.46V21h4v-7.1c0-3.5-.75-6.2-4.84-6.2-1.97 0-3.29 1.08-3.83 2.1h-.05V9H10v12z" />
+              </svg>
+              Simar Malhotra on LinkedIn
+            </a>
+          </section>
+        </div>
       </main>
       <Footer />
     </>
