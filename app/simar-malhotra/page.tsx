@@ -159,19 +159,24 @@ export default function SimarMalhotraPage() {
            the fixed navbar (96px desktop / 64px mobile), which the image would
            otherwise sit underneath. */
         .sm-hero { background:#F4EFE6; padding-top:96px; }
+        /* Three grid children, explicitly placed, so mobile can reorder them to
+           heading -> portrait -> copy without touching the markup order. */
         .sm-hero-grid { display:grid; grid-template-columns:clamp(300px,30vw,430px) 1fr;
                         align-items:start; }
+        .sm-portrait { grid-column:1; grid-row:1 / span 2; }
+        .sm-head { grid-column:2; grid-row:1; padding:64px 56px 0 60px; }
+        .sm-copy { grid-column:2; grid-row:2; padding:24px 56px 88px 60px; max-width:820px; }
         /* The frame keeps the photograph's own 1067x1600 ratio, so object-fit
            cover has nothing to crop. A fixed height here would crop into the
            sides of the frame at narrower viewports. */
         .sm-portrait { position:relative; overflow:hidden; aspect-ratio:1067/1600; }
-        .sm-hero-text { padding:64px 56px 88px 60px; max-width:820px; }
         .sm-eyebrow { font-family:var(--font-body); font-size:10px; letter-spacing:0.3em;
                       text-transform:uppercase; color:var(--red); margin-bottom:18px; }
         .sm-h1 { font-family:var(--font-heading); font-weight:400; font-size:clamp(30px,3.4vw,44px);
                  line-height:1.1; color:var(--ink); margin:0 0 10px; }
+        /* No bottom margin — the head and copy blocks own the gap between them. */
         .sm-role { font-family:var(--font-body); font-size:14px; letter-spacing:0.06em;
-                   color:var(--ink); margin:0 0 28px; }
+                   color:var(--ink); margin:0; }
         .sm-lead { font-family:var(--font-body); font-size:16px; line-height:1.85;
                    color:var(--ink); margin:0 0 20px; max-width:60ch; }
         .sm-h2 { font-family:var(--font-heading); font-style:italic; font-weight:400;
@@ -191,13 +196,16 @@ export default function SimarMalhotraPage() {
         @media (max-width:860px) {
           .sm-hero { padding-top:64px; }
           .sm-hero-grid { grid-template-columns:1fr; }
-          /* No auto side margins here: on a grid item they switch the box from
-             stretch to shrink-to-fit, and because the <Image fill> inside is
-             absolutely positioned there is no intrinsic width to shrink to — the
-             box collapses to zero and the photograph disappears. Full width,
-             capped so it cannot push the copy off screen. */
-          .sm-portrait { aspect-ratio:1067/1600; max-height:62vh; }
-          .sm-hero-text { padding:32px 22px 56px; }
+          /* Heading, then photograph, then the copy. */
+          .sm-head { grid-column:1; grid-row:1; padding:34px 22px 26px; }
+          .sm-portrait { grid-column:1; grid-row:2; }
+          .sm-copy { grid-column:1; grid-row:3; padding:30px 22px 56px; }
+          /* No max-height and no auto margins here. Either one stops the frame
+             filling the column: a clamped height makes the browser derive the
+             width back from the ratio, and auto side margins switch the item
+             from stretch to shrink-to-fit — which collapses to nothing, since
+             the absolutely positioned <Image fill> has no intrinsic width. */
+          .sm-portrait { aspect-ratio:1067/1600; }
           .sm-h1 { font-size:clamp(28px,7.5vw,36px); }
           .sm-p, .sm-lead { font-size:15px; line-height:1.85; }
           .sm-h2 { margin-top:36px; }
@@ -207,7 +215,17 @@ export default function SimarMalhotraPage() {
 
       <main className="sm-wrap">
         <section className="sm-hero">
+          {/* Markup order is heading -> portrait -> copy, which is the mobile
+              reading order, so assistive tech and tab order follow the visual
+              flow. Desktop places the portrait in column 1 explicitly, so the
+              two-column layout is unaffected by this order. */}
           <div className="sm-hero-grid">
+            <div className="sm-head">
+              <p className="sm-eyebrow">Author &amp; Founder</p>
+              <h1 className="sm-h1">Simar Malhotra</h1>
+              <p className="sm-role">Founder, Inkpot India</p>
+            </div>
+
             <div className="sm-portrait">
               <Image
                 src="/images/Simar%20Malhotra%2C%20Founder%20of%20Inkpot%20India.jpeg"
@@ -218,10 +236,8 @@ export default function SimarMalhotraPage() {
                 style={{ objectFit: "cover", objectPosition: "center top" }}
               />
             </div>
-            <div className="sm-hero-text">
-              <p className="sm-eyebrow">Author &amp; Founder</p>
-              <h1 className="sm-h1">Simar Malhotra</h1>
-              <p className="sm-role">Founder, Inkpot India</p>
+
+            <div className="sm-copy">
               <p className="sm-lead">
                 Simar Malhotra founded Inkpot India in 2019 with the vision of reimagining how people
                 experience India&rsquo;s rich artistic and cultural heritage. With the belief that
