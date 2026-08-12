@@ -9,27 +9,22 @@ import Turnstile, { HoneypotField } from "@/components/Turnstile";
 
 const OXBLOOD = "#8B1E20";
 
-/* Photographs from past drives, compressed to WebP (22.2MB of PNG -> 3.3MB).
- *
- * `size` drives the mosaic, and it is a resolution decision as much as a
- * design one. The portraits are 1080px wide natively so they can carry a
- * large tile; the landscapes are only 397px, so they are kept to the small
- * one-cell tiles where they are never upscaled. Ordering is hand-set for a
- * balanced composition — `grid-auto-flow: dense` packs the rest. */
 /* The viewer slides one panel at a time. Each panel groups two or three
  * photographs, alternating a portrait-led trio with a portrait pair so the
  * rhythm changes as you move across.
  *
  * Layout "a" = one tall portrait beside two stacked landscapes; "b" = two
- * portraits. The landscape cells are the narrow ones on purpose: those files
- * are only 397px wide, so they sit in ~400px slots and are never enlarged,
- * while the 1080px portraits take the big cells. */
+ * portraits.
+ *
+ * Sources: portraits are 1080x1440 WebP; landscapes are 1920x1080 WebP encoded
+ * from 4K PNGs (107MB -> 2.8MB) kept out of the repo in /_source-images. Both
+ * comfortably exceed 2x their largest slot, so nothing is ever upscaled. */
 const PANEL_SOURCE: { layout: "a" | "b"; shots: string[] }[] = [
-  { layout: "a", shots: ["p-48.webp", "l-32.webp", "l-33.webp"] },
+  { layout: "a", shots: ["p-48.webp", "l-08.webp", "l-09.webp"] },
   { layout: "b", shots: ["p-45.webp", "p-46.webp"] },
-  { layout: "a", shots: ["p-47.webp", "l-34.webp", "l-35.webp"] },
+  { layout: "a", shots: ["p-47.webp", "l-10.webp", "l-11.webp"] },
   { layout: "b", shots: ["p-49.webp", "p-50.webp"] },
-  { layout: "a", shots: ["p-51.webp", "l-36.webp", "l-37.webp"] },
+  { layout: "a", shots: ["p-51.webp", "l-12.webp", "l-13.webp"] },
 ];
 
 const PANELS = PANEL_SOURCE.map((p) => ({
@@ -41,16 +36,92 @@ const SHOT_ALT = "Volunteers at a Heritage Cleanliness Project drive in Delhi";
 
 /* Files live in public/images/heritage cleaning/Logos/
    Inkpot's own logo is deliberately not here — this row is collaborators. */
+/* `scale` compensates for baked-in transparent padding, which varies wildly
+ * between these files — DDA's artwork fills its whole canvas while Mai3tra's
+ * occupies 27% of its height. Without it, `object-fit: contain` renders the
+ * padded ones visibly smaller. Values are derived from each file's measured
+ * ink bounding box, then eased back so the wide wordmarks don't sprawl. */
 const PARTNERS = [
-  { file: "DDA.png", name: "Delhi Development Authority" },
-  { file: "Kaash Magic Foundation.png", name: "Kaash Magic Foundation" },
-  { file: "Umeed Logo.png", name: "Umeed" },
-  { file: "Ila Green.png", name: "Ila Green" },
-  { file: "Delhi Drum Circle.png", name: "Delhi Drum Circle" },
-  { file: "BECOZMUSIC.png", name: "Becoz Music" },
-  { file: "Mai3tra logo.png", name: "Mai3tra" },
-  { file: "Shot in the Dark.png", name: "Shot in the Dark" },
+  { file: "DDA_logo.png", name: "Delhi Development Authority", scale: 1 },
+  { file: "Kaash Magic Foundation.png", name: "Kaash Magic Foundation", scale: 1 },
+  { file: "Umeed Logo.png", name: "Umeed", scale: 1.5 },
+  { file: "Ila Green.png", name: "Ila Green", scale: 1.45 },
+  { file: "Delhi Drum Circle.png", name: "Delhi Drum Circle", scale: 1.1 },
+  { file: "Becoz_art_logo.png", name: "Becoz Music", scale: 1.6 },
+  { file: "Mai3tra logo.png", name: "Mai3tra", scale: 1.5 },
+  { file: "Shot in the Dark.png", name: "Shot in the Dark", scale: 1.45 },
 ];
+
+/* ── Partner logos — a single scrollable line with edge buttons.
+      The arrows hide themselves at each end (and entirely when everything
+      already fits), so they only appear when there is somewhere to go. ── */
+function PartnerRail() {
+  const railRef = useRef<HTMLDivElement>(null);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(true);
+  const [scrollable, setScrollable] = useState(false);
+
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+    const sync = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      setScrollable(max > 4);
+      setAtStart(el.scrollLeft <= 2);
+      setAtEnd(el.scrollLeft >= max - 2);
+    };
+    sync();
+    el.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    return () => {
+      el.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+    };
+  }, []);
+
+  const nudge = (dir: number) => {
+    const el = railRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * Math.max(260, el.clientWidth * 0.7), behavior: "smooth" });
+  };
+
+  return (
+    <div className={`hcp-prail-wrap${scrollable ? " is-scrollable" : ""}`}>
+      <button
+        type="button" className="hcp-prail-btn hcp-prail-prev"
+        onClick={() => nudge(-1)} disabled={atStart} aria-label="Previous partners"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+      </button>
+
+      <div ref={railRef} className="hcp-prail" role="list">
+        {PARTNERS.map((p) => (
+          <div
+            key={p.file}
+            className="hcp-prail-item"
+            role="listitem"
+            style={{ "--logo-scale": p.scale } as React.CSSProperties}
+          >
+            <Image
+              src={`/images/heritage cleaning/Logos/${p.file}`}
+              alt={p.name}
+              fill
+              sizes="190px"
+              style={{ objectFit: "contain", objectPosition: "center" }}
+            />
+          </div>
+        ))}
+      </div>
+
+      <button
+        type="button" className="hcp-prail-btn hcp-prail-next"
+        onClick={() => nudge(1)} disabled={atEnd} aria-label="Next partners"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+      </button>
+    </div>
+  );
+}
 
 function Field({
   label,
@@ -205,8 +276,10 @@ export default function HeritageCleanlinessPage() {
                 <div style={{ width: "22px", height: "1px", background: OXBLOOD }} />
                 <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: OXBLOOD }}>Why it matters</span>
               </div>
-              <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: isMobile ? "30px" : "clamp(30px, 3.4vw, 46px)", lineHeight: 1.12, color: "#1a1a1a", margin: 0 }}>
-                If you&rsquo;ve ever felt that responsibility, you already belong here.
+              {/* The proverb carries the section now — left dark so it does not
+                  compete with the oxblood eyebrow above. */}
+              <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: isMobile ? "27px" : "clamp(27px, 3vw, 41px)", lineHeight: 1.2, color: "#1a1a1a", margin: 0 }}>
+                Jab koi cheez sabki hoti hai, uski vajah se woh kabhi-kabhi kisi ki nahi hoti.
               </h2>
             </motion.div>
 
@@ -217,11 +290,8 @@ export default function HeritageCleanlinessPage() {
               <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "14px" : "15.5px", lineHeight: 1.9, color: "rgba(0,0,0,0.6)", margin: "0 0 22px" }}>
                 Ever spotted a plastic bottle lying against a centuries-old wall and wished you could do something about it? This is that chance. The Heritage Cleanliness Project is a coming together of institutions, authorities, communities and everyday people rethinking how we treat the places we&rsquo;ve inherited.
               </p>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "15px" : "17px", lineHeight: 1.7, color: "#1a1a1a", margin: "0 0 14px", fontWeight: 500 }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "15px" : "17px", lineHeight: 1.7, color: OXBLOOD, margin: 0, fontWeight: 500 }}>
                 Our heritage doesn&rsquo;t belong to one person. Neither does the responsibility to protect it.
-              </p>
-              <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: isMobile ? "17px" : "21px", lineHeight: 1.5, color: OXBLOOD, margin: 0 }}>
-                Jab koi cheez sabki hoti hai, uski vajah se woh kabhi-kabhi kisi ki nahi hoti.
               </p>
             </motion.div>
             </div>
@@ -229,25 +299,55 @@ export default function HeritageCleanlinessPage() {
         </section>
 
         {/* ── REGISTER FORM ── */}
-        <section id="register" style={{ background: "var(--bg-linen, #F4EFE6)", padding: isMobile ? "56px 24px 64px" : "104px 64px 120px" }}>
-          <div style={{ maxWidth: "1120px", margin: "0 auto", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.12fr 1fr", gap: isMobile ? "40px" : "60px", alignItems: "start" }}>
+        <section id="register" style={{ background: "var(--bg-linen, #F4EFE6)", scrollMarginTop: "92px" }}>
+          {/* Sultan Garhi drawing runs as the section's banner, bleeding off the
+              right edge the way the hero illustration does. It is line art on white,
+              so `multiply` drops the white ground into the linen and leaves only the
+              linework. A left-weighted scrim keeps the copy and form legible over it. */}
+          <style>{`
+            .hcp-reg       { position:relative; }
+            /* Pinned to the artwork's own 16:9 and sized off the width, not the
+               section. Filling the box would scale a 16:9 drawing up to cover a
+               very tall section, which zooms it enormously and crops it. */
+            .hcp-reg-art   { position:absolute; right:0; top:50%; translate:0 -50%;
+                             width:min(56%, 760px); aspect-ratio:16 / 9; height:auto;
+                             pointer-events:none; mix-blend-mode:multiply; opacity:.85; }
+            .hcp-reg-scrim { position:absolute; inset:0; pointer-events:none;
+                             background:linear-gradient(90deg,
+                               rgba(244,239,230,0.97) 0%, rgba(244,239,230,0.92) 26%,
+                               rgba(244,239,230,0.52) 46%, rgba(244,239,230,0) 66%); }
+            .hcp-reg-copy  { position:relative; z-index:2; max-width:620px;
+                             padding:clamp(64px,7vw,112px) clamp(24px,5vw,72px)
+                                     clamp(64px,8vw,120px) clamp(24px,5vw,64px); }
+            @media (max-width:900px) {
+              /* art drops to a band at the foot so it never sits under the fields */
+              .hcp-reg-art   { top:auto; bottom:0; translate:none;
+                               width:100%; height:auto; opacity:.8; }
+              .hcp-reg-scrim { background:linear-gradient(180deg,
+                               rgba(244,239,230,0.96) 0%, rgba(244,239,230,0.86) 46%,
+                               rgba(244,239,230,0.35) 78%, rgba(244,239,230,0) 100%); }
+              .hcp-reg-copy  { max-width:none; padding:44px 24px 72px; }
+            }
+          `}</style>
+          <div className="hcp-reg">
 
-            {/* Poster */}
-            <motion.div
-              initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.85, ease: "easeOut" }}
-              style={{ position: "relative", width: "100%", maxWidth: isMobile ? "340px" : "none", margin: isMobile ? "0 auto" : "0", aspectRatio: "1080 / 1350", overflow: "hidden", boxShadow: "0 14px 48px rgba(0,0,0,0.16)" }}
-            >
+            <div className="hcp-reg-art">
               <Image
-                src="/images/heritage cleaning/Feature_section.png"
-                alt="Coffee, Culture and Cleanliness — Sunday 30 August 2026, 4 PM onwards, Sultan Garhi Archaeological Park"
-                fill sizes="(max-width: 768px) 340px, 440px"
-                style={{ objectFit: "cover", objectPosition: "center" }}
+                src="/images/heritage%20cleaning/sultan-garhi-hero.webp"
+                alt=""
+                aria-hidden="true"
+                fill
+                sizes="(max-width: 900px) 100vw, 760px"
+                quality={90}
+                loading="lazy"
+                style={{ objectFit: "contain", objectPosition: "center" }}
               />
-            </motion.div>
+            </div>
+            <div className="hcp-reg-scrim" />
 
-            {/* Form */}
+            {/* Copy + form */}
             <motion.div
+              className="hcp-reg-copy"
               initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.85, delay: 0.1, ease: "easeOut" }}
             >
@@ -255,18 +355,24 @@ export default function HeritageCleanlinessPage() {
                 <div style={{ width: "22px", height: "1px", background: OXBLOOD }} />
                 <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: OXBLOOD }}>Next Drive · #NoLitterLegacy</span>
               </div>
-              <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: isMobile ? "31px" : "clamp(32px, 3.6vw, 50px)", lineHeight: 1.08, color: "#1a1a1a", margin: "0 0 16px" }}>
-                Coffee tastes better after you&rsquo;ve done something good.
+              <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: isMobile ? "29px" : "clamp(30px, 3.2vw, 44px)", lineHeight: 1.1, color: "#1a1a1a", margin: "0 0 18px" }}>
+                Register for The Heritage Cleanliness Project
               </h2>
+              
+              <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "14px" : "15.5px", lineHeight: 1.8, color: "rgba(0,0,0,0.6)", margin: "0 0 14px" }}>
+                Join us on Sunday, 30th August at 4:00 PM for Heritage, Culture &amp; Cleanliness: an evening of community action, heritage storytelling and conversations with people who share a love for heritage.
+              </p>
               <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "14px" : "15.5px", lineHeight: 1.8, color: "rgba(0,0,0,0.6)", margin: "0 0 12px" }}>
-                On Sunday, 30th August, swap your usual café catch-up for something more meaningful. Join us as a changemaker for an afternoon of cleaning &amp; restoring a heritage site — alongside storytelling, meeting interesting people, great conversations, and cold coffee.
+                Whether you&rsquo;ve joined us before or this is your first time, we&rsquo;d love to have you with us. Bring a friend, wear comfortable clothes, and spend the evening connecting with a wonderful community while giving back to the spaces that bring us together.
               </p>
-              <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: isMobile ? "17px" : "20px", color: OXBLOOD, margin: "0 0 24px", letterSpacing: "0.02em" }}>
-                Show up. Pick up. Sip up.
+              {/* Montserrat is this site's --font-body */}
+              <p style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: isMobile ? "15px" : "18px", letterSpacing: "0.06em", color: OXBLOOD, margin: "18px 0 26px" }}>
+                #NoLitterLegacy
               </p>
+
               <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "34px" }}>
                 {[
-                  { icon: "📍", text: "Sultan Garhi Archaeological Park" },
+                  { icon: "📍", text: "Sultan Garhi Tomb, Vasant Kunj" },
                   { icon: "🗓️", text: "Sunday, 30 August 2026" },
                   { icon: "🕖", text: "4:00 PM onwards" },
                 ].map((d) => (
@@ -391,7 +497,7 @@ export default function HeritageCleanlinessPage() {
               <div style={{ width: "40px", height: "1px", background: "rgba(139,30,32,0.4)", margin: "0 auto 20px" }} />
               <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "13px" : "14.5px", lineHeight: 1.85, color: "rgba(0,0,0,0.55)", margin: 0 }}>
                 Students, families, first-timers and regulars — gathered at Delhi&rsquo;s monuments
-                with gloves, bags and a morning to give.
+                with gloves, bags and a few hours to give.
               </p>
             </motion.div>
 
@@ -481,25 +587,49 @@ export default function HeritageCleanlinessPage() {
             >
               In collaboration with
             </motion.p>
-            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: isMobile ? "22px 26px" : "40px 52px" }}>
-              {PARTNERS.map((p, i) => (
-                <motion.div
-                  key={p.file}
-                  initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.4 }}
-                  transition={{ duration: 0.5, delay: Math.min(i * 0.05, 0.4), ease: "easeOut" }}
-                  style={{ position: "relative", width: isMobile ? "84px" : "116px", height: isMobile ? "50px" : "68px" }}
-                >
-                  <Image
-                    src={`/images/heritage cleaning/Logos/${p.file}`}
-                    alt={p.name}
-                    fill
-                    sizes="116px"
-                    style={{ objectFit: "contain", objectPosition: "center" }}
-                  />
-                </motion.div>
-              ))}
-            </div>
+            <style>{`
+              .hcp-prail-wrap  { position:relative; }
+              .hcp-prail       { display:flex; align-items:center; gap:clamp(26px,3.6vw,58px);
+                                 overflow-x:auto; scroll-behavior:smooth; scrollbar-width:none;
+                                 scroll-snap-type:x proximity;
+                                 padding:6px clamp(38px,5vw,60px); }
+              .hcp-prail::-webkit-scrollbar { display:none; }
+              /* Box grows by --logo-scale so padded logos read at a comparable
+                 optical size; growing the box (not transform) keeps the flex
+                 row's spacing honest instead of letting neighbours overlap. */
+              .hcp-prail-item  { position:relative; flex:0 0 auto; scroll-snap-align:center;
+                                 width:calc(clamp(118px,15vw,190px) * var(--logo-scale,1));
+                                 height:calc(clamp(72px,9vw,112px) * var(--logo-scale,1)); }
+              /* Edge fades + arrows only exist when there is actually overflow */
+              .hcp-prail-wrap.is-scrollable::before,
+              .hcp-prail-wrap.is-scrollable::after {
+                                 content:""; position:absolute; top:0; bottom:0; width:clamp(30px,4vw,54px);
+                                 pointer-events:none; z-index:2; }
+              .hcp-prail-wrap.is-scrollable::before { left:0;
+                                 background:linear-gradient(90deg, var(--bg-linen,#F4EFE6) 25%, rgba(244,239,230,0)); }
+              .hcp-prail-wrap.is-scrollable::after  { right:0;
+                                 background:linear-gradient(270deg, var(--bg-linen,#F4EFE6) 25%, rgba(244,239,230,0)); }
+              .hcp-prail-btn   { position:absolute; top:50%; transform:translateY(-50%);
+                                 width:42px; height:42px; border-radius:50%; border:none; cursor:pointer;
+                                 background:#ffffff; color:#1a1a1a; z-index:3;
+                                 display:flex; align-items:center; justify-content:center;
+                                 box-shadow:0 3px 16px rgba(0,0,0,0.18);
+                                 transition:opacity .25s, transform .22s, background .22s; }
+              .hcp-prail-btn:hover:not(:disabled) { transform:translateY(-50%) scale(1.08); }
+              .hcp-prail-btn:focus-visible { outline:2px solid #8B1E20; outline-offset:3px; }
+              .hcp-prail-btn:disabled { opacity:0; pointer-events:none; }
+              .hcp-prail-prev  { left:0; }
+              .hcp-prail-next  { right:0; }
+              @media (max-width:640px) {
+                .hcp-prail-btn { width:34px; height:34px; }
+                .hcp-prail     { padding:6px 34px; }
+              }
+              @media (prefers-reduced-motion:reduce) {
+                .hcp-prail     { scroll-behavior:auto; }
+                .hcp-prail-btn { transition:none; }
+              }
+            `}</style>
+            <PartnerRail />
           </div>
         </section>
 

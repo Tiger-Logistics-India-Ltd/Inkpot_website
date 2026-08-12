@@ -90,8 +90,8 @@ const person = {
     },
     {
       "@type": "CollegeOrUniversity",
-      name: "Columbia University",
-      sameAs: "https://en.wikipedia.org/wiki/Columbia_University",
+      name: "Columbia Business School",
+      sameAs: "https://en.wikipedia.org/wiki/Columbia_Business_School",
     },
   ],
   worksFor: { "@id": `${SITE}/#organization` },
@@ -246,11 +246,11 @@ export default function SimarMalhotraPage() {
               </p>
 
               <p className="sm-p">
-                After establishing Inkpot India, Simar pursued advanced studies at Stanford University
-                and Columbia University, where she further explored the intersections of culture,
-                leadership, and public engagement. These experiences strengthened her conviction that
-                heritage is not simply something to preserve, but something to actively experience and
-                celebrate.
+                A graduate of Stanford University and Columbia Business School, Simar founded Inkpot
+                India with the belief that culture is best experienced rather than observed. Through
+                thoughtfully curated concerts, dining experiences, exhibitions, conversations, and
+                community initiatives, she works to reimagine historic spaces as vibrant sites of
+                contemporary cultural engagement.
               </p>
               <p className="sm-p">
                 With her vision, Inkpot India has grown into a cultural platform that brings together
@@ -264,7 +264,7 @@ export default function SimarMalhotraPage() {
               <div className="sm-rule" />
               <p className="sm-p">
                 Simar Malhotra is an author, cultural entrepreneur, and advocate for India&rsquo;s art
-                and heritage. She began writing as a teenager and is the author of two books,{" "}
+                and heritage. She is the author of two books,{" "}
                 <em>There is a Tide</em> and <em>Tides Don&rsquo;t Cross</em>. She frequently speaks at
                 cultural institutions and forums, where she shares her perspectives on heritage,
                 storytelling, and the role of culture in shaping contemporary society.

@@ -13,7 +13,9 @@ const PRESS_ENABLED = false; // set true once real coverage exists
 
 const INSTAGRAM = "https://www.instagram.com/inkpotindia_/";
 
-/* ── The three About pillars ── */
+/* ── The three About pillars — rendered as alternating editorial rows.
+      `pos` tunes each crop: the sources are a mix of 3:2 and 2:3, and the row
+      media is a uniform 4:3, so the portrait frame needs its own focal point. ── */
 const PILLARS = [
   {
     num: "I",
@@ -21,15 +23,16 @@ const PILLARS = [
     body: "Narratives that reconnect us with the places, people and traditions that define our cultural identity.",
     img: "/images/thelivingtable/TLT-12.jpg",
     alt: "A storyteller at The Living Table",
-    mod: "1",
+    pos: "center 45%",
   },
   {
     num: "II",
     title: "Cuisine with a Sense of Place",
     body: "Menus crafted by acclaimed chefs, inspired by history and rooted in regional flavours.",
     img: "/images/thelivingtable/TLT-17.jpg",
+    // Portrait source in a 4:3 frame — only the middle half survives; 55% centres the thali.
     alt: "A plated dish from the evening",
-    mod: "2",
+    pos: "center 55%",
   },
   {
     num: "III",
@@ -37,27 +40,31 @@ const PILLARS = [
     body: "Extraordinary venues that provide an authentic setting for meaningful conversations and shared experiences.",
     img: "/images/thelivingtable/DSC_0066.JPG",
     alt: "The candlelit haveli interior at Kathika Cultural Centre",
-    mod: "3",
+    pos: "center 50%",
   },
 ];
 
-/* ── Moments — hand-curated stills from the inaugural evening ── */
+/* ── Moments — the full set from the inaugural evening.
+      True pixel dimensions travel with each frame: the rail is a fixed height and
+      derives every width from `ratio`, so the 13 portraits stay narrow and the two
+      landscapes open out. No crop, and no layout shift as they load. ── */
 const GALLERY = "/images/thelivingtable/gallery%20images";
 const MOMENTS = [
-  { src: `${GALLERY}/TLT-03.jpg`,   alt: "A moment from the inaugural Living Table", caption: "A moment from the inaugural Living Table" },
-  { src: `${GALLERY}/DSC_0074.JPG`, alt: "Guests gathered at The Living Table",      caption: "" },
-  { src: `${GALLERY}/TLT-04.jpg`,   alt: "The table set for the evening",             caption: "The table set for the evening" },
-  { src: `${GALLERY}/DSC_0429.JPG`, alt: "Conversation over dinner",                  caption: "" },
-  { src: `${GALLERY}/TLT-11.jpg`,   alt: "A dish served at The Living Table",         caption: "A dish served at The Living Table" },
-  { src: `${GALLERY}/DSC_0444.JPG`, alt: "The haveli, lit for the evening",           caption: "The haveli, lit for the evening" },
-  { src: `${GALLERY}/TLT-13.jpg`,   alt: "Guests in conversation",                    caption: "Guests in conversation" },
-  { src: `${GALLERY}/DSC_0447.JPG`, alt: "A moment from the inaugural Living Table",  caption: "A moment from the inaugural Living Table" },
-  { src: `${GALLERY}/TLT-15.jpg`,   alt: "Stories shared at the table",               caption: "Stories shared at the table" },
-  { src: `${GALLERY}/DSC_0499.JPG`, alt: "The evening at Kathika Cultural Centre",    caption: "The evening at Kathika Cultural Centre" },
-  { src: `${GALLERY}/DSC_0558.JPG`, alt: "Guests at The Living Table",                caption: "" },
-  { src: `${GALLERY}/DSC_0571.JPG`, alt: "A course from the menu",                    caption: "" },
-  { src: `${GALLERY}/DSC_0650.JPG`, alt: "The table during dinner",                   caption: "The table during dinner" },
-  { src: `${GALLERY}/DSC_0667.JPG`, alt: "A closing moment from the evening",         caption: "A closing moment from the evening" },
+  { src: `${GALLERY}/The_living_table.jpeg`,                  alt: "The Living Table set beneath chandeliers in the haveli courtyard", caption: "The table, set beneath the chandeliers", ratio: 953 / 1433 },
+  { src: `${GALLERY}/Old_haveli.jpeg`,                        alt: "The restored haveli at Kathika Cultural Centre",                   caption: "The old haveli, before the guests",     ratio: 1066 / 1600 },
+  { src: `${GALLERY}/DSC_0429.JPG`,                           alt: "Conversation over dinner",                                          caption: "Conversation over dinner",              ratio: 2200 / 1467 },
+  { src: `${GALLERY}/the_dinner_table.jpeg`,                  alt: "The dinner table laid for the evening",                             caption: "The dinner table, laid",                ratio: 1066 / 1600 },
+  { src: `${GALLERY}/TLT-05.jpg`,                             alt: "The inaugural Living Table evening",                                caption: "The inaugural evening",                 ratio: 1467 / 2200 },
+  { src: `${GALLERY}/Guest_at_The_Living_table.jpeg`,         alt: "A guest at The Living Table",                                       caption: "A guest at the table",                  ratio: 1066 / 1600 },
+  { src: `${GALLERY}/DSC_0444.JPG`,                           alt: "The haveli, lit for the evening",                                   caption: "The haveli, lit for the evening",       ratio: 1467 / 2200 },
+  { src: `${GALLERY}/TLT-11.jpg`,                             alt: "A dish served at The Living Table",                                 caption: "A dish from the menu",                  ratio: 1467 / 2200 },
+  { src: `${GALLERY}/TLT-13.jpg`,                             alt: "Guests in conversation",                                            caption: "Guests in conversation",                ratio: 2200 / 1467 },
+  { src: `${GALLERY}/Guest_at_the_living_table_kathika.jpeg`, alt: "A guest at Kathika Cultural Centre",                                caption: "An evening at Kathika",                 ratio: 1066 / 1600 },
+  { src: `${GALLERY}/DSC_0558.JPG`,                           alt: "Guests at The Living Table",                                        caption: "Around the table",                      ratio: 1467 / 2200 },
+  { src: `${GALLERY}/TLT-15.jpg`,                             alt: "Stories shared at the table",                                       caption: "Stories shared at the table",           ratio: 1467 / 2200 },
+  { src: `${GALLERY}/DSC_0571.JPG`,                           alt: "A course from the menu",                                            caption: "A course from the menu",                ratio: 1467 / 2200 },
+  { src: `${GALLERY}/DSC_0650.JPG`,                           alt: "The table during dinner",                                           caption: "The table during dinner",               ratio: 1467 / 2200 },
+  { src: `${GALLERY}/DSC_0667.JPG`,                           alt: "A closing moment from the evening",                                 caption: "A closing moment",                      ratio: 1467 / 2200 },
 ];
 
 /* ── Press clippings — placeholders behind PRESS_ENABLED ── */
@@ -83,81 +90,124 @@ function Fade({ children, delay = 0, y = 28, amount = 0.2, style }: { children: 
   );
 }
 
-/* ── Moments: masonry on desktop, swipe carousel on mobile ── */
-function MomentsGrid() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  if (isMobile) return <MomentsCarousel />;
-
-  return (
-    <div className="tlt-moments">
-      {MOMENTS.map((m, i) => (
-        <div key={m.src + i} className="tlt-moment">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={m.src} alt={m.alt} loading="lazy" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* ── Mobile horizontal snap-carousel — centred photo scales up, neighbours recede ── */
-function MomentsCarousel() {
+/* ── Moments: one horizontal rail at every breakpoint.
+      Frames sit on a shared bottom baseline at a fixed rail height, with every
+      other one stepped slightly shorter — a contact-sheet skyline rather than a
+      flat strip. Each frame reveals itself as it is scrolled into view, so the
+      gallery unfolds as you travel along it. Pointer drag pans on desktop;
+      touch uses native momentum scrolling. ── */
+function MomentsRail() {
   const reduce = useReducedMotion();
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [dragging, setDragging] = useState(false);
 
+  /* Centre-most frame wins the caption; progress drives the rule beneath the rail. */
   useEffect(() => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    const slides = Array.from(scroller.querySelectorAll<HTMLElement>("[data-slide]"));
-    const io = new IntersectionObserver(
-      entries => {
-        entries.forEach(e => {
-          if (e.isIntersecting && e.intersectionRatio >= 0.6) {
-            setActive(Number((e.target as HTMLElement).dataset.slide));
-          }
-        });
-      },
-      { root: scroller, threshold: [0.6, 0.9] }
-    );
-    slides.forEach(s => io.observe(s));
-    return () => io.disconnect();
+
+    const onScroll = () => {
+      const max = scroller.scrollWidth - scroller.clientWidth;
+      setProgress(max > 8 ? Math.min(1, Math.max(0, scroller.scrollLeft / max)) : 1);
+
+      const mid = scroller.scrollLeft + scroller.clientWidth / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      scroller.querySelectorAll<HTMLElement>("[data-slide]").forEach(el => {
+        const d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid);
+        if (d < bestDist) {
+          bestDist = d;
+          best = Number(el.dataset.slide);
+        }
+      });
+      setActive(best);
+    };
+
+    onScroll();
+    scroller.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      scroller.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
+  /* Drag-to-pan. Touch is left alone — native scrolling already feels better. */
+  const drag = useRef({ down: false, startX: 0, startScroll: 0 });
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "touch") return;
+    const s = scrollerRef.current;
+    if (!s) return;
+    drag.current = { down: true, startX: e.clientX, startScroll: s.scrollLeft };
+    setDragging(true);
+    s.setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const s = scrollerRef.current;
+    if (!s || !drag.current.down) return;
+    s.scrollLeft = drag.current.startScroll - (e.clientX - drag.current.startX);
+  };
+
+  const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+    const s = scrollerRef.current;
+    if (!s || !drag.current.down) return;
+    drag.current.down = false;
+    setDragging(false);
+    if (s.hasPointerCapture(e.pointerId)) s.releasePointerCapture(e.pointerId);
+  };
+
   return (
-    <div>
-      <div ref={scrollerRef} className="tlt-hscroll" role="list">
+    <div className="tlt-rail-wrap">
+      <div
+        ref={scrollerRef}
+        className={`tlt-rail${dragging ? " is-dragging" : ""}`}
+        role="list"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+      >
         {MOMENTS.map((m, i) => (
-          <div
-            key={m.src + i}
+          <motion.div
+            key={m.src}
             data-slide={i}
-            className={`tlt-slide${active === i ? " is-active" : ""}`}
             role="listitem"
+            className={`tlt-frame${i % 2 === 1 ? " tlt-frame--step" : ""}${active === i ? " is-active" : ""}`}
+            style={{ aspectRatio: String(m.ratio) }}
+            initial={reduce ? false : { opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={m.src} alt={m.alt} loading="lazy" />
-          </div>
+            <img src={m.src} alt={m.alt} loading="lazy" draggable={false} />
+            <span className="tlt-frame-num">{String(i + 1).padStart(2, "0")}</span>
+          </motion.div>
         ))}
       </div>
 
-      <div className="tlt-slide-meta">
+      {/* Progress rule — how far along the evening you have travelled */}
+      <div className="tlt-rail-rule" aria-hidden="true">
+        <span style={{ transform: `scaleX(${progress})` }} />
+      </div>
+
+      <div className="tlt-rail-meta">
         <motion.span
           key={active}
-          initial={reduce ? false : { opacity: 0, y: 5 }}
+          initial={reduce ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="tlt-slide-cap"
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="tlt-rail-cap"
         >
           {MOMENTS[active].caption}
         </motion.span>
-        <span className="tlt-slide-count">{String(active + 1).padStart(2, "0")} / {MOMENTS.length}</span>
+        <span className="tlt-rail-count">
+          {String(active + 1).padStart(2, "0")} / {String(MOMENTS.length).padStart(2, "0")}
+        </span>
       </div>
     </div>
   );
@@ -169,51 +219,71 @@ export default function LivingTablePage() {
       <Navbar />
       <main style={{ background: "#F4EFE6", overflowX: "hidden" }}>
         <style>{`
-          /* Pillar cards — scattered-photo layout */
-          .tlt-pillars   { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(22px, 3vw, 44px); align-items: stretch; }
-          .tlt-card      { background: #FAF7F2; height: 100%; display: flex; flex-direction: column; box-shadow: 0 14px 34px rgba(34,30,26,.13); transition: transform .5s cubic-bezier(.2,.7,.3,1), box-shadow .5s cubic-bezier(.2,.7,.3,1); will-change: transform; }
-          .tlt-card:hover{ transform: translateY(-8px); box-shadow: 0 26px 56px rgba(34,30,26,.2); }
+          /* About — alternating editorial rows: text one side, photograph the other */
+          .tlt-about      { display: flex; flex-direction: column; gap: clamp(52px, 7vw, 112px); }
+          .tlt-about-row  { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 76px); align-items: center; }
+          .tlt-about-media{ order: 2; position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; box-shadow: 0 18px 46px rgba(34,30,26,.17); }
+          .tlt-about-copy { order: 1; }
+          .tlt-about-row.is-flipped .tlt-about-media { order: 1; }
+          .tlt-about-row.is-flipped .tlt-about-copy  { order: 2; }
+          .tlt-about-media img { transition: transform 1.1s cubic-bezier(.2,.7,.3,1); }
+          .tlt-about-row:hover .tlt-about-media img  { transform: scale(1.045); }
+          .tlt-about-num  { display: block; font-family: var(--font-heading); font-style: italic; font-size: clamp(30px, 3.6vw, 46px); line-height: 1; color: rgba(144,26,28,.26); margin: 0 0 14px; }
+          .tlt-about-h    { font-family: var(--font-heading); font-weight: 400; font-size: clamp(23px, 2.7vw, 36px); color: #1a1a1a; line-height: 1.22; margin: 0 0 18px; }
+          .tlt-about-rule { width: 34px; height: 1px; background: #901A1C; margin: 0 0 18px; }
+          .tlt-about-body { font-family: var(--font-body); font-size: clamp(13px, 1.2vw, 15px); color: rgba(0,0,0,.55); line-height: 1.9; margin: 0; max-width: 42ch; }
 
-          /* Moments — column masonry */
-          .tlt-moments   { column-count: 3; column-gap: clamp(14px, 2vw, 26px); }
-          .tlt-moment    { display: block; break-inside: avoid; margin-bottom: clamp(14px, 2vw, 26px); position: relative; overflow: hidden; transition: transform .45s cubic-bezier(.2,.7,.3,1), box-shadow .45s cubic-bezier(.2,.7,.3,1); box-shadow: 0 8px 24px rgba(34,30,26,.10); }
-          .tlt-moment:hover { transform: translateY(-6px); box-shadow: 0 20px 44px rgba(34,30,26,.20); }
-          .tlt-moment img{ width: 100%; height: auto; display: block; }
-
-          /* Moments — mobile swipe carousel */
-          .tlt-hscroll { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding: 12px 12vw 16px; scrollbar-width: none; }
-          .tlt-hscroll::-webkit-scrollbar { display: none; }
-          .tlt-slide { flex: 0 0 76vw; aspect-ratio: 3 / 4; scroll-snap-align: center; position: relative; overflow: hidden; display: block; transform: scale(.86); opacity: .5; box-shadow: 0 10px 30px rgba(34,30,26,.12); transition: transform .55s cubic-bezier(.2,.7,.3,1), opacity .55s cubic-bezier(.2,.7,.3,1), box-shadow .55s cubic-bezier(.2,.7,.3,1); }
-          .tlt-slide.is-active { transform: scale(1); opacity: 1; box-shadow: 0 24px 60px rgba(34,30,26,.28); }
-          .tlt-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
-          .tlt-slide-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 20px 16px 0; min-height: 20px; }
-          .tlt-slide-cap { font-family: var(--font-heading); font-style: italic; font-size: 15px; color: rgba(0,0,0,.6); line-height: 1.4; }
-          .tlt-slide-count { font-family: var(--font-body); font-size: 11px; letter-spacing: .16em; color: #901A1C; white-space: nowrap; }
-          @media (prefers-reduced-motion: reduce) {
-            .tlt-slide { transform: none !important; opacity: 1 !important; transition: none !important; }
-          }
+          /* Moments — horizontal rail, bottom-aligned, bleeding off the right edge */
+          .tlt-rail-wrap  { position: relative; }
+          .tlt-rail       { display: flex; align-items: flex-end; gap: clamp(12px, 1.6vw, 24px);
+                            height: clamp(330px, 42vw, 560px);
+                            overflow-x: auto; overflow-y: hidden;
+                            scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+                            scrollbar-width: none; cursor: grab;
+                            margin-right: calc(-1 * clamp(24px, 6vw, 100px));
+                            /* bottom padding absorbs the frames' entrance travel, which
+                               overflow-y: hidden would otherwise clip */
+                            padding: 6px clamp(24px, 6vw, 100px) 22px 0; }
+          .tlt-rail::-webkit-scrollbar { display: none; }
+          .tlt-rail.is-dragging { cursor: grabbing; scroll-snap-type: none; }
+          .tlt-frame      { position: relative; flex: 0 0 auto; height: 100%; scroll-snap-align: center;
+                            overflow: hidden; background: #E4DCCF;
+                            box-shadow: 0 10px 28px rgba(34,30,26,.13);
+                            transition: box-shadow .55s cubic-bezier(.2,.7,.3,1), height .55s cubic-bezier(.2,.7,.3,1); }
+          .tlt-frame--step{ height: 85%; }
+          .tlt-frame.is-active { box-shadow: 0 22px 54px rgba(34,30,26,.26); }
+          .tlt-frame img  { width: 100%; height: 100%; object-fit: cover; display: block;
+                            transform: scale(1.05); transition: transform 1.2s cubic-bezier(.2,.7,.3,1);
+                            -webkit-user-drag: none; user-select: none; }
+          .tlt-frame.is-active img, .tlt-frame:hover img { transform: scale(1); }
+          .tlt-frame-num  { position: absolute; top: 12px; left: 13px; font-family: var(--font-body);
+                            font-size: 9px; letter-spacing: .18em; color: #fff; opacity: 0;
+                            text-shadow: 0 1px 6px rgba(0,0,0,.55); transition: opacity .45s ease; }
+          .tlt-frame.is-active .tlt-frame-num { opacity: .85; }
+          .tlt-rail-rule  { position: relative; height: 1px; background: rgba(34,30,26,.14); margin-top: clamp(22px, 2.6vw, 34px); overflow: hidden; }
+          .tlt-rail-rule span { position: absolute; inset: 0; background: #901A1C; transform-origin: left center; transition: transform .18s linear; }
+          .tlt-rail-meta  { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; padding-top: 16px; min-height: 22px; }
+          .tlt-rail-cap   { font-family: var(--font-heading); font-style: italic; font-size: clamp(14px, 1.5vw, 17px); color: rgba(0,0,0,.6); line-height: 1.4; }
+          .tlt-rail-count { font-family: var(--font-body); font-size: 11px; letter-spacing: .16em; color: #901A1C; white-space: nowrap; }
 
           .tlt-press-grid   { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2.4vw, 32px); }
           .tlt-prev         { display: grid; grid-template-columns: 1fr 1fr; }
 
           @media (max-width: 900px) {
-            .tlt-moments { column-count: 2; }
+            .tlt-about-row  { grid-template-columns: 1fr; gap: 22px; }
+            .tlt-about-media, .tlt-about-row.is-flipped .tlt-about-media { order: 1; }
+            .tlt-about-copy,  .tlt-about-row.is-flipped .tlt-about-copy  { order: 2; }
           }
           @media (max-width: 768px) {
             .tlt-hero         { height: 68dvh !important; min-height: 440px !important; }
-            .tlt-pillars      { grid-template-columns: 1fr; gap: 28px; }
-            .tlt-card, .tlt-card--1, .tlt-card--2, .tlt-card--3 { transform: none !important; }
-            .tlt-card:hover   { transform: translateY(-6px) !important; }
             .tlt-press-grid   { grid-template-columns: 1fr; }
             .tlt-prev         { grid-template-columns: 1fr; }
-            .tlt-upcoming     { grid-template-columns: 1fr !important; }
-          }
-          @media (max-width: 540px) {
-            .tlt-moments { column-count: 1; }
+            .tlt-rail         { height: clamp(300px, 68vw, 420px); scroll-snap-type: x mandatory; }
+            .tlt-frame--step  { height: 90%; }
           }
           @media (prefers-reduced-motion: reduce) {
-            .tlt-card, .tlt-card--1, .tlt-card--2, .tlt-card--3 { transform: none !important; transition: none !important; }
-            .tlt-moment { transition: none !important; }
+            .tlt-about-media img, .tlt-frame img { transition: none !important; transform: none !important; }
+            .tlt-frame, .tlt-rail-rule span { transition: none !important; }
           }
         `}</style>
 
@@ -270,40 +340,47 @@ export default function LivingTablePage() {
                 Register Your Interest
               </a>
               <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12px, 2.8vw, 15px)", fontWeight: 700, color: "#C9A84C", letterSpacing: "0.22em", textTransform: "uppercase" }}>
-                The next edition is being set
+                A new table is being set
               </span>
             </motion.div>
           </div> 
         </section>
 
-        {/* ── 2. ABOUT — three pillars, layered cards ── */}
+        {/* ── 2. ABOUT — alternating editorial rows ── */}
         <section style={{ background: "#EDE6DA", padding: "clamp(64px, 9vw, 130px) clamp(24px, 6vw, 110px)" }}>
-          <Fade style={{ textAlign: "center", maxWidth: "720px", margin: "0 auto clamp(52px, 6vw, 84px)" }}>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "#901A1C", margin: "0 0 24px" }}>
-              About 
+          <Fade style={{ textAlign: "center", maxWidth: "760px", margin: "0 auto clamp(56px, 7vw, 96px)" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "#901A1C", margin: "0 0 22px" }}>
+              About
             </p>
-            {/* <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(26px, 4vw, 46px)", color: "#1a1a1a", lineHeight: 1.22, margin: "0 0 22px" }}>
-              Where gastronomy and history come together to explore the stories, traditions and ideas that shape our culinary heritage
-            </h2> */}
-            <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(16px, 2vw, 22px)", color: "rgba(0,0,0,0.5)", margin: 0 }}>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(28px, 4.2vw, 52px)", color: "#1a1a1a", lineHeight: 1.14, margin: "0 0 26px" }}>
+              What The Living Table Is About
+            </h2>
+            <div style={{ width: "34px", height: "1px", background: "#901A1C", margin: "0 auto 26px" }} />
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.3vw, 15px)", color: "rgba(0,0,0,0.55)", lineHeight: 1.9, margin: 0 }}>
               Where gastronomy and history come together to explore the stories, traditions and ideas that shape our culinary heritage.
             </p>
           </Fade>
 
-          <div className="tlt-pillars">
+          <div className="tlt-about">
             {PILLARS.map((p, i) => (
-              <Fade key={p.num} delay={i * 0.12} amount={0.15} style={{ display: "flex", flexDirection: "column" }}>
-                <article className={`tlt-card tlt-card--${p.mod}`}>
-                  <div style={{ position: "relative", width: "100%", height: "250px", overflow: "hidden", flexShrink: 0 }}>
-                    <Image src={p.img} alt={p.alt} fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: "cover", objectPosition: "center" }} loading="lazy" />
+              <Fade key={p.num} amount={0.15} y={36}>
+                {/* Odd rows flip: photograph left, text right */}
+                <article className={`tlt-about-row${i % 2 === 1 ? " is-flipped" : ""}`}>
+                  <div className="tlt-about-media">
+                    <Image
+                      src={p.img}
+                      alt={p.alt}
+                      fill
+                      sizes="(max-width: 900px) 100vw, 47vw"
+                      style={{ objectFit: "cover", objectPosition: p.pos }}
+                      loading="lazy"
+                    />
                   </div>
-                  <div style={{ padding: "clamp(24px, 2.4vw, 34px) clamp(24px, 2.2vw, 32px) clamp(28px, 2.8vw, 38px)", flex: 1 }}>
-                    <h3 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(19px, 1.9vw, 25px)", color: "#1a1a1a", lineHeight: 1.25, margin: "0 0 14px" }}>
-                      {p.title}
-                    </h3>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.15vw, 14px)", color: "rgba(0,0,0,0.55)", lineHeight: 1.85, margin: 0 }}>
-                      {p.body}
-                    </p>
+                  <div className="tlt-about-copy">
+                    <span className="tlt-about-num">{p.num}</span>
+                    <h3 className="tlt-about-h">{p.title}</h3>
+                    <div className="tlt-about-rule" />
+                    <p className="tlt-about-body">{p.body}</p>
                   </div>
                 </article>
               </Fade>
@@ -311,59 +388,23 @@ export default function LivingTablePage() {
           </div>
         </section>
 
-        {/* ── 3. UPCOMING EDITION — 40% portrait image / 60% text ── */}
-        <section className="tlt-upcoming" style={{ background: "#0A0806", display: "grid", gridTemplateColumns: "2fr 3fr" }}>
-          {/* Image — 40% */}
-          <div style={{ position: "relative", minHeight: "clamp(380px, 56vw, 640px)", overflow: "hidden" }}>
-            <Image
-              src="/images/thelivingtable/DSC_0051.JPG"
-              alt="The Living Table, set for the evening"
-              fill
-              sizes="(max-width: 768px) 100vw, 40vw"
-              style={{ objectFit: "cover", objectPosition: "center" }}
-              loading="lazy"
-            />
-          </div>
-
-          {/* Text — 60% */}
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", padding: "clamp(52px, 7vw, 104px) clamp(28px, 6vw, 96px)" }}>
-            <Fade>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "#C9A84C", margin: "0 0 22px" }}>
-                Upcoming Edition
-              </p>
-              <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(30px, 5vw, 54px)", color: "#F4EFE6", lineHeight: 1.15, margin: "0 0 18px" }}>
-                The Next Edition
-              </h2>
-              <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(16px, 2.1vw, 23px)", color: "rgba(244,239,230,0.55)", lineHeight: 1.5, margin: "0 0 14px" }}>
-                A new evening is being set.
-              </p>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12px, 1.3vw, 14px)", letterSpacing: "0.06em", color: "rgba(244,239,230,0.45)", margin: "0 0 40px" }}>
-                Dates announced soon.
-              </p>
-              <a
-                href="#register"
-                style={{ display: "inline-block", alignSelf: "flex-start", background: "#901A1C", color: "#ffffff", padding: "16px 48px", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", textDecoration: "none", transition: "background 0.25s" }}
-                onMouseEnter={e => (e.currentTarget.style.background = "#7a1517")}
-                onMouseLeave={e => (e.currentTarget.style.background = "#901A1C")}
-              >
-                Reserve Your Table →
-              </a>
-            </Fade>
-          </div>
-        </section>
-
-        {/* ── 4. MOMENTS ── */}
+        {/* ── 3. MOMENTS ── */}
         <section style={{ background: "#F4EFE6", padding: "clamp(64px, 9vw, 120px) clamp(24px, 6vw, 100px)" }}>
-          <Fade style={{ marginBottom: "clamp(40px, 5vw, 64px)" }}>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "#901A1C", margin: "0 0 16px" }}>
-              Moments
-            </p>
-            <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(24px, 3.4vw, 40px)", color: "#1a1a1a", lineHeight: 1.2, margin: 0 }}>
-              From the first evening.
-            </h2>
+          <Fade style={{ marginBottom: "clamp(34px, 4.2vw, 54px)", display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "24px", flexWrap: "wrap" }}>
+            <div>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "#901A1C", margin: "0 0 16px" }}>
+                Moments
+              </p>
+              <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(24px, 3.4vw, 40px)", color: "#1a1a1a", lineHeight: 1.2, margin: 0 }}>
+                From the first evening.
+              </h2>
+            </div>
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.26em", textTransform: "uppercase", color: "rgba(0,0,0,0.35)", paddingBottom: "4px" }}>
+              Drag or scroll →
+            </span>
           </Fade>
 
-          <MomentsGrid />
+          <MomentsRail />
 
           <Fade style={{ textAlign: "center", marginTop: "clamp(36px, 4vw, 56px)" }}>
             <a
@@ -443,21 +484,21 @@ export default function LivingTablePage() {
 
         {/* ── 8. PREVIOUS EDITION ── */}
         <section className="tlt-prev" style={{ background: "#ffffff" }}>
-          <div style={{ position: "relative", minHeight: "clamp(280px, 42vw, 520px)", overflow: "hidden" }}>
+          <div style={{ position: "relative", minHeight: "clamp(210px, 27vw, 340px)", overflow: "hidden" }}>
             <Image src="/images/thelivingtable/TLT-05.jpg" alt="The inaugural Living Table at Kathika Cultural Centre" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover", objectPosition: "center" }} loading="lazy" />
           </div>
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", padding: "clamp(48px, 6vw, 88px) clamp(28px, 5vw, 72px)", background: "#F4EFE6" }}>
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", padding: "clamp(34px, 4vw, 56px) clamp(26px, 4.5vw, 64px)", background: "#F4EFE6" }}>
             <Fade>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "#901A1C", margin: "0 0 22px" }}>
-                From the Archive
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "#901A1C", margin: "0 0 16px" }}>
+                Previous Edition
               </p>
-              <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(28px, 3.6vw, 44px)", color: "#1a1a1a", lineHeight: 1.15, margin: "0 0 14px" }}>
+              <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(24px, 3vw, 36px)", color: "#1a1a1a", lineHeight: 1.15, margin: "0 0 10px" }}>
                 The Inaugural Edition
               </h2>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(0,0,0,0.45)", margin: "0 0 24px" }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(0,0,0,0.45)", margin: "0 0 18px" }}>
                 28 June 2026 · Kathika Cultural Centre, Old Delhi
               </p>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.4vw, 15px)", color: "rgba(0,0,0,0.55)", lineHeight: 1.9, margin: "0 0 32px", maxWidth: "440px" }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12.5px, 1.25vw, 14px)", color: "rgba(0,0,0,0.55)", lineHeight: 1.85, margin: "0 0 22px", maxWidth: "440px" }}>
                 Our first table traced butter chicken from Peshawar to Delhi, with the Gujral family, Sadaf Husain and Salma Husain. An evening of food, memory and migration inside a restored haveli.
               </p>
               <a

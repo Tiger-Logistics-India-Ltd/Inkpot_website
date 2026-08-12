@@ -82,7 +82,7 @@ export async function POST(req: Request) {
 ${affiliation ? `<p style="margin:0 0 6px;font-size:14px;color:#1a1a1a;"><strong>University / Workplace:</strong> ${esc(affiliation)}</p>` : ""}
 </td></tr>
 <tr><td style="padding:16px 36px 32px;">
-<p style="margin:0;font-size:11px;color:#999;">#NoLitterLegacy — next drive: Sunday 30 August 2026, 4 PM, Sultan Garhi Archaeological Park.</p>
+<p style="margin:0;font-size:11px;color:#999;">#NoLitterLegacy — next drive: Sunday 30 August 2026, 4 PM, Sultan Garhi Tomb, Vasant Kunj.</p>
 </td></tr></table></td></tr></table></body></html>`,
     });
 

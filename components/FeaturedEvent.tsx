@@ -22,7 +22,7 @@ const events: EventItem[] = [
     tag: "Food · Culture · Memory",
     title: "The Living Table",
     chapter: null,
-    body: "Long before culture found its way into galleries, it lived around tables — where food, conversation, and long dinners became vessels for memory and tradition. The next edition is being set.",
+    body: "Long before culture found its way into galleries, it lived around tables — where food, conversation, and long dinners became vessels for memory and tradition. A new table is being set.",
     image: "/images/thelivingtable/Thelivingtable_poster.png",
     status: "active",
     location: "New Delhi",
@@ -34,20 +34,20 @@ const events: EventItem[] = [
     title: "The Heritage Cleanliness Project",
     chapter: null,
     body: "Every last Sunday, we gather at a heritage site — not just to clean, but to listen. To the stories that stone remembers.",
-    image: "/images/heritage cleaning/Feature_section.png",
+    image: "/images/heritage cleaning/THCP_Aug_new.png",
     status: "active",
-    location: "Sultan Garhi Archaeological Park",
+    location: "Sultan Garhi Tomb, Vasant Kunj",
     cta: { label: "Volunteer Now", href: "/events/heritage-cleanliness" },
   },
   {
     num: "03",
     tag: "Music & Heritage",
     title: "Songs of the Stone",
-    chapter: "Chapter 3",
+    chapter: null,
     body: "After-hours cultural evenings at Delhi's heritage monuments. Space becomes stage. Arches become resonance. Stone becomes story.",
     image: "/images/Songs of the stone/third_chapter_2.png",
     status: "coming-soon",
-    location: "Delhi Heritage Monuments",
+    location: "New Delhi",
     cta: null,
   },
 ];
@@ -66,6 +66,14 @@ export default function FeaturedEvent() {
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+
+  /* Move by ±1, clamped at both ends (no wrap-around) */
+  const paginate = (dir: number) => {
+    const next = activeIdx + dir;
+    if (next < 0 || next >= events.length) return;
+    setDirection(dir);
+    setActiveIdx(next);
+  };
 
 
   return (
@@ -119,7 +127,22 @@ export default function FeaturedEvent() {
                   animate="center"
                   exit="exit"
                   transition={{ duration: 0.72, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  style={{ position: "absolute", inset: 0 }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.18}
+                  dragMomentum={false}
+                  onDragEnd={(_, info) => {
+                    const flick =
+                      Math.abs(info.offset.x) > 55 || Math.abs(info.velocity.x) > 380;
+                    if (!flick) return;
+                    paginate(info.offset.x < 0 ? 1 : -1);
+                  }}
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    touchAction: "pan-y",   // let vertical page scroll through
+                    userSelect: "none",
+                  }}
                 >
                   <EventCard ev={events[activeIdx]} index={0} />
                 </motion.div>
@@ -252,18 +275,6 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
                 </span>
               )}
             </div>
-            {!isActive && (
-              <span style={{
-                fontFamily: "var(--font-body)", fontSize: "7.5px",
-                letterSpacing: "0.16em", textTransform: "uppercase",
-                color: "rgba(255,255,255,0.62)",
-                border: "1px solid rgba(255,255,255,0.28)",
-                padding: "3px 9px", whiteSpace: "nowrap",
-                flexShrink: 0, marginTop: "3px",
-              }}>
-                Soon
-              </span>
-            )}
           </div>
 
           <div style={{

@@ -118,7 +118,8 @@ function PanelLivingTable({ isMobile }: { isMobile: boolean }) {
       <section style={{ background: "#F4EFE6" }}>
         <div style={{ padding: "20px 20px 0" }}>
           <div style={{ position: "relative", height: "210px", overflow: "hidden" }}>
-            <Image src="/images/thelivingtable/gallery%20images/TLT-03.jpg" alt="The Living Table" fill sizes="calc(100vw - 40px)" style={{ objectFit: "cover", objectPosition: "center" }} />
+            {/* Portrait source in a 210px letterbox — bias the crop down so the laid table stays in frame */}
+            <Image src="/images/thelivingtable/gallery%20images/The_living_table.jpeg" alt="The Living Table" fill sizes="calc(100vw - 40px)" style={{ objectFit: "cover", objectPosition: "center 78%" }} />
           </div>
         </div>
         <motion.div {...fadeUp} style={{ padding: "28px 24px 40px" }}>
@@ -132,7 +133,7 @@ function PanelLivingTable({ isMobile }: { isMobile: boolean }) {
             The Living<br />Table
           </h2>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.78, color: "rgba(0,0,0,0.5)", marginBottom: "8px" }}>
-            Long before culture found its way into galleries, it lived around tables — where food, conversation, and long dinners became vessels for memory and tradition. On 28th June, we set the table for the first time. A new edition is being set.
+            Long before culture found its way into galleries, it lived around tables — where food, conversation, and long dinners became vessels for memory and tradition. On 28th June, we set the table for the first time. A new table is being set.
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "24px" }}>
             <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
@@ -155,7 +156,7 @@ function PanelLivingTable({ isMobile }: { isMobile: boolean }) {
   return (
     <section style={{ position: "relative", width: "100%", height: "100vh", background: "#F4EFE6", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "54%", zIndex: 0 }}>
-        <Image src="/images/thelivingtable/gallery%20images/TLT-03.jpg" alt="The Living Table — dinner experience"
+        <Image src="/images/thelivingtable/gallery%20images/The_living_table.jpeg" alt="The Living Table — dinner experience"
           fill sizes="54vw" style={{ objectFit: "cover", objectPosition: "center" }} />
       </div>
       <div style={{ position: "absolute", right: "8%", top: "50%", transform: "translateY(-50%)", zIndex: 2, maxWidth: "370px" }}>
@@ -168,7 +169,7 @@ function PanelLivingTable({ isMobile }: { isMobile: boolean }) {
         </h2>
         <div style={{ width: "28px", height: "1px", background: "var(--primary-red)", marginBottom: "24px" }} />
         <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.85, color: "rgba(0,0,0,0.48)", marginBottom: "14px" }}>
-          Long before culture found its way into galleries, it lived around tables — where food, conversation, and long dinners became vessels for memory and tradition. On 28th June, we set the table for the first time. A new edition is being set.
+          Long before culture found its way into galleries, it lived around tables — where food, conversation, and long dinners became vessels for memory and tradition. On 28th June, we set the table for the first time. A new table is being set.
         </p>
         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "38px" }}>
           <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
@@ -221,7 +222,7 @@ function PanelHCP({ isMobile }: { isMobile: boolean }) {
             <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
               <path d="M4.5 0C2.567 0 1 1.567 1 3.5c0 2.625 3.5 7.5 3.5 7.5S8 6.125 8 3.5C8 1.567 6.433 0 4.5 0zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="rgba(255,255,255,0.3)" />
             </svg>
-            <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", color: "rgba(255,255,255,0.35)", letterSpacing: "0.08em" }}>Sultan Garhi Archaeological Park, Delhi</span>
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", color: "rgba(255,255,255,0.35)", letterSpacing: "0.08em" }}>Sultan Garhi Tomb, Vasant Kunj</span>
           </div>
           <a href="/events/heritage-cleanliness"
             style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#ffffff", color: "#8B1E20", fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.18em", textTransform: "uppercase", padding: "12px 24px", textDecoration: "none", fontWeight: 600 }}>
@@ -258,7 +259,7 @@ function PanelHCP({ isMobile }: { isMobile: boolean }) {
           <svg width="8" height="11" viewBox="0 0 9 12" fill="none">
             <path d="M4.5 0C2.567 0 1 1.567 1 3.5c0 2.625 3.5 7.5 3.5 7.5S8 6.125 8 3.5C8 1.567 6.433 0 4.5 0zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="rgba(255,255,255,0.3)" />
           </svg>
-          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(255,255,255,0.32)", letterSpacing: "0.08em" }}>Sultan Garhi Archaeological Park, Delhi</span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(255,255,255,0.32)", letterSpacing: "0.08em" }}>Sultan Garhi Tomb, Vasant Kunj</span>
         </div>
         <a href="/events/heritage-cleanliness"
           style={{ display: "inline-flex", alignItems: "center", gap: "10px", background: "#ffffff", color: "#8B1E20", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", padding: "14px 32px", textDecoration: "none", fontWeight: 600, transition: "background 0.25s, color 0.25s" }}

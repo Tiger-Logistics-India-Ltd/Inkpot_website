@@ -159,25 +159,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ── MISSION STATEMENT ── */}
-        <section style={{ background: "#ffffff", padding: isMobile ? "40px 0" : "80px 64px" }}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.75, ease: "easeOut" }}
-            style={{ maxWidth: "860px", margin: "0 auto", textAlign: "center", padding: isMobile ? "0 24px" : "0" }}
-          >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", marginBottom: isMobile ? "20px" : "32px" }}>
-              <div style={{ width: "28px", height: "1px", background: "var(--primary-red)" }} />
-              <span style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--primary-red)" }}>Our Mission</span>
-              <div style={{ width: "28px", height: "1px", background: "var(--primary-red)" }} />
-            </div>
-            <p style={{ fontFamily: "var(--font-body)", fontWeight: 400, fontSize: isMobile ? "14px" : "clamp(15px, 1.4vw, 18px)", lineHeight: 1.9, color: "#1a1a1a", margin: 0 }}>
-              <span style={{ color: "var(--primary-red)", fontSize: "1.4em", lineHeight: 0, verticalAlign: "-0.15em" }}>&ldquo;</span>To bring India&rsquo;s music, literature, architecture, and performance back into the light — through intimate, thoughtfully crafted cultural experiences.<span style={{ color: "var(--primary-red)", fontSize: "1.4em", lineHeight: 0, verticalAlign: "-0.15em" }}>&rdquo;</span>
-            </p>
-          </motion.div>
-        </section>
-
         {/* ── BELIEFS & VALUES ── */}
         <section id="beliefs" style={{ background: "#ffffff", padding: isMobile ? "56px 0" : "128px 0" }}>
           <div style={{ maxWidth: "1280px", margin: "0 auto", padding: isMobile ? "0 20px" : "0 64px" }}>
@@ -271,7 +252,7 @@ export default function AboutPage() {
                 </p>
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.08em", color: "rgba(0,0,0,0.5)", lineHeight: 1.7 }}>
                   Author &amp; Founder, Inkpot India<br />
-                  Alumnus – Stanford University &amp; Columbia University
+                  Alumna – Stanford University &amp; Columbia Business School
                 </p>
                 <a
                   href="/simar-malhotra"
