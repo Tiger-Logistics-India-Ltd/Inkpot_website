@@ -48,6 +48,11 @@ const spring = (delay = 0) => ({ type: "spring" as const, stiffness: 65, damping
 export default function MediaCoverage() {
   const [isMobile, setIsMobile] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [direction, setDirection] = useState(1);
+  /* Bumped on every manual swipe or dot tap. It is a dependency of the
+     auto-advance effect, so any interaction restarts the interval — otherwise
+     the timer could fire immediately after a swipe and yank the card away. */
+  const [interaction, setInteraction] = useState(0);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -58,9 +63,24 @@ export default function MediaCoverage() {
 
   useEffect(() => {
     if (!isMobile) return;
-    const timer = setInterval(() => setActiveIdx((i) => (i + 1) % pressItems.length), 4500);
+    const timer = setInterval(() => {
+      setDirection(1);
+      setActiveIdx((i) => (i + 1) % pressItems.length);
+    }, 4500);
     return () => clearInterval(timer);
-  }, [isMobile]);
+  }, [isMobile, interaction]);
+
+  const paginate = (dir: number) => {
+    setDirection(dir);
+    setActiveIdx((i) => (i + dir + pressItems.length) % pressItems.length);
+    setInteraction((n) => n + 1);
+  };
+
+  const goTo = (i: number) => {
+    setDirection(i > activeIdx ? 1 : -1);
+    setActiveIdx(i);
+    setInteraction((n) => n + 1);
+  };
 
   return (
     <section style={{ background: "#ffffff", padding: isMobile ? "56px 0 48px" : "100px 0" }}>
@@ -91,17 +111,38 @@ export default function MediaCoverage() {
         {/* Press cards */}
         {isMobile ? (
           <div>
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" custom={direction}>
               <motion.a
                 key={activeIdx}
                 href={pressItems[activeIdx].href}
                 target="_blank"
                 rel="noopener noreferrer"
-                initial={{ opacity: 0.2, x: 60 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0.2, x: -60 }}
-                transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-                style={{ display: "flex", flexDirection: "column", background: "var(--primary-white)", borderLeft: "3px solid var(--primary-red)", padding: "28px 24px", boxShadow: "0 2px 20px rgba(72,45,24,0.07)", textDecoration: "none" }}
+                custom={direction}
+                variants={{
+                  enter: (d: number) => ({ opacity: 0.2, x: d > 0 ? 60 : -60 }),
+                  center: { opacity: 1, x: 0 },
+                  exit: (d: number) => ({ opacity: 0.2, x: d > 0 ? -60 : 60 }),
+                }}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.18}
+                dragMomentum={false}
+                onDragEnd={(_, info) => {
+                  const flick = Math.abs(info.offset.x) > 55 || Math.abs(info.velocity.x) > 380;
+                  if (!flick) return;
+                  paginate(info.offset.x < 0 ? 1 : -1);
+                }}
+                style={{
+                  display: "flex", flexDirection: "column", background: "var(--primary-white)",
+                  borderLeft: "3px solid var(--primary-red)", padding: "28px 24px",
+                  boxShadow: "0 2px 20px rgba(72,45,24,0.07)", textDecoration: "none",
+                  touchAction: "pan-y",   // let the page still scroll vertically
+                  userSelect: "none",
+                }}
               >
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--primary-red)", marginBottom: "16px" }}>
                   {pressItems[activeIdx].pubShort}
@@ -123,7 +164,8 @@ export default function MediaCoverage() {
               {pressItems.map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => setActiveIdx(i)}
+                  onClick={() => goTo(i)}
+                  aria-label={`Show press item ${i + 1}`}
                   style={{ width: i === activeIdx ? "28px" : "8px", height: "8px", borderRadius: "4px", background: i === activeIdx ? "var(--primary-red)" : "rgba(0,0,0,0.15)", border: "none", cursor: "pointer", transition: "all 0.35s", padding: 0 }}
                 />
               ))}

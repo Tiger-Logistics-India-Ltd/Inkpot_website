@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AutoplayVideo from "@/components/AutoplayVideo";
 import Turnstile, { HoneypotField } from "@/components/Turnstile";
 
 const OXBLOOD = "#8B1E20";
@@ -42,6 +43,10 @@ const SHOT_ALT = "Volunteers at a Heritage Cleanliness Project drive in Delhi";
  * padded ones visibly smaller. Values are derived from each file's measured
  * ink bounding box, then eased back so the wide wordmarks don't sprawl. */
 const PARTNERS = [
+  // Lead institutions first
+  { file: "177.png", name: "Archaeological Survey of India", scale: 1 },
+  { file: "166.png", name: "Delhi Tourism", scale: 1.2 },
+  { file: "188.png", name: "Parvaah", scale: 1.1 },
   { file: "DDA_logo.png", name: "Delhi Development Authority", scale: 1 },
   { file: "Kaash Magic Foundation.png", name: "Kaash Magic Foundation", scale: 1 },
   { file: "Umeed Logo.png", name: "Umeed", scale: 1.5 },
@@ -123,6 +128,64 @@ function PartnerRail() {
   );
 }
 
+/* ── The drive reel.
+      Autoplay is only permitted while muted — every browser blocks sound
+      without a user gesture — so it starts silent and offers a toggle. The
+      toggle reaches the element through the wrapper because AutoplayVideo
+      owns its own ref and does not forward one. ── */
+function DriveReel() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [muted, setMuted] = useState(true);
+
+  const toggleSound = () => {
+    const v = wrapRef.current?.querySelector("video");
+    if (!v) return;
+    const next = !v.muted;
+    v.muted = next;
+    if (!next) {
+      v.volume = 1;
+      const p = v.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    }
+    setMuted(next);
+  };
+
+  return (
+    <figure className="hcp-reg-reel" style={{ margin: 0 }} ref={wrapRef}>
+      <div className="hcp-reel-frame">
+        <AutoplayVideo
+          src="/images/heritage%20cleaning/heritage-reel.mp4"
+          poster="/images/heritage%20cleaning/heritage-reel-poster.jpg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-label="Volunteers at a Heritage Cleanliness Project drive"
+        />
+        <button
+          type="button"
+          onClick={toggleSound}
+          className="hcp-reel-sound"
+          aria-pressed={!muted}
+          aria-label={muted ? "Unmute video" : "Mute video"}
+        >
+          {muted ? (
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 5L6 9H2v6h4l5 4V5z" /><path d="M23 9l-6 6M17 9l6 6" />
+            </svg>
+          ) : (
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 5L6 9H2v6h4l5 4V5z" /><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14" />
+            </svg>
+          )}
+        </button>
+      </div>
+      <figcaption>@theheritagecleanlinessproject</figcaption>
+    </figure>
+  );
+}
+
 function Field({
   label,
   name,
@@ -144,7 +207,7 @@ function Field({
 }) {
   const [focused, setFocused] = useState(false);
   return (
-    <div style={{ marginBottom: isMobile ? "26px" : "32px" }}>
+    <div style={{ marginBottom: isMobile ? "26px" : "42px" }}>
       <label style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(0,0,0,0.4)", display: "block", marginBottom: "8px" }}>
         {label}{required && <span style={{ color: OXBLOOD }}> *</span>}
       </label>
@@ -309,24 +372,58 @@ export default function HeritageCleanlinessPage() {
             /* Pinned to the artwork's own 16:9 and sized off the width, not the
                section. Filling the box would scale a 16:9 drawing up to cover a
                very tall section, which zooms it enormously and crops it. */
-            .hcp-reg-art   { position:absolute; right:0; top:50%; translate:0 -50%;
+            .hcp-reg-art   { position:absolute; right:0; top:clamp(52px,5.5vw,92px);
                              width:min(56%, 760px); aspect-ratio:16 / 9; height:auto;
                              pointer-events:none; mix-blend-mode:multiply; opacity:.85; }
             .hcp-reg-scrim { position:absolute; inset:0; pointer-events:none;
                              background:linear-gradient(90deg,
                                rgba(244,239,230,0.97) 0%, rgba(244,239,230,0.92) 26%,
                                rgba(244,239,230,0.52) 46%, rgba(244,239,230,0) 66%); }
-            .hcp-reg-copy  { position:relative; z-index:2; max-width:620px;
+            .hcp-reg-copy  { position:relative; z-index:2;
                              padding:clamp(64px,7vw,112px) clamp(24px,5vw,72px)
                                      clamp(64px,8vw,120px) clamp(24px,5vw,64px); }
+            /* Intro stays narrow so it clears the drawing sitting top-right */
+            .hcp-reg-intro { max-width:620px; }
+            /* Below the drawing the column opens out: form left, reel right */
+            /* No max-width — the row runs the full column so the reel sits hard
+               against the section's right padding rather than floating short of it.
+               align-items:stretch lets the reel take exactly the form's height
+               instead of running past it on its natural 9:16. */
+            .hcp-reg-lower { display:grid; grid-template-columns:minmax(0,1fr) clamp(300px,28vw,390px);
+                             gap:clamp(28px,4vw,72px); align-items:stretch; }
+            .hcp-reg-reel  { display:flex; flex-direction:column; width:100%; }
+            /* No tall floor here — the form sets the row height and the reel
+               crops to match. A large min-height made the reel overrun the form
+               and left dead space under the button. */
+            .hcp-reel-frame{ position:relative; flex:1 1 auto; min-height:340px; }
+            .hcp-reg-reel video { display:block; width:100%; height:100%;
+                             object-fit:cover; background:#EFEAE1;
+                             box-shadow:0 14px 40px rgba(34,30,26,.16); }
+            .hcp-reel-sound { position:absolute; right:12px; bottom:12px; z-index:2;
+                             width:34px; height:34px; border-radius:50%; border:none;
+                             cursor:pointer; display:flex; align-items:center;
+                             justify-content:center; color:#fff;
+                             background:rgba(20,16,13,0.55); backdrop-filter:blur(4px);
+                             transition:background .22s, transform .22s; }
+            .hcp-reel-sound:hover { background:rgba(20,16,13,0.78); transform:scale(1.07); }
+            .hcp-reel-sound:focus-visible { outline:2px solid #fff; outline-offset:2px; }
+            .hcp-reg-reel figcaption { font-family:var(--font-body); font-size:10px;
+                             letter-spacing:.18em; text-transform:uppercase;
+                             color:rgba(0,0,0,.42); margin:12px 0 0; }
             @media (max-width:900px) {
-              /* art drops to a band at the foot so it never sits under the fields */
-              .hcp-reg-art   { top:auto; bottom:0; translate:none;
-                               width:100%; height:auto; opacity:.8; }
+              /* The drawing stays at the top, behind the intro copy only. Pinned
+                 to the foot it sat directly behind the reel and its caption, so
+                 two images competed for the same space. */
+              .hcp-reg-art   { top:0; bottom:auto; right:-9%; width:118%; opacity:.5; }
               .hcp-reg-scrim { background:linear-gradient(180deg,
-                               rgba(244,239,230,0.96) 0%, rgba(244,239,230,0.86) 46%,
-                               rgba(244,239,230,0.35) 78%, rgba(244,239,230,0) 100%); }
-              .hcp-reg-copy  { max-width:none; padding:44px 24px 72px; }
+                               rgba(244,239,230,0.78) 0%, rgba(244,239,230,0.94) 32%,
+                               rgba(244,239,230,1) 50%, rgba(244,239,230,1) 100%); }
+              .hcp-reg-copy  { max-width:none; padding:40px 22px 68px; }
+              .hcp-reg-intro { max-width:none; }
+              .hcp-reg-lower { grid-template-columns:1fr; gap:32px; align-items:start; }
+              /* reel leads on mobile, back to its true 9:16 */
+              .hcp-reg-reel  { order:-1; max-width:380px; margin-inline:auto; }
+              .hcp-reel-frame{ min-height:0; aspect-ratio:9 / 16; }
             }
           `}</style>
           <div className="hcp-reg">
@@ -351,6 +448,7 @@ export default function HeritageCleanlinessPage() {
               initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.85, delay: 0.1, ease: "easeOut" }}
             >
+              <div className="hcp-reg-intro">
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
                 <div style={{ width: "22px", height: "1px", background: OXBLOOD }} />
                 <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: OXBLOOD }}>Next Drive · #NoLitterLegacy</span>
@@ -370,7 +468,7 @@ export default function HeritageCleanlinessPage() {
                 #NoLitterLegacy
               </p>
 
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "34px" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: isMobile ? "32px" : "58px" }}>
                 {[
                   { icon: "📍", text: "Sultan Garhi Tomb, Vasant Kunj" },
                   { icon: "🗓️", text: "Sunday, 30 August 2026" },
@@ -381,7 +479,10 @@ export default function HeritageCleanlinessPage() {
                   </div>
                 ))}
               </div>
+              </div>{/* /hcp-reg-intro */}
 
+              <div className="hcp-reg-lower">
+                <div>
               {submitted ? (
                 <div style={{ padding: isMobile ? "24px 0" : "24px 0 40px" }}>
                   <div style={{ width: "48px", height: "48px", border: `1px solid ${OXBLOOD}`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "24px" }}>
@@ -398,7 +499,7 @@ export default function HeritageCleanlinessPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit}>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", color: OXBLOOD, fontWeight: 600, margin: "0 0 22px" }}>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", color: OXBLOOD, fontWeight: 600, margin: isMobile ? "0 0 22px" : "0 0 30px" }}>
                     Register as a Changemaker
                   </p>
                   <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? "0" : "0 40px" }}>
@@ -420,7 +521,7 @@ export default function HeritageCleanlinessPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    style={{ background: loading ? "rgba(139,30,32,0.55)" : OXBLOOD, color: "#ffffff", padding: "16px 48px", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase", border: "none", cursor: loading ? "default" : "pointer", transition: "background 0.25s", marginTop: "8px" }}
+                    style={{ background: loading ? "rgba(139,30,32,0.55)" : OXBLOOD, color: "#ffffff", padding: "16px 48px", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase", border: "none", cursor: loading ? "default" : "pointer", transition: "background 0.25s", marginTop: isMobile ? "8px" : "18px" }}
                     onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "#6d1719"; }}
                     onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = OXBLOOD; }}
                   >
@@ -428,8 +529,66 @@ export default function HeritageCleanlinessPage() {
                   </button>
                 </form>
               )}
+                </div>
+
+                {/* Self-hosted so it can actually autoplay — an Instagram embed
+                    never does. The poster paints immediately while the file
+                    streams, and +faststart lets playback begin before it has
+                    finished downloading. */}
+                <DriveReel />
+              </div>
             </motion.div>
           </div>
+        </section>
+
+        {/* ── IN ASSOCIATION WITH ── */}
+        <section
+          style={{
+            background: "#FBF9F5",
+            borderTop: "1px solid rgba(139,30,32,0.14)",
+            borderBottom: "1px solid rgba(139,30,32,0.14)",
+            padding: isMobile ? "40px 24px" : "60px 64px",
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.7, ease: "easeOut" }}
+            style={{
+              maxWidth: "1000px", margin: "0 auto",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              gap: isMobile ? "20px" : "44px",
+              flexDirection: isMobile ? "column" : "row",
+              textAlign: isMobile ? "center" : "left",
+            }}
+          >
+            <div style={{ position: "relative", width: isMobile ? "128px" : "168px", height: isMobile ? "84px" : "110px", flexShrink: 0 }}>
+              <Image
+                src="/images/heritage cleaning/Logos/188.png"
+                alt="Parvaah"
+                fill
+                sizes="168px"
+                style={{ objectFit: "contain", objectPosition: "center" }}
+              />
+            </div>
+
+            {/* Hairline separates the mark from the words without boxing it in */}
+            {!isMobile && <div style={{ width: "1px", alignSelf: "stretch", background: "rgba(139,30,32,0.16)" }} />}
+
+            <div>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: OXBLOOD, margin: "0 0 10px" }}>
+                In Association with
+              </p>
+              <p style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: isMobile ? "26px" : "clamp(28px, 2.8vw, 38px)", lineHeight: 1.15, color: "#1a1a1a", margin: "0 0 10px" }}>
+                Parvaah
+              </p>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "13.5px" : "15px", lineHeight: 1.7, color: "rgba(0,0,0,0.58)", margin: "0 0 10px", maxWidth: "520px" }}>
+                Engaging youth for a better world
+              </p>
+              <p style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: isMobile ? "12px" : "13px", letterSpacing: "0.06em", color: OXBLOOD, margin: 0 }}>
+                #youthforimpact
+              </p>
+            </div>
+          </motion.div>
         </section>
 
         {/* ── GALLERY ── */}
@@ -589,15 +748,19 @@ export default function HeritageCleanlinessPage() {
             </motion.p>
             <style>{`
               .hcp-prail-wrap  { position:relative; }
-              .hcp-prail       { display:flex; align-items:center; gap:clamp(26px,3.6vw,58px);
+              /* No scroll-snap: with items of differing widths it kept grabbing
+                 the nearest logo mid-flick, which is what made the rail feel
+                 jerky. Free scrolling is smooth; the buttons still animate via
+                 scroll-behavior. */
+              .hcp-prail       { display:flex; align-items:center; gap:clamp(12px,1.6vw,26px);
                                  overflow-x:auto; scroll-behavior:smooth; scrollbar-width:none;
-                                 scroll-snap-type:x proximity;
+                                 overscroll-behavior-x:contain;
                                  padding:6px clamp(38px,5vw,60px); }
               .hcp-prail::-webkit-scrollbar { display:none; }
               /* Box grows by --logo-scale so padded logos read at a comparable
                  optical size; growing the box (not transform) keeps the flex
                  row's spacing honest instead of letting neighbours overlap. */
-              .hcp-prail-item  { position:relative; flex:0 0 auto; scroll-snap-align:center;
+              .hcp-prail-item  { position:relative; flex:0 0 auto;
                                  width:calc(clamp(118px,15vw,190px) * var(--logo-scale,1));
                                  height:calc(clamp(72px,9vw,112px) * var(--logo-scale,1)); }
               /* Edge fades + arrows only exist when there is actually overflow */
