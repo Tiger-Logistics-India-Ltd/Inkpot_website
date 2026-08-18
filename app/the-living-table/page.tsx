@@ -502,7 +502,7 @@ export default function LivingTablePage() {
                 Our first table traced butter chicken from Peshawar to Delhi, with the Gujral family, Sadaf Husain and Salma Husain. An evening of food, memory and migration inside a restored haveli.
               </p>
               <a
-                href="/the-living-table/inaugural-edition"
+                href="/the-living-table/archive/june-2026"
                 style={{ fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.16em", textTransform: "uppercase", color: "#901A1C", textDecoration: "none", borderBottom: "1px solid rgba(144,26,28,0.3)", paddingBottom: "3px", alignSelf: "flex-start" }}
               >
                 View Previous Event →

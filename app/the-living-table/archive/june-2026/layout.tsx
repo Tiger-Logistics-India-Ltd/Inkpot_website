@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "The Living Table — The Inaugural Edition | 28 June 2026, Old Delhi",
+  title: "The Living Table — Archive: June 2026 | Kathika Cultural Centre, Old Delhi",
   description:
-    "The inaugural edition of The Living Table — a one-night curated dining experience at Kathika Cultural Centre, Old Delhi, on 28 June 2026. From Peshawar to Delhi, with the Gujral family, Sadaf Husain and Salma Husain. A record of the evening.",
+    "Archive of the first Living Table — a one-night curated dining experience at Kathika Cultural Centre, Old Delhi, on 28 June 2026. From Peshawar to Delhi, with the Gujral family, Sadaf Husain and Salma Husain. A record of the evening.",
   keywords: [
-    "The Living Table inaugural edition",
+    "The Living Table archive",
     "Inkpot India dinner",
     "cultural dinner Delhi",
     "Old Delhi food event",
@@ -14,25 +14,25 @@ export const metadata: Metadata = {
     "Peshawar to Delhi dinner",
   ],
   alternates: {
-    canonical: "https://www.inkpotindia.com/the-living-table/inaugural-edition",
+    canonical: "https://www.inkpotindia.com/the-living-table/archive/june-2026",
   },
   openGraph: {
-    title: "The Living Table — The Inaugural Edition",
+    title: "The Living Table — Archive: June 2026",
     description:
       "A record of the first Living Table: a curated sit-down dinner at Kathika Cultural Centre, Old Delhi, 28 June 2026.",
-    url: "https://www.inkpotindia.com/the-living-table/inaugural-edition",
+    url: "https://www.inkpotindia.com/the-living-table/archive/june-2026",
     siteName: "Inkpot India",
     locale: "en_IN",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Living Table — The Inaugural Edition",
+    title: "The Living Table — Archive: June 2026",
     description: "A record of the first Living Table · 28 June 2026 · Kathika Cultural Centre, Old Delhi.",
   },
 };
 
-export default function InauguralEditionLayout({ children }: { children: React.ReactNode }) {
+export default function ArchiveJune2026Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* Preconnect to Razorpay origins — the archived booking block is preserved as a record */}

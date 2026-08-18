@@ -40,7 +40,7 @@ export default function LivingTableLayout({ children }: { children: React.ReactN
     <>
       {/* Preload the hero LCP logo so the browser finds it immediately.
           (No Razorpay preconnects here — the evergreen page has no checkout;
-           the archived /inaugural-edition keeps them.) */}
+           the archived /archive/june-2026 keeps them.) */}
       <link
         rel="preload"
         as="image"

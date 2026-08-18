@@ -21,6 +21,19 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
+
+  // The June 2026 edition moved from /inaugural-edition when the archive was
+  // restructured (Aug 2026). Google had never crawled the old URL, but keep a
+  // permanent redirect for external links and bookmarks.
+  async redirects() {
+    return [
+      {
+        source: "/the-living-table/inaugural-edition",
+        destination: "/the-living-table/archive/june-2026",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
