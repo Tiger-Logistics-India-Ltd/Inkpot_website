@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import QRCode from "qrcode";
 import fs from "fs";
 import path from "path";
+import { getEdition } from "@/lib/editions";
 
 let _resend: Resend | null = null;
 
@@ -19,7 +20,8 @@ interface TicketEmailParams {
   ticketId: string;
   amount: number;
   siteUrl: string;
-  mealPreferences?: string[];
+  /** Edition slug — selects date / venue / programme. Defaults to the inaugural edition. */
+  edition?: string;
 }
 
 interface QrTestEmailParams {
@@ -92,6 +94,8 @@ interface GuidelinesEmailParams {
   buyerName: string;
   ticketId: string;
   siteUrl: string;
+  /** Edition slug — selects date / venue. Defaults to the inaugural edition. */
+  edition?: string;
 }
 
 export async function sendGuidelines({
@@ -99,7 +103,10 @@ export async function sendGuidelines({
   buyerName,
   ticketId,
   siteUrl,
+  edition,
 }: GuidelinesEmailParams): Promise<void> {
+  const ev = getEdition(edition);
+  const isInaugural = ev.slug === "june-2026";
   const qrBuffer = await QRCode.toBuffer(`${siteUrl}/ticket/${ticketId}`, {
     width: 400,
     margin: 2,
@@ -110,11 +117,13 @@ export async function sendGuidelines({
   );
   const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const firstName = esc(buyerName.split(" ")[0]);
+  const venueLine = `${esc(ev.venueName)}${ev.venueAddressLines.length ? `, ${esc(ev.venueAddressLines.join(", "))}` : ""}`;
+  const mapSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.mapQuery)}`;
 
   await getResend().emails.send({
     from: "Inkpot India <tickets@tickets.inkpotindia.com>",
     to,
-    subject: "Guest Guidelines — The Living Table · 28 June",
+    subject: `Guest Guidelines — ${ev.brand} · ${ev.dateLabel}`,
     attachments: [
       { filename: "Guest_Guidelines-TheLivingTable.pdf", content: pdfBuffer, contentType: "application/pdf" },
       { filename: "entry-qr.png", content: qrBuffer, contentType: "image/png" },
@@ -129,26 +138,32 @@ export async function sendGuidelines({
 
       <tr><td style="padding:48px 48px 0;text-align:center;">
         <p style="margin:0 0 6px;font-size:9px;letter-spacing:0.32em;text-transform:uppercase;color:#901A1C;">Inkpot India presents</p>
-        <h1 style="margin:0 0 6px;font-size:32px;font-weight:400;color:#1a1a1a;font-style:italic;font-family:Georgia,serif;line-height:1.15;">The Living Table</h1>
-        <p style="margin:0;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(0,0,0,0.4);">28th June, 2026 &nbsp;&middot;&nbsp; New Delhi</p>
+        <h1 style="margin:0 0 6px;font-size:32px;font-weight:400;color:#1a1a1a;font-style:italic;font-family:Georgia,serif;line-height:1.15;">${esc(ev.brand)}</h1>
+        <p style="margin:0;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(0,0,0,0.4);">${esc(ev.dateLabel)} &nbsp;&middot;&nbsp; ${esc(ev.cityLabel)}</p>
       </td></tr>
 
       <tr><td style="padding:32px 48px 0;"><div style="height:1px;background:rgba(0,0,0,0.08);"></div></td></tr>
 
       <tr><td style="padding:32px 48px 0;">
         <p style="margin:0 0 24px;font-size:15px;color:#1a1a1a;line-height:1.7;">Dear ${firstName},</p>
-        <p style="margin:0 0 18px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">We look forward to welcoming you to The Living Table on 28th June, from 6:00 PM onwards at Kathika Cultural Centre, Old Delhi.</p>
+        <p style="margin:0 0 18px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">We look forward to welcoming you to ${esc(ev.brand)} on ${esc(ev.dateLabel)}, from ${esc(ev.timeLabel)} at ${venueLine}.</p>
         <p style="margin:0 0 18px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Please find the attached Guest Guidelines to help make your arrival and experience seamless and enjoyable.</p>
         <p style="margin:0 0 24px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Kindly keep your QR ticket handy at the front desk for a smooth check-in experience.</p>
 
         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4EFE6;padding:20px 24px;margin-bottom:24px;">
           <tr><td>
-            <p style="margin:0 0 10px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Location Pin: <a href="https://www.google.com/maps/place/28%C2%B038'46.0%22N+77%C2%B013'38.8%22E/@28.6461,77.227438,17z" style="color:#901A1C;text-decoration:underline;">https://www.google.com/maps/place/28%C2%B038'46.0%22N+77%C2%B013'38.8%22E/@28.6461,77.227438,17z</a></p>
-            <p style="margin:0;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Parking Pin: <a href="https://www.google.com/maps/place/28%C2%B038'35.3%22N+77%C2%B013'40.1%22E" style="color:#901A1C;text-decoration:underline;">https://www.google.com/maps/place/28%C2%B038'35.3%22N+77%C2%B013'40.1%22E</a></p>
+            ${isInaugural
+              ? `<p style="margin:0 0 10px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Location Pin: <a href="https://www.google.com/maps/place/28%C2%B038'46.0%22N+77%C2%B013'38.8%22E/@28.6461,77.227438,17z" style="color:#901A1C;text-decoration:underline;">https://www.google.com/maps/place/28%C2%B038'46.0%22N+77%C2%B013'38.8%22E/@28.6461,77.227438,17z</a></p>
+            <p style="margin:0;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Parking Pin: <a href="https://www.google.com/maps/place/28%C2%B038'35.3%22N+77%C2%B013'40.1%22E" style="color:#901A1C;text-decoration:underline;">https://www.google.com/maps/place/28%C2%B038'35.3%22N+77%C2%B013'40.1%22E</a></p>`
+              : `<p style="margin:0 0 6px;font-size:14px;color:#1a1a1a;line-height:1.85;font-weight:600;">${esc(ev.venueName)}</p>
+            <p style="margin:0 0 10px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">${esc(ev.venueAddressLines.join(", "))}</p>
+            <p style="margin:0;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Map &amp; directions: <a href="${mapSearch}" style="color:#901A1C;text-decoration:underline;">${mapSearch}</a></p>`}
           </td></tr>
         </table>
 
-        <p style="margin:0 0 24px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">For any assistance, feel free to reach us at <a href="tel:+918700730130" style="color:#901A1C;text-decoration:none;">+91 8700730130</a></p>
+        <p style="margin:0 0 24px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">For any assistance, feel free to reach us at ${isInaugural
+          ? `<a href="tel:+918700730130" style="color:#901A1C;text-decoration:none;">+91 8700730130</a>`
+          : `<a href="mailto:info@inkpotindia.com" style="color:#901A1C;text-decoration:none;">info@inkpotindia.com</a>`}</p>
         <p style="margin:0 0 4px;font-size:14px;color:rgba(0,0,0,0.72);line-height:1.85;">Warm regards,</p>
         <p style="margin:0;font-size:15px;color:#1a1a1a;font-family:Georgia,serif;font-style:italic;">Inkpot India</p>
       </td></tr>
@@ -177,8 +192,26 @@ export async function sendTicketConfirmation({
   ticketId,
   amount,
   siteUrl,
-  mealPreferences = [],
+  edition,
 }: TicketEmailParams): Promise<void> {
+  const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const ev = getEdition(edition);
+  const venueHtml = ev.venueAddressLines.map(esc).join("<br />");
+  const programmeRows = ev.programme
+    .map(
+      (p, i) => `
+                <tr>
+                  <td style="padding:12px 0;${i < ev.programme.length - 1 ? "border-bottom:1px solid rgba(0,0,0,0.07);" : ""}">
+                    <span style="font-size:10px;color:rgba(0,0,0,0.38);letter-spacing:0.06em;font-weight:600;">${esc(p.title)}</span>
+                    ${p.body ? `<p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">${esc(p.body)}</p>` : ""}
+                  </td>
+                </tr>`,
+    )
+    .join("");
+  const presentedByHtml = ev.presentedBy
+    ? `<p style="margin:6px 0 0;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,0,0,0.35);">In Association with ${esc(ev.presentedBy)}</p>`
+    : "";
+
   // Generate QR as a PNG buffer — embedded as inline CID attachment so it
   // renders in Gmail (which strips data: URIs) and every other client.
   const qrBuffer = await QRCode.toBuffer(`${siteUrl}/ticket/${ticketId}`, {
@@ -186,38 +219,16 @@ export async function sendTicketConfirmation({
     margin: 2,
     color: { dark: "#1a1a1a", light: "#ffffff" },
   });
-  const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const numPadded  = String(ticketNumber).padStart(4, "0");
   const seatsLabel = qty > 1
     ? seatNumbers.map(n => `TLT-${String(n).padStart(4, "0")}`).join(", ")
     : `TLT-${numPadded}`;
   const amountFormatted = `₹${(amount / 100).toLocaleString("en-IN")}`;
 
-  const mealLabel = (m: string): string => m === "veg" ? "Vegetarian" : "Non-Vegetarian";
-  const mealsRow = mealPreferences.length > 0
-    ? `
-          <!-- Meal Preferences -->
-          <tr>
-            <td style="padding:16px 48px 0;">
-              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4EFE6;padding:16px 28px;">
-                <tr>
-                  <td>
-                    <span style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(0,0,0,0.4);display:block;margin-bottom:8px;">Meal Preference${qty > 1 ? "s" : ""}</span>
-                    ${qty === 1
-                      ? `<span style="font-size:13px;color:#1a1a1a;">${mealLabel(mealPreferences[0] ?? "non-veg")}</span>`
-                      : mealPreferences.map((m, i) => `<span style="font-size:12px;color:#1a1a1a;display:block;line-height:1.9;">Guest ${i + 1}: ${mealLabel(m)}</span>`).join("")
-                    }
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>`
-    : "";
-
   await getResend().emails.send({
     from: "Inkpot India <tickets@tickets.inkpotindia.com>",
     to,
-    subject: `Your Seat at The Living Table — 28th June`,
+    subject: `Your Seat at ${ev.brand} — ${ev.dateLabel}`,
     attachments: [
       {
         filename: "entry-qr.png",
@@ -245,12 +256,16 @@ export async function sendTicketConfirmation({
               <p style="margin:0 0 6px;font-size:9px;letter-spacing:0.32em;text-transform:uppercase;color:#901A1C;">
                 Inkpot India presents
               </p>
-              <h1 style="margin:0 0 6px;font-size:32px;font-weight:400;color:#1a1a1a;font-style:italic;font-family:Georgia,serif;line-height:1.15;">
-                The Living Table
+              <h1 style="margin:0 0 4px;font-size:32px;font-weight:400;color:#1a1a1a;font-style:italic;font-family:Georgia,serif;line-height:1.15;">
+                ${esc(ev.brand)}
               </h1>
-              <p style="margin:0;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(0,0,0,0.4);">
-                28th June, 2026 &nbsp;&middot;&nbsp; New Delhi
+              <p style="margin:0 0 10px;font-size:15px;color:rgba(0,0,0,0.6);font-family:Georgia,serif;">
+                ${esc(ev.editionTitle)}
               </p>
+              <p style="margin:0;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(0,0,0,0.4);">
+                ${esc(ev.dateLabel)} &nbsp;&middot;&nbsp; ${esc(ev.cityLabel)}
+              </p>
+              ${presentedByHtml}
             </td>
           </tr>
 
@@ -267,9 +282,10 @@ export async function sendTicketConfirmation({
               <p style="margin:0 0 16px;font-size:15px;color:#1a1a1a;line-height:1.7;">
                 Dear ${esc(buyerName)},
               </p>
-              <p style="margin:0;font-size:14px;color:rgba(0,0,0,0.55);line-height:1.85;">
-                Your booking is confirmed. We look forward to welcoming you to the table on 28th June.
+              <p style="margin:0 0 14px;font-size:14px;color:rgba(0,0,0,0.55);line-height:1.85;">
+                Your booking is confirmed. We look forward to welcoming you to the table on ${esc(ev.dateLabel)}.
               </p>
+              ${ev.tagline ? `<p style="margin:0;font-size:14px;color:rgba(0,0,0,0.55);line-height:1.85;font-style:italic;font-family:Georgia,serif;">${esc(ev.tagline)}</p>` : ""}
             </td>
           </tr>
 
@@ -283,11 +299,11 @@ export async function sendTicketConfirmation({
                       <tr>
                         <td style="width:50%;padding:4px 0;">
                           <span style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(0,0,0,0.4);display:block;margin-bottom:3px;">Date</span>
-                          <span style="font-size:13px;color:#1a1a1a;">28th June, 2026</span>
+                          <span style="font-size:13px;color:#1a1a1a;">${esc(ev.dateLabel)}</span>
                         </td>
                         <td style="width:50%;padding:4px 0;">
                           <span style="font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(0,0,0,0.4);display:block;margin-bottom:3px;">Time</span>
-                          <span style="font-size:13px;color:#1a1a1a;">6:30 PM onwards</span>
+                          <span style="font-size:13px;color:#1a1a1a;">${esc(ev.timeLabel)}</span>
                         </td>
                       </tr>
                     </table>
@@ -296,8 +312,6 @@ export async function sendTicketConfirmation({
               </table>
             </td>
           </tr>
-
-          ${mealsRow}
 
           <!-- QR code -->
           <tr>
@@ -309,7 +323,7 @@ export async function sendTicketConfirmation({
                 Your QR code is <strong style="color:#1a1a1a;">attached to this email</strong> as <em>entry-qr.png</em>.<br />Open the attachment and show it at the door.
               </p>
               <a href="${siteUrl}/ticket/${ticketId}"
-                style="display:inline-block;background:#901A1C;color:#ffffff;text-decoration:none;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;padding:14px 32px;">
+                style="display:inline-block;background:#901A1C;color:#ffffff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;padding:18px 48px;">
                 View My Ticket &rarr;
               </a>
               <p style="margin:16px 0 0;font-size:10px;color:rgba(0,0,0,0.35);letter-spacing:0.05em;">
@@ -323,8 +337,8 @@ export async function sendTicketConfirmation({
             <td style="padding:28px 48px 0;">
               <div style="border-left:2px solid #901A1C;padding-left:16px;">
                 <p style="margin:0 0 6px;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(0,0,0,0.4);">Venue</p>
-                <p style="margin:0;font-size:13px;color:#1a1a1a;line-height:1.8;font-weight:500;">Kathika Cultural Centre</p>
-                <p style="margin:4px 0 0;font-size:12px;color:rgba(0,0,0,0.5);line-height:1.7;">Gali Khatikan, Kucha Pati Ram<br />Sitaram Bazar, Delhi</p>
+                <p style="margin:0;font-size:13px;color:#1a1a1a;line-height:1.8;font-weight:500;">${esc(ev.venueName)}</p>
+                <p style="margin:4px 0 0;font-size:12px;color:rgba(0,0,0,0.5);line-height:1.7;">${venueHtml}</p>
               </div>
             </td>
           </tr>
@@ -333,31 +347,7 @@ export async function sendTicketConfirmation({
           <tr>
             <td style="padding:32px 48px 0;">
               <p style="margin:0 0 20px;font-size:9px;letter-spacing:0.26em;text-transform:uppercase;color:rgba(0,0,0,0.38);">The Evening</p>
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
-                    <span style="font-size:10px;color:rgba(0,0,0,0.38);letter-spacing:0.06em;font-weight:600;">6:30 PM</span>
-                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">Arrival &amp; Welcome</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
-                    <span style="font-size:10px;color:rgba(0,0,0,0.38);letter-spacing:0.06em;font-weight:600;">7:00 PM</span>
-                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">A conversation tracing the journey of North Indian food through the lens of partition and memory, with Monish Gujral, Sadaf Hussain, and Salma Husain, moderated by Simar Malhotra.</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
-                    <span style="font-size:10px;color:rgba(0,0,0,0.38);letter-spacing:0.06em;font-weight:600;">8:00 PM</span>
-                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">The bar opens and the dining experience begins at Neem Ki Haveli.</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:12px 0;">
-                    <span style="font-size:10px;color:rgba(0,0,0,0.38);letter-spacing:0.06em;font-weight:600;">10:00 PM</span>
-                    <p style="margin:4px 0 0;font-size:13px;color:#1a1a1a;line-height:1.6;">The evening concludes.</p>
-                  </td>
-                </tr>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">${programmeRows}
               </table>
             </td>
           </tr>

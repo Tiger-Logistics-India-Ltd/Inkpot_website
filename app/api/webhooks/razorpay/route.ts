@@ -60,7 +60,7 @@ export async function POST(req: Request) {
   // Find the ticket by Razorpay order_id
   const { data: ticket, error: fetchError } = await supabase
     .from("living_table_tickets")
-    .select("id, payment_status, qty, buyer_name, buyer_email, amount, meal_preferences")
+    .select("id, edition, payment_status, qty, buyer_name, buyer_email, amount")
     .eq("razorpay_order_id", orderId)
     .single();
 
@@ -76,11 +76,13 @@ export async function POST(req: Request) {
   }
 
   const seats = ticket.qty;
+  const ticketEdition = ticket.edition ?? "june-2026";
 
-  // Assign next available seat block
+  // Assign next available seat block (within this ticket's edition)
   const { data: existing } = await supabase
     .from("living_table_tickets")
     .select("seat_numbers")
+    .eq("edition", ticketEdition)
     .in("payment_status", ["paid", "pending"]);
 
   const allAssigned: number[] = (existing ?? [])
@@ -118,7 +120,7 @@ export async function POST(req: Request) {
       ticketId: ticket.id,
       amount: ticket.amount,
       siteUrl: SITE_URL,
-      mealPreferences: ticket.meal_preferences ?? [],
+      edition: ticketEdition,
     }).catch(e => console.error("[webhook/razorpay email]", e));
   }
 

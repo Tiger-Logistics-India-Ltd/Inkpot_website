@@ -21,12 +21,12 @@ const events: EventItem[] = [
     num: "01",
     tag: "Food · Culture · Memory",
     title: "The Living Table",
-    chapter: null,
-    body: "Long before culture found its way into galleries, it lived around tables — where food, conversation, and long dinners became vessels for memory and tradition. A new table is being set.",
-    image: "/images/thelivingtable/Thelivingtable_poster.png",
+    chapter: "Chapter Two",
+    body: "A conversation on India's food history, fusion music, a little mystery, and a table where the past finds a new expression.",
+    image: "/images/thelivingtable/TLT_Chapter_2/new_hero_poster.png",
     status: "active",
-    location: "New Delhi",
-    cta: { label: "Explore The Living Table", href: "/the-living-table" },
+    location: "Greenr Cafe, GK1, New Delhi",
+    cta: { label: "Reserve Your Seat", href: "/the-living-table/lost-grains-of-india" },
   },
   {
     num: "02",
@@ -43,12 +43,12 @@ const events: EventItem[] = [
     num: "03",
     tag: "Music & Heritage",
     title: "Songs of the Stone",
-    chapter: null,
-    body: "After-hours cultural evenings at Delhi's heritage monuments. Space becomes stage. Arches become resonance. Stone becomes story.",
-    image: "/images/Songs of the stone/third_chapter_2.png",
-    status: "coming-soon",
+    chapter: "Chapter Three",
+    body: "Internationally acclaimed music sensation, Amrita Kaur, is coming to Delhi for Chapter 3 of Songs of the Stone by Inkpot India.",
+    image: "/images/Songs of the stone/new_poster.png",
+    status: "active",
     location: "New Delhi",
-    cta: null,
+    cta: { label: "Buy Tickets", href: "https://www.district.in/events/amrita-kaur-dusk-to-dawn-songs-of-the-stone-2026-buy-tickets" },
   },
 ];
 
@@ -306,6 +306,8 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
           {isActive && ev.cta ? (
             <a
               href={ev.cta.href}
+              target={ev.cta.href.startsWith("http") ? "_blank" : undefined}
+              rel={ev.cta.href.startsWith("http") ? "noopener noreferrer" : undefined}
               style={{
                 display: "inline-flex", alignItems: "center", gap: "9px",
                 background: "#ffffff", color: "#901A1C",

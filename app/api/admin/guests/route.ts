@@ -22,12 +22,19 @@ export async function GET(req: Request) {
 
   const supabase = getSupabase();
 
+  // Optional ?edition= filter. Absent = every edition (legacy behaviour).
+  const edition = new URL(req.url).searchParams.get("edition");
+
+  let ticketQuery = supabase
+    .from("living_table_tickets")
+    .select("id, edition, ticket_number, seat_numbers, buyer_name, buyer_email, buyer_phone, qty, amount, payment_status, checked_in, checked_in_at, coupon_code, archived, notes, created_at")
+    .order("ticket_number", { ascending: true, nullsFirst: false })
+    .order("created_at", { ascending: true });
+
+  if (edition) ticketQuery = ticketQuery.eq("edition", edition);
+
   const [{ data: tickets, error }, { data: stats }] = await Promise.all([
-    supabase
-      .from("living_table_tickets")
-      .select("id, ticket_number, seat_numbers, buyer_name, buyer_email, buyer_phone, qty, amount, payment_status, checked_in, checked_in_at, coupon_code, meal_preferences, archived, notes, created_at")
-      .order("ticket_number", { ascending: true, nullsFirst: false })
-      .order("created_at", { ascending: true }),
+    ticketQuery,
     supabase.from("living_table_stats").select("*").single(),
   ]);
 

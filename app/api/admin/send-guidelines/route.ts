@@ -10,18 +10,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { test_email } = await req.json().catch(() => ({}));
+  const { test_email, edition } = await req.json().catch(() => ({}));
 
   const { getSupabase } = await import("@/lib/supabase");
   const { sendGuidelines } = await import("@/lib/email");
   const supabase = getSupabase();
 
-  const { data: tickets, error } = await supabase
+  let q = supabase
     .from("living_table_tickets")
     .select("id, buyer_name, buyer_email")
     .eq("payment_status", "paid")
     .eq("archived", false)
     .order("created_at", { ascending: true });
+
+  if (edition) q = q.eq("edition", edition);
+
+  const { data: tickets, error } = await q;
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (!tickets?.length) return NextResponse.json({ error: "No paid tickets found." }, { status: 400 });
@@ -30,7 +34,7 @@ export async function POST(req: Request) {
   if (test_email) {
     const first = tickets[0];
     try {
-      await sendGuidelines({ to: test_email, buyerName: first.buyer_name, ticketId: first.id, siteUrl: SITE_URL });
+      await sendGuidelines({ to: test_email, buyerName: first.buyer_name, ticketId: first.id, siteUrl: SITE_URL, edition });
       return NextResponse.json({ sent: 1, test: true, to: test_email });
     } catch (e: any) {
       return NextResponse.json({ error: e.message }, { status: 500 });
@@ -43,7 +47,7 @@ export async function POST(req: Request) {
 
   for (const ticket of tickets) {
     try {
-      await sendGuidelines({ to: ticket.buyer_email, buyerName: ticket.buyer_name, ticketId: ticket.id, siteUrl: SITE_URL });
+      await sendGuidelines({ to: ticket.buyer_email, buyerName: ticket.buyer_name, ticketId: ticket.id, siteUrl: SITE_URL, edition });
       sent++;
     } catch (e: any) {
       failures.push(`${ticket.buyer_email}: ${e.message}`);

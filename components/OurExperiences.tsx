@@ -38,7 +38,7 @@ function PanelSOTS({ isMobile }: { isMobile: boolean }) {
             </span>
           </div>
           <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "36px", lineHeight: 1.08, color: "#ffffff", marginBottom: "14px" }}>
-            Songs of<br />the Stone
+            Songs of<br />The Stone
           </h2>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", lineHeight: 1.78, color: "rgba(255,255,255,0.72)", marginBottom: "8px" }}>
             After-hours cultural evenings at Delhi&rsquo;s heritage monuments. Space becomes stage. Stone becomes story.
@@ -82,7 +82,7 @@ function PanelSOTS({ isMobile }: { isMobile: boolean }) {
           </span>
         </div>
         <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(40px, 5.5vw, 82px)", lineHeight: 1.03, color: "#ffffff", marginBottom: "24px" }}>
-          Songs of<br />the Stone
+          Songs of<br />The Stone
         </h2>
         <div style={{ width: "28px", height: "1px", background: "var(--primary-red)", marginBottom: "24px" }} />
         <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", lineHeight: 1.85, color: "rgba(255,255,255,0.85)", marginBottom: "14px" }}>
@@ -141,7 +141,7 @@ function PanelLivingTable({ isMobile }: { isMobile: boolean }) {
             </svg>
             <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", color: "rgba(0,0,0,0.28)", letterSpacing: "0.08em" }}>New Delhi</span>
           </div>
-          <a href="/the-living-table"
+          <a href="/the-living-table/lost-grains-of-india"
             style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.2em", textTransform: "uppercase", color: "#1a1a1a", textDecoration: "none", fontWeight: 700, borderBottom: "1px solid rgba(0,0,0,0.35)", paddingBottom: "2px" }}>
             Explore Experience
             <svg width="10" height="7" viewBox="0 0 14 10" fill="none">
@@ -177,7 +177,7 @@ function PanelLivingTable({ isMobile }: { isMobile: boolean }) {
           </svg>
           <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.28)", letterSpacing: "0.08em" }}>New Delhi</span>
         </div>
-        <a href="/the-living-table"
+        <a href="/the-living-table/lost-grains-of-india"
           style={{ display: "inline-flex", alignItems: "center", gap: "10px", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", color: "#1a1a1a", textDecoration: "none", fontWeight: 700, borderBottom: "1px solid rgba(0,0,0,0.4)", paddingBottom: "3px", transition: "color 0.25s, border-color 0.25s" }}
           onMouseEnter={(e) => { e.currentTarget.style.color = "var(--primary-red)"; e.currentTarget.style.borderBottomColor = "var(--primary-red)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.color = "#1a1a1a"; e.currentTarget.style.borderBottomColor = "rgba(0,0,0,0.4)"; }}

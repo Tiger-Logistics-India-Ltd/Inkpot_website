@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     let resolvedBuyerName = "";
     let resolvedBuyerEmail = "";
     let resolvedAmount = 0;
-    let resolvedMeals: string[] = [];
+    let resolvedEdition = "june-2026";
 
     if (dbEnabled()) {
       const { getSupabase } = await import("@/lib/supabase");
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
       // a different (higher-value) ticket as paid by swapping ticket_id.
       const { data: existingTicket, error: fetchError } = await supabase
         .from("living_table_tickets")
-        .select("id, razorpay_order_id, qty, buyer_name, buyer_email, payment_status, amount, ticket_number, seat_numbers, meal_preferences, coupon_code")
+        .select("id, edition, razorpay_order_id, qty, buyer_name, buyer_email, payment_status, amount, ticket_number, seat_numbers, coupon_code")
         .eq("id", ticket_id)
         .single();
 
@@ -96,13 +96,14 @@ export async function POST(req: Request) {
       resolvedBuyerName = existingTicket.buyer_name;
       resolvedBuyerEmail = existingTicket.buyer_email;
       resolvedAmount = existingTicket.amount;
-      resolvedMeals = existingTicket.meal_preferences ?? [];
+      resolvedEdition = existingTicket.edition ?? "june-2026";
       finalTicketId = existingTicket.id;
 
-      // ── 5. Assign seat block ─────────────────────────────────────────────
+      // ── 5. Assign seat block (within this ticket's edition) ──────────────
       const { data: existing } = await supabase
         .from("living_table_tickets")
         .select("seat_numbers")
+        .eq("edition", resolvedEdition)
         .in("payment_status", ["paid", "pending"]);
 
       const allAssigned: number[] = (existing ?? [])
@@ -156,7 +157,7 @@ export async function POST(req: Request) {
         ticketId: finalTicketId,
         amount: resolvedAmount,
         siteUrl: SITE_URL,
-        mealPreferences: resolvedMeals,
+        edition: resolvedEdition,
       }).catch(e => console.error("[email]", e));
     }
 

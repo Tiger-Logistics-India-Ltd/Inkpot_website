@@ -5,9 +5,11 @@ import { useParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
+import { getEdition } from "@/lib/editions";
 
 interface TicketData {
   id: string;
+  edition?: string;
   ticket_number: number;
   buyer_name: string;
   buyer_email: string;
@@ -73,7 +75,7 @@ export default function TicketPage() {
           {ticket && !loading && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
               <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: "#901A1C", marginBottom: "24px" }}>
-                The Living Table · 28th June, 2026
+                {getEdition(ticket.edition).brand} · {getEdition(ticket.edition).dateLabel}
               </p>
 
               <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", color: "rgba(0,0,0,0.55)", marginBottom: "44px", lineHeight: 1.7 }}>

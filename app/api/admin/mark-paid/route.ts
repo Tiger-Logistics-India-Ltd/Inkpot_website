@@ -31,7 +31,7 @@ export async function POST(req: Request) {
 
   const { data: ticket, error: fetchError } = await supabase
     .from("living_table_tickets")
-    .select("id, payment_status, qty, buyer_name, buyer_email, amount, meal_preferences")
+    .select("id, edition, payment_status, qty, buyer_name, buyer_email, amount")
     .eq("id", ticket_id)
     .single();
 
@@ -44,11 +44,13 @@ export async function POST(req: Request) {
   }
 
   const seats = ticket.qty;
+  const ticketEdition = ticket.edition ?? "june-2026";
 
-  // Assign the next available seat block (same logic as verify route)
+  // Assign the next available seat block within this ticket's edition (same logic as verify route)
   const { data: existing } = await supabase
     .from("living_table_tickets")
     .select("seat_numbers")
+    .eq("edition", ticketEdition)
     .in("payment_status", ["paid", "pending"]);
 
   const allAssigned: number[] = (existing ?? [])
@@ -84,7 +86,7 @@ export async function POST(req: Request) {
       ticketId: ticket_id,
       amount: ticket.amount,
       siteUrl: SITE_URL,
-      mealPreferences: ticket.meal_preferences ?? [],
+      edition: ticket.edition,
     }).catch(e => console.error("[mark-paid email]", e));
   }
 

@@ -332,15 +332,15 @@ export default function LivingTablePage() {
               style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}
             >
               <a
-                href="#register"
+                href="/the-living-table/lost-grains-of-india"
                 style={{ background: "#901A1C", color: "#ffffff", padding: "15px 46px", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", textDecoration: "none", transition: "background 0.25s" }}
                 onMouseEnter={e => (e.currentTarget.style.background = "#7a1517")}
                 onMouseLeave={e => (e.currentTarget.style.background = "#901A1C")}
               >
-                Register Your Interest
+                Reserve Your Seat
               </a>
               <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12px, 2.8vw, 15px)", fontWeight: 700, color: "#C9A84C", letterSpacing: "0.22em", textTransform: "uppercase" }}>
-                A new table is being set
+                Chapter Two &middot; Lost Grains of India
               </span>
             </motion.div>
           </div> 
@@ -396,7 +396,7 @@ export default function LivingTablePage() {
                 Moments
               </p>
               <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(24px, 3.4vw, 40px)", color: "#1a1a1a", lineHeight: 1.2, margin: 0 }}>
-                From the first evening.
+                From the first evening
               </h2>
             </div>
             <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.26em", textTransform: "uppercase", color: "rgba(0,0,0,0.35)", paddingBottom: "4px" }}>
@@ -514,18 +514,33 @@ export default function LivingTablePage() {
         {/* breathing space before the register block */}
         <div style={{ height: "clamp(56px, 8vw, 110px)", background: "#F4EFE6" }} />
 
-        {/* ── 9. REGISTER YOUR INTEREST ── */}
+        {/* ── 9. THE NEXT EDITION ── */}
         <section id="register" style={{ background: "#0A0806", padding: "clamp(64px, 9vw, 130px) clamp(24px, 6vw, 24px)", scrollMarginTop: "110px" }}>
           <div style={{ maxWidth: "520px", margin: "0 auto", textAlign: "center" }}>
             <Fade>
               <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "#C9A84C", margin: "0 0 22px" }}>
-                Register Your Interest
+                Chapter Two &middot; Lost Grains of India
               </p>
               <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(30px, 5vw, 52px)", color: "#F4EFE6", lineHeight: 1.12, margin: "0 0 16px" }}>
                 Join us at the table.
               </h2>
-              <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.4vw, 15px)", color: "rgba(244,239,230,0.55)", lineHeight: 1.9, margin: "0 0 44px" }}>
-                Be the first to know when the next edition opens.
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.4vw, 15px)", color: "rgba(244,239,230,0.55)", lineHeight: 1.9, margin: "0 0 32px" }}>
+                Our next edition, in association with Dewar&rsquo;s Experiences, is open for bookings &mdash; an evening on the forgotten grains and
+                recipes of India, at Greenr Cafe, GK1, on Saturday 26 September 2026.
+              </p>
+              <a
+                href="/the-living-table/lost-grains-of-india"
+                style={{ display: "inline-block", background: "#901A1C", color: "#ffffff", padding: "16px 48px", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", textDecoration: "none", transition: "background 0.25s", marginBottom: "56px" }}
+                onMouseEnter={e => (e.currentTarget.style.background = "#7a1517")}
+                onMouseLeave={e => (e.currentTarget.style.background = "#901A1C")}
+              >
+                Reserve Your Seat &rarr;
+              </a>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(244,239,230,0.4)", margin: "0 0 22px" }}>
+                Can&rsquo;t make this one?
+              </p>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.4vw, 15px)", color: "rgba(244,239,230,0.55)", lineHeight: 1.9, margin: "0 0 36px" }}>
+                Leave your details and we&rsquo;ll be in touch when the next table is set.
               </p>
             </Fade>
             <RegisterInterest />

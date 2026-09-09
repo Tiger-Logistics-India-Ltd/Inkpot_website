@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
   const { data: ticket, error } = await supabase
     .from("living_table_tickets")
-    .select("id, ticket_number, seat_numbers, qty, buyer_name, buyer_email, amount, payment_status, meal_preferences")
+    .select("id, edition, ticket_number, seat_numbers, qty, buyer_name, buyer_email, amount, payment_status")
     .eq("id", ticket_id)
     .single();
 
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     ticketId: ticket.id,
     amount: ticket.amount,
     siteUrl: SITE_URL,
-    mealPreferences: ticket.meal_preferences ?? [],
+    edition: ticket.edition,
   });
 
   return NextResponse.json({ ok: true, sent_to: ticket.buyer_email });

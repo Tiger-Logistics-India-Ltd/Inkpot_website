@@ -2,18 +2,23 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
+import { getEdition } from "@/lib/editions";
 
-const MAX_TICKETS = 30;
-const SOLD_OUT = true;
+export async function GET(req: Request) {
+  // Edition comes from ?edition= ; unknown/absent falls back to the inaugural
+  // edition, which keeps the existing archive page working unchanged.
+  const slug = new URL(req.url).searchParams.get("edition");
+  const edition = getEdition(slug);
+  const { maxTickets: MAX_TICKETS, soldOut } = edition;
 
-export async function GET() {
-  if (SOLD_OUT) {
+  if (soldOut) {
     return NextResponse.json({ sold: MAX_TICKETS, total: MAX_TICKETS, available: 0 });
   }
   try {
     const { count, error } = await getSupabase()
       .from("living_table_tickets")
       .select("*", { count: "exact", head: true })
+      .eq("edition", edition.slug)
       .eq("payment_status", "paid")
       .eq("archived", false);
 

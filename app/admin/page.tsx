@@ -1,11 +1,16 @@
 "use client";
 
 import { useState, useCallback, useRef, Fragment } from "react";
+import { EDITIONS, type EditionSlug } from "@/lib/editions";
 
-const TOTAL = 100;
+const EDITION_OPTIONS: { slug: EditionSlug; label: string }[] = [
+  { slug: "lost-grains-of-india", label: "Lost Grains of India" },
+  { slug: "june-2026",            label: "June 2026 · Archive" },
+];
 
 interface Ticket {
   id: string;
+  edition?: string;
   ticket_number: number | null;
   seat_numbers: number[];
   buyer_name: string;
@@ -17,7 +22,6 @@ interface Ticket {
   checked_in: boolean;
   checked_in_at: string | null;
   coupon_code: string | null;
-  meal_preferences: string[] | null;
   archived: boolean;
   notes: string | null;
   created_at: string;
@@ -96,6 +100,7 @@ export default function AdminPage() {
   const [stats, setStats]         = useState<Stats | null>(null);
   const [filter, setFilter]       = useState<FilterType>("all");
   const [search, setSearch]       = useState("");
+  const [edition, setEdition]     = useState<EditionSlug>("lost-grains-of-india");
 
   // Interest list
   const [view, setView]                     = useState<ViewType>("guests");
@@ -137,10 +142,10 @@ export default function AdminPage() {
   const [noteDraft, setNoteDraft]         = useState("");
   const [savingNote, setSavingNote]       = useState<string | null>(null);
 
-  const fetchData = useCallback(async (p: string) => {
+  const fetchData = useCallback(async (p: string, ed: string) => {
     setLoading(true); setError("");
     try {
-      const res = await fetch("/api/admin/guests", { headers: { "x-admin-password": p } });
+      const res = await fetch(`/api/admin/guests?edition=${encodeURIComponent(ed)}`, { headers: { "x-admin-password": p } });
       const data = await res.json();
       if (res.status === 401) { setError("Wrong password."); return; }
       if (!res.ok) { setError(data.error ?? "Server error — run the pending Supabase migration."); return; }
@@ -188,7 +193,14 @@ export default function AdminPage() {
     } catch { setSubError("Failed to load subscribers."); }
   }, []);
 
-  const refresh = () => { fetchData(pw); };
+  const refresh = () => { fetchData(pw, edition); };
+
+  const switchEdition = (ed: EditionSlug) => {
+    setEdition(ed);
+    setFilter("all");
+    setSearch("");
+    if (authed) fetchData(pw, ed);
+  };
 
   async function handleResend(ticketId: string) {
     setResending(ticketId);
@@ -274,7 +286,7 @@ export default function AdminPage() {
       const res = await fetch("/api/admin/send-guidelines", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-password": pw },
-        body: JSON.stringify(testEmail ? { test_email: testEmail } : {}),
+        body: JSON.stringify({ edition, ...(testEmail ? { test_email: testEmail } : {}) }),
       });
       const data = await res.json();
       setGuidelinesResult(data);
@@ -306,10 +318,10 @@ export default function AdminPage() {
 
   function exportCSV() {
     const SITE = "https://www.inkpotindia.com";
-    const headers = ["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Meals", "Status", "Checked In", "Check-in Time", "Archived", "Notes", "Booked At", "Ticket URL (for QR)"];
+    const headers = ["Seat(s)", "Name", "Email", "Phone", "Qty", "Amount", "Status", "Checked In", "Check-in Time", "Archived", "Notes", "Booked At", "Ticket URL (for QR)"];
     const rows = tickets.map(t => [
       fmtSeats(t), t.buyer_name, t.buyer_email, t.buyer_phone, t.qty,
-      fmtAmount(t.amount), (t.meal_preferences ?? []).join(", "), t.payment_status,
+      fmtAmount(t.amount), t.payment_status,
       t.checked_in ? "Yes" : "No", t.checked_in_at ? fmtDate(t.checked_in_at) : "",
       t.archived ? "Yes" : "No", t.notes ?? "", fmtDate(t.created_at),
       t.payment_status === "paid" ? `${SITE}/ticket/${t.id}` : "",
@@ -384,11 +396,12 @@ export default function AdminPage() {
   const archivedCount = tickets.filter(t => t.archived).length;
   const pendingCount  = tickets.filter(t => !t.archived && t.payment_status === "pending").length;
 
-  // Computed from non-archived paid tickets only
+  // Computed from non-archived paid tickets only, scoped to the selected edition
+  const CAP            = EDITIONS[edition].maxTickets;
   const activePaid     = tickets.filter(t => !t.archived && t.payment_status === "paid");
   const seatsSold      = activePaid.reduce((s, t) => s + (t.qty ?? 1), 0);
-  const seatsRemaining = TOTAL - seatsSold;
-  const revenue        = seatsSold * 6500;
+  const seatsRemaining = CAP - seatsSold;
+  const revenue        = Math.round(activePaid.reduce((s, t) => s + (t.amount ?? 0), 0) / 100);
   const checkedInCount = activePaid.filter(t => t.checked_in).length;
 
   // ── Login ─────────────────────────────────────────────────────────────────
@@ -400,8 +413,8 @@ export default function AdminPage() {
           <h1 className="text-2xl text-black mb-1" style={{ fontFamily: "Georgia,serif", fontStyle: "italic", fontWeight: 400 }}>
             Admin Dashboard
           </h1>
-          <p className="text-xs text-black/35 mb-8">The Living Table · 28 June 2026</p>
-          <form onSubmit={e => { e.preventDefault(); fetchData(password); }}>
+          <p className="text-xs text-black/35 mb-8">The Living Table</p>
+          <form onSubmit={e => { e.preventDefault(); fetchData(password, edition); }}>
             <input
               type="password" placeholder="Password" value={password}
               onChange={e => setPassword(e.target.value)}
@@ -433,10 +446,22 @@ export default function AdminPage() {
                   ? "Newsletter — Subscribers"
                   : view === "interest"
                     ? "The Living Table — Interest List"
-                    : "The Living Table — Guest List"}
+                    : `The Living Table — ${EDITION_OPTIONS.find(o => o.slug === edition)?.label ?? "Guests"}`}
             </h1>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            {view === "guests" && (
+              <select
+                value={edition}
+                onChange={e => switchEdition(e.target.value as EditionSlug)}
+                className="text-[9px] tracking-[0.14em] uppercase text-black/70 border border-black/20 px-3 py-2 bg-white outline-none focus:border-[#901A1C] cursor-pointer"
+                aria-label="Edition"
+              >
+                {EDITION_OPTIONS.map(o => (
+                  <option key={o.slug} value={o.slug}>{o.label}</option>
+                ))}
+              </select>
+            )}
             <button onClick={refresh}
               className="text-[9px] tracking-[0.18em] uppercase text-black/45 border border-black/15 px-4 py-2 hover:border-black/40 transition-colors">
               Refresh
@@ -556,7 +581,7 @@ export default function AdminPage() {
         {/* ── Stats ── */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Seats Sold",      value: `${seatsSold} / ${TOTAL}`,                              accent: false },
+            { label: "Seats Sold",      value: `${seatsSold} / ${CAP}`,                                accent: false },
             { label: "Seats Remaining", value: seatsRemaining,                                          accent: false },
             { label: "Revenue",         value: `₹${revenue.toLocaleString("en-IN")}`,                  accent: false },
             { label: "Checked In",      value: `${checkedInCount} / ${seatsSold}`,                     accent: true },
@@ -597,7 +622,7 @@ export default function AdminPage() {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="border-b-2 border-black/8">
-                {["Seat(s)", "Guest", "Phone", "Qty · Amount", "Meals", "Status", "Check-in", "Booked", ""].map(h => (
+                {["Seat(s)", "Guest", "Phone", "Qty · Amount", "Status", "Check-in", "Booked", ""].map(h => (
                   <th key={h} className="text-left px-4 py-3 text-[8px] tracking-[0.24em] uppercase text-black/30 font-normal whitespace-nowrap bg-white sticky top-0">
                     {h}
                   </th>
@@ -631,19 +656,6 @@ export default function AdminPage() {
                     <td className="px-4 py-3 whitespace-nowrap">
                       <p className="text-black/55 text-[12px]">{t.qty} seat{t.qty > 1 ? "s" : ""}</p>
                       <p className="text-black/38 text-[11px] mt-0.5">{fmtAmount(t.amount)}</p>
-                    </td>
-
-                    {/* Meals */}
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      {(t.meal_preferences ?? []).length > 0 ? (
-                        <div className="flex gap-1 flex-wrap">
-                          {(t.meal_preferences ?? []).map((m, mi) => (
-                            <span key={mi} className={`text-[8px] tracking-[0.1em] uppercase px-2 py-0.5 rounded-full ${m === "veg" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
-                              {m}
-                            </span>
-                          ))}
-                        </div>
-                      ) : <span className="text-black/20 text-xs">—</span>}
                     </td>
 
                     {/* Status */}

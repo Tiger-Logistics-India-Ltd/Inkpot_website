@@ -3,10 +3,8 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import crypto from "crypto";
+import { EDITIONS, DEFAULT_EDITION, isEditionSlug } from "@/lib/editions";
 
-const PRICE_PAISE = 650000; // ₹6,500
-const MAX_TICKETS = 30;
-const SOLD_OUT = true;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.inkpotindia.com";
 
 const dbEnabled = () =>
@@ -15,11 +13,22 @@ const dbEnabled = () =>
 const emailEnabled = () => !!process.env.RESEND_API_KEY?.trim();
 
 export async function POST(req: Request) {
-  if (SOLD_OUT) {
-    return NextResponse.json({ error: "Bookings are now closed. All seats are taken." }, { status: 400 });
-  }
   try {
-    const { name, email, phone, qty = 1, coupon_code, meals = [], terms_accepted } = await req.json();
+    const { name, email, phone, qty = 1, coupon_code, terms_accepted, edition: editionRaw } =
+      await req.json();
+
+    // ── Resolve the edition FIRST — price, capacity and the sold-out gate all
+    //    come from it. An explicit-but-unknown slug is rejected rather than
+    //    silently attributed to the default edition. ──────────────────────────
+    if (editionRaw !== undefined && editionRaw !== null && !isEditionSlug(editionRaw)) {
+      return NextResponse.json({ error: "Unknown event edition." }, { status: 400 });
+    }
+    const edition = EDITIONS[isEditionSlug(editionRaw) ? editionRaw : DEFAULT_EDITION];
+    const { pricePaise: PRICE_PAISE, maxTickets: MAX_TICKETS, maxPerEmail: MAX_PER_EMAIL, soldOut } = edition;
+
+    if (soldOut) {
+      return NextResponse.json({ error: "Bookings are now closed. All seats are taken." }, { status: 400 });
+    }
 
     if (!name?.trim() || !email?.trim() || !phone?.trim()) {
       return NextResponse.json({ error: "All fields are required." }, { status: 400 });
@@ -34,12 +43,7 @@ export async function POST(req: Request) {
     if (!/^[+\d\s\-().]{7,20}$/.test(phone.trim())) {
       return NextResponse.json({ error: "Please enter a valid phone number." }, { status: 400 });
     }
-    // Whitelist meal values — never store arbitrary client strings
-    const VALID_MEALS = ["veg", "non-veg"];
-    const safeMeals = Array.isArray(meals)
-      ? (meals as unknown[]).filter((m): m is string => VALID_MEALS.includes(m as string))
-      : [];
-    const seats = Math.min(Math.max(1, parseInt(qty) || 1), 8);
+    const seats = Math.min(Math.max(1, parseInt(qty) || 1), MAX_PER_EMAIL);
     let totalPaise = PRICE_PAISE * seats;
     let discountPaise = 0;
     let appliedCoupon: string | null = null;
@@ -77,13 +81,14 @@ export async function POST(req: Request) {
       couponUsesCount = coupon.uses_count;
     }
 
-    // ── Availability check ───────────────────────────────────────────────────
+    // ── Availability check (scoped to this edition) ──────────────────────────
     if (dbEnabled()) {
       const { getSupabase } = await import("@/lib/supabase");
       const supabase = getSupabase();
       const { count, error: countError } = await supabase
         .from("living_table_tickets")
         .select("*", { count: "exact", head: true })
+        .eq("edition", edition.slug)
         .in("payment_status", ["paid", "pending"])
         .eq("archived", false);
       if (countError) throw countError;
@@ -94,11 +99,15 @@ export async function POST(req: Request) {
       const { data: emailTickets } = await supabase
         .from("living_table_tickets")
         .select("qty")
+        .eq("edition", edition.slug)
         .eq("buyer_email", email.trim().toLowerCase())
         .in("payment_status", ["paid", "pending"]);
       const alreadyBooked = (emailTickets ?? []).reduce((s: number, t: { qty: number }) => s + (t.qty || 0), 0);
-      if (alreadyBooked + seats > 8) {
-        return NextResponse.json({ error: "You've already booked the maximum of 8 seats with this email." }, { status: 400 });
+      if (alreadyBooked + seats > MAX_PER_EMAIL) {
+        return NextResponse.json(
+          { error: `You've already booked the maximum of ${MAX_PER_EMAIL} seats with this email.` },
+          { status: 400 },
+        );
       }
     }
 
@@ -107,10 +116,11 @@ export async function POST(req: Request) {
       const { getSupabase } = await import("@/lib/supabase");
       const supabase = getSupabase();
 
-      // Assign seat block
+      // Assign seat block (within this edition)
       const { data: existing } = await supabase
         .from("living_table_tickets")
         .select("seat_numbers")
+        .eq("edition", edition.slug)
         .in("payment_status", ["paid", "pending"]);
 
       const allAssigned: number[] = (existing ?? [])
@@ -124,6 +134,7 @@ export async function POST(req: Request) {
       const { data: ticket, error: insertError } = await supabase
         .from("living_table_tickets")
         .insert({
+          edition: edition.slug,
           buyer_name: name.trim(),
           buyer_email: email.trim().toLowerCase(),
           buyer_phone: phone.trim(),
@@ -136,7 +147,6 @@ export async function POST(req: Request) {
           ticket_number: ticketNumber,
           seat_numbers: seatNumbers,
           qr_token: qrToken,
-          meal_preferences: safeMeals,
           terms_accepted_at: new Date().toISOString(),
         })
         .select("id")
@@ -171,6 +181,7 @@ export async function POST(req: Request) {
           ticketId: ticket.id,
           amount: 0,
           siteUrl: SITE_URL,
+          edition: edition.slug,
         }).catch(e => console.error("[email]", e));
       }
 
@@ -200,6 +211,7 @@ export async function POST(req: Request) {
       amount: totalPaise,
       currency: "INR",
       receipt: `tlt_${Date.now()}`,
+      notes: { edition: edition.slug },
     });
 
     // ── Create pending ticket ─────────────────────────────────────────────────
@@ -210,6 +222,7 @@ export async function POST(req: Request) {
       const { data: ticket, error: insertError } = await supabase
         .from("living_table_tickets")
         .insert({
+          edition: edition.slug,
           buyer_name: name.trim(),
           buyer_email: email.trim().toLowerCase(),
           buyer_phone: phone.trim(),
@@ -219,7 +232,6 @@ export async function POST(req: Request) {
           qty: seats,
           coupon_code: appliedCoupon,
           discount_amount: discountPaise,
-          meal_preferences: safeMeals,
           terms_accepted_at: new Date().toISOString(),
         })
         .select("id")
