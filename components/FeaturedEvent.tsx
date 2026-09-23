@@ -45,7 +45,7 @@ const events: EventItem[] = [
     title: "Songs of the Stone",
     chapter: "Chapter Three",
     body: "Internationally acclaimed music sensation, Amrita Kaur, is coming to Delhi for Chapter 3 of Songs of the Stone by Inkpot India.",
-    image: "/images/Songs of the stone/new_poster.png",
+    image: "/images/Songs of the stone/new_hero_poster_chapter_3.jpg",
     status: "active",
     location: "New Delhi",
     cta: { label: "Buy Tickets", href: "https://www.district.in/events/amrita-kaur-dusk-to-dawn-songs-of-the-stone-2026-buy-tickets" },
