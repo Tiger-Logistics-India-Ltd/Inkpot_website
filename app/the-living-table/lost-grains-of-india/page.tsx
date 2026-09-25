@@ -48,6 +48,23 @@ const KNOW: { icon: ReactNode; label: string }[] = [
   { icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><ellipse cx="12" cy="16" rx="5" ry="4" /><circle cx="7.5" cy="9.5" r="1.5" /><circle cx="16.5" cy="9.5" r="1.5" /><line x1="4" y1="4" x2="20" y2="20" /></svg>, label: "Pets not allowed" },
 ];
 
+/* ── The printed menu (TLT_Chapter_2/TLT 2 MENU (1).png), transcribed.
+      Print typos corrected: "banyard" → "barnyard", "naturallysweetened" → "naturally sweetened". ── */
+const MENU_DISHES: { name: string; body: string }[] = [
+  { name: "Spiced Kashifal & Maize Cold Soup", body: "Chilled pumpkin and sweet maize soup, delicately scented with fresh celery and locally sourced nutmeg." },
+  { name: "Watermelon, Young Peas & Amaranth", body: "Macerated watermelon, cucumber ribbons and young peas, with toasted amaranth, basil oil and a delicate lime blossom dressing." },
+  { name: "Ragi Roti with BBQ Cauliflower & Hemp Chutney", body: "An earthy ragi roti layered with green pea mash, BBQ cauliflower, hemp chutney, shredded cabbage, lemon onion and mint ranch." },
+  { name: "Calangute Millet Caldin with Roasted Vegetables", body: "A preparation of warm barnyard millet and roasted vegetables, paired with a delicate Goan-inspired caldin, lentil patty and aromatic peepli pepper." },
+  { name: "Ragi Chocolate Cake, Seasonal Strawberry & Coconut", body: "Ragi chocolate sponge layered with dark chocolate ganache and seasonal strawberry compote, finished with coconut whipped cream." },
+  { name: "Seabuckthorn Berry Bloom", body: "A vibrant iced tea of Ladakhi seabuckthorn, raspberry, passion fruit and green tea, naturally sweetened with jaggery." },
+];
+
+const MENU_PAIRINGS: { course: string; name: string; notes: string[] }[] = [
+  { course: "Welcome",       name: "Dewar’s 12 — The Golden Highball", notes: ["Dewar’s 12", "Darjeeling Tea", "Peach", "Bajra", "Soda"] },
+  { course: "Second Course", name: "Dewar’s 15 — Grain & Garden",      notes: ["Dewar’s 15", "Toasted Barley Honey", "Apricot", "Lemon"] },
+  { course: "Fourth Course", name: "Dewar’s 18 — The Final Chapter",   notes: ["Dewar’s 18", "Coffee Liqueur", "Dark Chocolate", "Toasted Gobindbhog Rice", "Demerara", "Bitters"] },
+];
+
 function waitForRazorpay(): Promise<void> {
   return new Promise((resolve, reject) => {
     if ((window as any).Razorpay) { resolve(); return; }
@@ -211,8 +228,9 @@ export default function LostGrainsPage() {
           .lg-venue-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 44px); align-items: stretch; }
           .lg-map         { width: 100%; height: 100%; min-height: 300px; border: 0; display: block; filter: grayscale(0.25) contrast(1.02); }
           .lg-prev        { display: grid; grid-template-columns: 1fr 1fr; }
+          .lg-menu-grid   { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px); align-items: start; max-width: 1080px; margin: 0 auto; }
           @media (max-width: 900px) {
-            .lg-experience, .lg-evening, .lg-venue-grid, .lg-prev { grid-template-columns: 1fr !important; }
+            .lg-experience, .lg-evening, .lg-venue-grid, .lg-prev, .lg-menu-grid { grid-template-columns: 1fr !important; }
             .lg-know-grid { grid-template-columns: 1fr !important; }
             .lg-map { min-height: 260px; }
           }
@@ -519,6 +537,65 @@ export default function LostGrainsPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ── 4.5 THE MENU ── */}
+        <section id="menu" style={{ background: "#5E6636", padding: "clamp(56px, 8vw, 110px) clamp(20px, 6vw, 110px)" }}>
+          <Fade style={{ textAlign: "center", marginBottom: "clamp(34px, 5vw, 60px)" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(244,239,230,0.75)", margin: "0 0 16px" }}>
+              The Menu
+            </p>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(24px, 3.4vw, 40px)", letterSpacing: "0.02em", color: "#F4EFE6", lineHeight: 1.2, margin: "0 0 12px" }}>
+              Lost Grains of India
+            </h2>
+            <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(14px, 1.5vw, 17px)", color: "#EBD9AE", margin: 0 }}>
+              Through forgotten grains and familiar rituals
+            </p>
+          </Fade>
+
+          <div className="lg-menu-grid">
+            {/* Dishes */}
+            <ul style={{ listStyle: "none", margin: 0, padding: 0, textAlign: "center" }}>
+              {MENU_DISHES.map((dish, i) => (
+                <li key={dish.name}>
+                  <Fade y={18} amount={0.3}>
+                    <h3 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(18px, 2vw, 23px)", color: "#ffffff", lineHeight: 1.3, margin: "0 0 10px" }}>
+                      {dish.name}
+                    </h3>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12.5px, 1.2vw, 14px)", color: "#EBD9AE", lineHeight: 1.75, margin: "0 auto", maxWidth: "520px" }}>
+                      {dish.body}
+                    </p>
+                  </Fade>
+                  {i < MENU_DISHES.length - 1 && (
+                    <div aria-hidden="true" style={{ width: "36px", height: "1px", background: "rgba(235,217,174,0.55)", margin: "clamp(20px, 2.6vw, 30px) auto" }} />
+                  )}
+                </li>
+              ))}
+            </ul>
+
+            {/* Dewar's pairings */}
+            <Fade style={{ background: "#EFE4CB", padding: "clamp(28px, 3.4vw, 44px) clamp(22px, 2.8vw, 36px)", boxShadow: "0 10px 40px rgba(0,0,0,0.22)" }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.32em", textTransform: "uppercase", color: "#8A4632", textAlign: "center", margin: "0 0 6px" }}>
+                In Association with
+              </p>
+              <h3 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(20px, 2.2vw, 26px)", color: "#3a2a20", textAlign: "center", lineHeight: 1.2, margin: "0 0 clamp(22px, 2.6vw, 32px)" }}>
+                Dewar’s Experiences
+              </h3>
+              {MENU_PAIRINGS.map(p => (
+                <div key={p.course} style={{ textAlign: "center", padding: "clamp(16px, 2vw, 22px) 0", borderTop: "1px solid rgba(138,70,50,0.22)" }}>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.3em", textTransform: "uppercase", color: "#8A4632", margin: "0 0 8px" }}>
+                    {p.course}
+                  </p>
+                  <p style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "clamp(15px, 1.6vw, 18px)", color: "#2b2019", lineHeight: 1.35, margin: "0 0 6px" }}>
+                    {p.name}
+                  </p>
+                  <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(13px, 1.3vw, 15px)", color: "rgba(43,32,25,0.72)", lineHeight: 1.6, margin: 0 }}>
+                    {p.notes.join(" · ")}
+                  </p>
+                </div>
+              ))}
+            </Fade>
           </div>
         </section>
 
