@@ -337,7 +337,7 @@ export default function LivingTablePage() {
                 onMouseEnter={e => (e.currentTarget.style.background = "#7a1517")}
                 onMouseLeave={e => (e.currentTarget.style.background = "#901A1C")}
               >
-                Reserve Your Seat
+                Sold Out
               </a>
               <span style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12px, 2.8vw, 15px)", fontWeight: 700, color: "#C9A84C", letterSpacing: "0.22em", textTransform: "uppercase" }}>
                 Chapter Two &middot; Lost Grains of India
@@ -525,7 +525,7 @@ export default function LivingTablePage() {
                 Join us at the table.
               </h2>
               <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.4vw, 15px)", color: "rgba(244,239,230,0.55)", lineHeight: 1.9, margin: "0 0 32px" }}>
-                Our next edition, in association with Dewar&rsquo;s Experiences, is open for bookings &mdash; an evening on the forgotten grains and
+                Our next edition, in association with Dewar&rsquo;s Experiences, is now sold out &mdash; an evening on the forgotten grains and
                 recipes of India, at Greenr Cafe, GK1, on Saturday 26 September 2026.
               </p>
               <a
@@ -534,7 +534,7 @@ export default function LivingTablePage() {
                 onMouseEnter={e => (e.currentTarget.style.background = "#7a1517")}
                 onMouseLeave={e => (e.currentTarget.style.background = "#901A1C")}
               >
-                Reserve Your Seat &rarr;
+                Chapter Two &middot; Sold Out &rarr;
               </a>
               <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(244,239,230,0.4)", margin: "0 0 22px" }}>
                 Can&rsquo;t make this one?

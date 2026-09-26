@@ -26,7 +26,7 @@ const events: EventItem[] = [
     image: "/images/thelivingtable/TLT_Chapter_2/new_hero_poster.png",
     status: "active",
     location: "Greenr Cafe, GK1, New Delhi",
-    cta: { label: "Reserve Your Seat", href: "/the-living-table/lost-grains-of-india" },
+    cta: { label: "Sold Out", href: "/the-living-table/lost-grains-of-india" },
   },
   {
     num: "02",

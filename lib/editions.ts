@@ -86,7 +86,7 @@ export const EDITIONS: Record<EditionSlug, Edition> = {
     priceRupees: 4500,
     maxTickets: 40,
     maxPerEmail: 8,
-    soldOut: false,
+    soldOut: true,
     brand: "The Living Table",
     editionTitle: "Lost Grains of India",
     tagline: "A conversation on India’s food history, fusion music, a little mystery, and a table where the past finds a new expression.",

@@ -16,7 +16,7 @@ const experiences = [
     label: "The Living Table",
     href: "/the-living-table/lost-grains-of-india",
     image: "/images/thelivingtable/Menu.png",
-    links: [{ label: "Reserve Your Seat", href: "/the-living-table/lost-grains-of-india" }],
+    links: [{ label: "Sold Out", href: "/the-living-table/lost-grains-of-india" }],
   },
   {
     label: "Inkpot India Conclave",

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "The Living Table — Lost Grains of India | Chapter Two, 26 September 2026",
   description:
-    "Chapter Two of The Living Table by Inkpot India, in association with Dewar's Experiences. An evening on the forgotten grains, recipes and flavours of India, at Greenr Cafe, Greater Kailash 1, New Delhi, on Saturday 26 September 2026. Book your seat.",
+    "Chapter Two of The Living Table by Inkpot India, in association with Dewar's Experiences. An evening on the forgotten grains, recipes and flavours of India, at Greenr Cafe, Greater Kailash 1, New Delhi, on Saturday 26 September 2026. Sold out.",
   keywords: [
     "The Living Table",
     "Lost Grains of India",
