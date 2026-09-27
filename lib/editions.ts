@@ -77,9 +77,8 @@ export const EDITIONS: Record<EditionSlug, Edition> = {
     path: "/the-living-table/archive/june-2026",
   },
 
-  /* ── Chapter Two — LIVE, bookings open.
-        Price ₹4,500, capacity 40, time, programme and sponsor are confirmed.
-        Only the full street address of the venue is still to be confirmed. ── */
+  /* ── Chapter Two — event held 26 Sept 2026, bookings closed (soldOut below).
+        Price ₹4,500, capacity 40, time, programme and sponsor are confirmed. ── */
   "lost-grains-of-india": {
     slug: "lost-grains-of-india",
     pricePaise: 450000,
