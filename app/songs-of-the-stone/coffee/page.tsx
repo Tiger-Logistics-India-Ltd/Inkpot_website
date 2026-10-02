@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useRef } from "react";
-import Image from "next/image";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -9,7 +8,6 @@ import { COFFEE_ITEMS, COFFEE_PROMO, SOTS_EVENT, priceOrder, type CartLine } fro
 
 const BROWN = "#4B2E1E";
 const BROWN_DARK = "#3A2316";
-const GOLD = "#C9A84C";
 const CREAM = "#F4EFE6";
 
 type Flow = "browse" | "paying" | "confirmed";
@@ -83,7 +81,6 @@ export default function SOTSCoffeePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
   const [order, setOrder]     = useState<ConfirmedOrder | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   const cart: CartLine[] = useMemo(
     () => Object.entries(qtyById).filter(([, q]) => q > 0).map(([id, qty]) => ({ id, qty })),
@@ -94,8 +91,6 @@ export default function SOTSCoffeePage() {
   const hasItems = cart.length > 0;
 
   const setQty = (id: string, qty: number) => setQtyById(prev => ({ ...prev, [id]: Math.max(0, qty) }));
-
-  const scrollToMenu = () => menuRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,73 +157,52 @@ export default function SOTSCoffeePage() {
       <Navbar />
       <main style={{ background: CREAM, overflowX: "hidden" }}>
         <style>{`
-          .sotsc-poster-landscape { display: block; }
-          .sotsc-poster-portrait  { display: none; }
           .sotsc-menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
           .sotsc-layout    { display: grid; grid-template-columns: 1fr 380px; gap: clamp(28px, 4vw, 56px); align-items: start; }
           @media (max-width: 860px) {
-            .sotsc-poster-landscape { display: none; }
-            .sotsc-poster-portrait  { display: block; }
             .sotsc-menu-grid { grid-template-columns: 1fr; }
             .sotsc-layout    { grid-template-columns: 1fr; }
           }
         `}</style>
 
-        {/* ── HERO: the real event poster ── */}
-        <section style={{ position: "relative", background: "#120c08", padding: "clamp(96px, 14vh, 140px) 20px clamp(48px, 7vh, 72px)", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+        {/* ── TOP BANNER ── */}
+        <div style={{ background: BROWN, padding: "10px 16px", textAlign: "center" }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(10.5px, 2.4vw, 12px)", letterSpacing: "0.04em", color: CREAM, margin: 0 }}>
+            You can now pre-order your coffee for the venue — collect fresh at the counter.
+          </p>
+        </div>
+
+        {/* ── COMPACT HEADER ── */}
+        <section style={{ padding: "clamp(56px, 9vh, 88px) 20px clamp(8px, 2vw, 16px)", textAlign: "center" }}>
           <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, delay: 0.2 }}
-            style={{ fontFamily: "var(--font-body)", fontSize: "clamp(9px, 2.2vw, 11px)", letterSpacing: "0.34em", textTransform: "uppercase", color: "rgba(244,239,230,0.6)", margin: "0 0 20px" }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7 }}
+            style={{ fontFamily: "var(--font-body)", fontSize: "clamp(9px, 2.2vw, 11px)", letterSpacing: "0.34em", textTransform: "uppercase", color: BROWN, margin: "0 0 14px" }}
           >
-            Coffee Counter &middot; {SOTS_EVENT.title}
+            {SOTS_EVENT.title} &middot; Coffee Counter
           </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.35 }}
-            style={{ width: "100%", maxWidth: "560px", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}
-          >
-            <Image
-              className="sotsc-poster-landscape"
-              src="/images/Songs of the stone/new_hero_poster_chap_3_landscape.jpeg"
-              alt={`${SOTS_EVENT.title}, ${SOTS_EVENT.chapter} — ${SOTS_EVENT.artist} at ${SOTS_EVENT.venue}, ${SOTS_EVENT.dateLabel}`}
-              width={1600} height={900}
-              style={{ width: "100%", height: "auto", display: "block" }}
-              priority
-            />
-            <Image
-              className="sotsc-poster-portrait"
-              src="/images/Songs of the stone/SOTS_District banner potrait.png"
-              alt={`${SOTS_EVENT.title}, ${SOTS_EVENT.chapter} — ${SOTS_EVENT.artist} at ${SOTS_EVENT.venue}, ${SOTS_EVENT.dateLabel}`}
-              width={900} height={1200}
-              style={{ width: "100%", height: "auto", display: "block" }}
-              priority
-            />
-          </motion.div>
-
           <motion.h1
-            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.6 }}
-            style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(26px, 4.4vw, 44px)", color: CREAM, margin: "32px 0 10px", lineHeight: 1.12 }}
+            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
+            style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(26px, 4.4vw, 42px)", color: "#1a1a1a", margin: "0 0 16px", lineHeight: 1.12 }}
           >
-            Coffee, from dusk to dawn.
+            Pre-order your coffee.
           </motion.h1>
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.2 }}
+            style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#166534", color: "#ffffff", padding: "8px 18px", margin: "0 0 16px" }}
+          >
+            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#ffffff", flexShrink: 0 }} />
+            <span style={{ fontFamily: "var(--font-body)", fontSize: "9.5px", letterSpacing: "0.18em", textTransform: "uppercase" }}>Pre-Booking Available Now</span>
+          </motion.div>
           <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, delay: 0.75 }}
-            style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12.5px, 1.6vw, 14px)", color: "rgba(244,239,230,0.62)", maxWidth: "440px", lineHeight: 1.85, margin: "0 0 30px" }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.3 }}
+            style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12.5px, 1.6vw, 14px)", color: "rgba(0,0,0,0.5)", maxWidth: "440px", lineHeight: 1.85, margin: "0 auto" }}
           >
-            Pre-order your coffee for the night — pay online, skip the queue, and collect at the counter when it&rsquo;s ready.
+            Pay online, skip the queue, and collect at the counter when it&rsquo;s ready.
           </motion.p>
-
-          <motion.button
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.9 }}
-            onClick={scrollToMenu}
-            style={{ background: GOLD, color: "#1a1208", padding: "16px 48px", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", border: "none", cursor: "pointer", fontWeight: 600 }}
-          >
-            Order Coffee ↓
-          </motion.button>
         </section>
 
         {/* ── MENU + ORDER ── */}
-        <section ref={menuRef} style={{ padding: "clamp(48px, 7vw, 88px) clamp(20px, 5vw, 64px)", maxWidth: "1180px", margin: "0 auto" }}>
+        <section style={{ padding: "clamp(24px, 4vw, 48px) clamp(20px, 5vw, 64px) clamp(48px, 7vw, 88px)", maxWidth: "1180px", margin: "0 auto" }}>
           <AnimatePresence mode="wait">
             {flow === "confirmed" && order ? (
               <motion.div
@@ -361,28 +335,6 @@ export default function SOTSCoffeePage() {
               </motion.div>
             )}
           </AnimatePresence>
-        </section>
-
-        {/* ── ABOUT THE EVENING ── */}
-        <section style={{ position: "relative", background: "#1a1208", padding: "clamp(48px, 7vw, 80px) clamp(20px, 6vw, 100px)", overflow: "hidden" }}>
-          <Image
-            src="/images/Songs of the stone/purana_quila.png"
-            alt=""
-            width={3840} height={2160}
-            aria-hidden
-            style={{ position: "absolute", right: "-6%", bottom: "-10%", width: "60%", height: "auto", opacity: 0.16, mixBlendMode: "screen", pointerEvents: "none" }}
-          />
-          <div style={{ position: "relative", maxWidth: "640px" }}>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.32em", textTransform: "uppercase", color: GOLD, margin: "0 0 16px" }}>
-              {SOTS_EVENT.chapter}
-            </p>
-            <h3 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(22px, 2.8vw, 30px)", color: CREAM, lineHeight: 1.3, margin: "0 0 16px" }}>
-              A two-part musical experience with {SOTS_EVENT.artist}, through the night at {SOTS_EVENT.venue}.
-            </h3>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "rgba(244,239,230,0.6)", lineHeight: 1.9, margin: 0 }}>
-              Presented by {SOTS_EVENT.presentedBy}, supported by {SOTS_EVENT.supportedBy}. The coffee counter runs through both sessions — pre-order here any time and collect fresh, hot, on the spot.
-            </p>
-          </div>
         </section>
       </main>
 
