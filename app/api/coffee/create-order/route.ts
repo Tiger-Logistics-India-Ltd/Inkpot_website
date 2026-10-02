@@ -1,0 +1,128 @@
+export const dynamic = "force-dynamic";
+
+import { NextResponse } from "next/server";
+import Razorpay from "razorpay";
+import { priceOrder, type CartLine } from "@/lib/sotsCoffee";
+
+export async function POST(req: Request) {
+  try {
+    const { name, phone, items, coupon_code } = await req.json();
+
+    if (!name?.trim() || !phone?.trim()) {
+      return NextResponse.json({ error: "Name and phone are required." }, { status: 400 });
+    }
+    if (!/^[+\d\s\-().]{7,20}$/.test(phone.trim())) {
+      return NextResponse.json({ error: "Please enter a valid phone number." }, { status: 400 });
+    }
+    if (!Array.isArray(items) || items.length === 0) {
+      return NextResponse.json({ error: "Your cart is empty." }, { status: 400 });
+    }
+
+    const cart: CartLine[] = items
+      .filter((i: any) => i && typeof i.id === "string" && Number.isFinite(i.qty) && i.qty > 0)
+      .map((i: any) => ({ id: i.id, qty: Math.floor(i.qty) }));
+
+    if (cart.length === 0) {
+      return NextResponse.json({ error: "Your cart is empty." }, { status: 400 });
+    }
+
+    // Server-authoritative pricing — never trust a client-sent total.
+    const priced = priceOrder(cart, coupon_code);
+    if (priced.lines.length === 0) {
+      return NextResponse.json({ error: "Unknown item in cart." }, { status: 400 });
+    }
+
+    const appliedCoupon = coupon_code?.trim().toUpperCase() === "SONGS" ? "SONGS" : null;
+    const originalPaise = priced.originalTotalRupees * 100;
+    const discountPaise = priced.discountRupees * 100;
+    const payablePaise = priced.payableTotalRupees * 100;
+
+    const itemsSnapshot = priced.lines.map(l => ({
+      id: l.id, name: l.name, qty: l.qty, unit_price_paise: l.unitPriceRupees * 100, free_qty: l.freeQty,
+    }));
+
+    const dbEnabled = !!(process.env.SUPABASE_URL?.trim() && process.env.SUPABASE_SERVICE_ROLE_KEY?.trim());
+    if (!dbEnabled) {
+      return NextResponse.json({ error: "Ordering is temporarily unavailable. Please try again shortly." }, { status: 503 });
+    }
+    const { getSupabase } = await import("@/lib/supabase");
+    const supabase = getSupabase();
+
+    // ── FREE ORDER (promo covers the full cart) — skip Razorpay entirely ──
+    if (payablePaise === 0) {
+      const { data: order, error: insertError } = await supabase
+        .from("sots_coffee_orders")
+        .insert({
+          buyer_name: name.trim(),
+          buyer_phone: phone.trim(),
+          items: itemsSnapshot,
+          total_qty: priced.totalQty,
+          amount_paise: 0,
+          original_amount_paise: originalPaise,
+          discount_paise: discountPaise,
+          coupon_code: appliedCoupon,
+          payment_status: "paid",
+        })
+        .select("id, order_number")
+        .single();
+
+      if (insertError) throw insertError;
+
+      return NextResponse.json({
+        free: true,
+        order: {
+          orderId: order.id,
+          orderNumber: order.order_number,
+          buyerName: name.trim(),
+          items: itemsSnapshot,
+          totalQty: priced.totalQty,
+        },
+      });
+    }
+
+    // ── PAID ORDER — create Razorpay order ──────────────────────────────
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    if (!keyId || !keySecret) {
+      return NextResponse.json({ error: "Payment service not configured." }, { status: 503 });
+    }
+
+    const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
+    const rpOrder = await razorpay.orders.create({
+      amount: payablePaise,
+      currency: "INR",
+      receipt: `sots_coffee_${Date.now()}`,
+      notes: { event: "songs-of-the-stone-coffee" },
+    });
+
+    const { data: order, error: insertError } = await supabase
+      .from("sots_coffee_orders")
+      .insert({
+        buyer_name: name.trim(),
+        buyer_phone: phone.trim(),
+        items: itemsSnapshot,
+        total_qty: priced.totalQty,
+        amount_paise: payablePaise,
+        original_amount_paise: originalPaise,
+        discount_paise: discountPaise,
+        coupon_code: appliedCoupon,
+        razorpay_order_id: rpOrder.id,
+        payment_status: "pending",
+      })
+      .select("id")
+      .single();
+
+    if (insertError) throw insertError;
+
+    return NextResponse.json({
+      order_id: rpOrder.id,
+      amount: payablePaise,
+      key_id: keyId,
+      coffee_order_id: order.id,
+      discount_paise: discountPaise,
+    });
+  } catch (err: any) {
+    console.error("[coffee/create-order]", err);
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  }
+}
