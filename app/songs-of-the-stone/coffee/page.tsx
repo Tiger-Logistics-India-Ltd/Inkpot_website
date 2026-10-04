@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { COFFEE_ITEMS, COFFEE_PROMO, SOTS_EVENT, priceOrder, type CartLine } from "@/lib/sotsCoffee";
+import { COFFEE_ITEMS, COFFEE_PROMO, COFFEE_TEST_PROMO, SOTS_EVENT, priceOrder, type CartLine } from "@/lib/sotsCoffee";
 
 const BROWN = "#4B2E1E";
 const BROWN_DARK = "#3A2316";
@@ -88,6 +88,7 @@ export default function SOTSCoffeePage() {
   );
   const priced = useMemo(() => priceOrder(cart, coupon), [cart, coupon]);
   const promoValid = coupon.trim().toUpperCase() === COFFEE_PROMO.code;
+  const testCodeValid = coupon.trim().toUpperCase() === COFFEE_TEST_PROMO.code;
   const hasItems = cart.length > 0;
 
   const setQty = (id: string, qty: number) => setQtyById(prev => ({ ...prev, [id]: Math.max(0, qty) }));
@@ -285,7 +286,9 @@ export default function SOTSCoffeePage() {
                               <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", color: "#1a1a1a", margin: 0 }}>
                                 {l.qty}× {l.name}{l.freeQty > 0 ? ` (${l.freeQty} free)` : ""}
                               </p>
-                              <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", color: "#1a1a1a", margin: 0 }}>₹{l.lineTotalRupees}</p>
+                              {!priced.testOverride && (
+                                <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", color: "#1a1a1a", margin: 0 }}>₹{l.lineTotalRupees}</p>
+                              )}
                             </div>
                           ))}
 
@@ -300,13 +303,13 @@ export default function SOTSCoffeePage() {
                               style={{ width: "100%", border: "none", borderBottom: "1px solid rgba(0,0,0,0.18)", padding: "8px 0", fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.1em", color: "#1a1a1a", outline: "none", background: "transparent", boxSizing: "border-box" }}
                             />
                             {coupon.trim() && (
-                              <p style={{ fontFamily: "var(--font-body)", fontSize: "10.5px", color: promoValid ? "#166534" : "#901A1C", margin: "6px 0 0" }}>
-                                {promoValid ? COFFEE_PROMO.description : "Invalid code."}
+                              <p style={{ fontFamily: "var(--font-body)", fontSize: "10.5px", color: promoValid || testCodeValid ? "#166534" : "#901A1C", margin: "6px 0 0" }}>
+                                {promoValid ? COFFEE_PROMO.description : testCodeValid ? "Test code applied — charge forced to ₹1." : "Invalid code."}
                               </p>
                             )}
                           </div>
 
-                          {priced.discountRupees > 0 && (
+                          {!priced.testOverride && priced.discountRupees > 0 && (
                             <div style={{ display: "flex", justifyContent: "space-between", paddingTop: "10px", borderTop: "1px dashed rgba(0,0,0,0.12)", marginBottom: "10px" }}>
                               <p style={{ fontFamily: "var(--font-body)", fontSize: "11px", color: "#166534", margin: 0 }}>Promo discount</p>
                               <p style={{ fontFamily: "var(--font-body)", fontSize: "12.5px", color: "#166534", fontWeight: 600, margin: 0 }}>− ₹{priced.discountRupees}</p>
@@ -314,7 +317,7 @@ export default function SOTSCoffeePage() {
                           )}
 
                           <div style={{ display: "flex", justifyContent: "space-between", paddingTop: "12px", borderTop: "1px solid rgba(0,0,0,0.1)", marginBottom: "20px" }}>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "#1a1a1a", margin: 0 }}>Total</p>
+                            <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "#1a1a1a", margin: 0 }}>{priced.testOverride ? "Test Total" : "Total"}</p>
                             <p style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "22px", color: "#1a1a1a", margin: 0 }}>₹{priced.payableTotalRupees}</p>
                           </div>
 
@@ -325,7 +328,7 @@ export default function SOTSCoffeePage() {
                             onMouseEnter={e => (e.currentTarget.style.background = BROWN_DARK)}
                             onMouseLeave={e => (e.currentTarget.style.background = BROWN)}
                           >
-                            {priced.payableTotalRupees === 0 ? "Claim Free Coffee" : "Continue to Payment"}
+                            {priced.payableTotalRupees === 0 ? "Claim Free Coffee" : priced.testOverride ? "Pay ₹1 (Test)" : "Continue to Payment"}
                           </button>
                         </>
                       )}
@@ -375,7 +378,7 @@ export default function SOTSCoffeePage() {
                   disabled={loading || flow === "paying"}
                   style={{ background: loading || flow === "paying" ? `${BROWN}73` : BROWN, color: "#ffffff", width: "100%", padding: "16px", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase", border: "none", cursor: loading || flow === "paying" ? "default" : "pointer", marginTop: "8px" }}
                 >
-                  {loading ? "Creating order…" : flow === "paying" ? "Opening payment…" : priced.payableTotalRupees === 0 ? "Confirm Free Order" : "Continue to Payment →"}
+                  {loading ? "Creating order…" : flow === "paying" ? "Opening payment…" : priced.payableTotalRupees === 0 ? "Confirm Free Order" : priced.testOverride ? "Pay ₹1 (Test) →" : "Continue to Payment →"}
                 </button>
                 {priced.payableTotalRupees > 0 && (
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(0,0,0,0.5)", marginTop: "14px", textAlign: "center", lineHeight: 1.7 }}>

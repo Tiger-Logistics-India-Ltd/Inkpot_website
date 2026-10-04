@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
-import { priceOrder, type CartLine } from "@/lib/sotsCoffee";
+import { priceOrder, COFFEE_PROMO, COFFEE_TEST_PROMO, type CartLine } from "@/lib/sotsCoffee";
 
 export async function POST(req: Request) {
   try {
@@ -32,7 +32,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unknown item in cart." }, { status: 400 });
     }
 
-    const appliedCoupon = coupon_code?.trim().toUpperCase() === "SONGS" ? "SONGS" : null;
+    const normalizedCode = coupon_code?.trim().toUpperCase();
+    const appliedCoupon =
+      normalizedCode === COFFEE_TEST_PROMO.code ? COFFEE_TEST_PROMO.code :
+      normalizedCode === COFFEE_PROMO.code ? COFFEE_PROMO.code : null;
     const originalPaise = priced.originalTotalRupees * 100;
     const discountPaise = priced.discountRupees * 100;
     const payablePaise = priced.payableTotalRupees * 100;
