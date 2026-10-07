@@ -3,7 +3,8 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { getSupabase } from "@/lib/supabase";
-import { priceOrder, getMenuItem, COFFEE_PROMO, COFFEE_TEST_PROMO, CAPS, isSessionId, type CartLine } from "@/lib/sotsCoffee";
+import { getMenuItem, COFFEE_PROMO, CAPS, isSessionId, type CartLine } from "@/lib/sotsCoffee";
+import { priceOrderServer, COFFEE_TEST_PROMO } from "@/lib/sotsCoffeeServer";
 
 export async function POST(req: Request) {
   try {
@@ -42,7 +43,7 @@ export async function POST(req: Request) {
     }
 
     // Server-authoritative pricing — never trust a client-sent total.
-    const priced = priceOrder(cart, coupon_code);
+    const priced = priceOrderServer(cart, coupon_code);
     if (priced.lines.length === 0) {
       return NextResponse.json({ error: "Unknown item in cart." }, { status: 400 });
     }

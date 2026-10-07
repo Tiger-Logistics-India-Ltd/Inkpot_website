@@ -79,17 +79,6 @@ export const COFFEE_PROMO = {
   description: "First 2 cups free with code SONGS.",
 };
 
-/**
- * Internal-only test code — forces the payable total to ₹1 regardless of
- * cart contents, so the live Razorpay path (same keys as production) can be
- * verified end-to-end without moving a real amount. Not meant for customers —
- * don't publicise it.
- */
-export const COFFEE_TEST_PROMO = {
-  code: "RUPEE1",
-  flatRupees: 1,
-};
-
 export interface CartLine {
   id: string;
   qty: number;
@@ -111,7 +100,6 @@ export interface PricedOrder {
   discountRupees: number;
   payableTotalRupees: number;
   freeUnitsApplied: number;
-  testOverride: boolean;
 }
 
 /**
@@ -122,6 +110,11 @@ export interface PricedOrder {
  * Session eligibility (does this food item belong to this session?) and
  * capacity caps are NOT checked here — that needs a DB read, so it happens
  * in the create-order route, which also owns the authoritative item lookup.
+ *
+ * This module is imported by the CLIENT page for the live cart preview, so
+ * everything exported from here ships in the public JS bundle — do NOT add
+ * the internal RUPEE1 test-code logic here (see lib/sotsCoffeeServer.ts,
+ * which is server-only and applies that override on top of this function).
  */
 export function priceOrder(cart: CartLine[], couponCode?: string): PricedOrder {
   const resolved = cart
@@ -132,8 +125,7 @@ export function priceOrder(cart: CartLine[], couponCode?: string): PricedOrder {
     .filter((l): l is { id: string; name: string; category: "coffee" | "food"; unitPriceRupees: number; qty: number } => l !== null);
 
   const normalizedCode = couponCode?.trim().toUpperCase();
-  const testOverride = normalizedCode === COFFEE_TEST_PROMO.code;
-  const promoApplied = !testOverride && normalizedCode === COFFEE_PROMO.code;
+  const promoApplied = normalizedCode === COFFEE_PROMO.code;
   let freeUnitsRemaining = promoApplied ? COFFEE_PROMO.freeUnits : 0;
 
   // Flatten to units, sort ascending by price, mark the cheapest N free —
@@ -155,21 +147,12 @@ export function priceOrder(cart: CartLine[], couponCode?: string): PricedOrder {
 
   const totalQty = lines.reduce((s, l) => s + l.qty, 0);
   const originalTotalRupees = lines.reduce((s, l) => s + l.qty * l.unitPriceRupees, 0);
-  let payableTotalRupees = lines.reduce((s, l) => s + l.lineTotalRupees, 0);
-
-  // Flat override for the internal RUPEE1 test code — forces the charge to
-  // ₹1 regardless of cart, so per-line prices above are NOT representative
-  // of what's actually charged when this is active (caller should show a
-  // distinct "test mode" note rather than summing lines against the total).
-  if (testOverride && totalQty > 0) {
-    payableTotalRupees = Math.min(payableTotalRupees, COFFEE_TEST_PROMO.flatRupees);
-  }
+  const payableTotalRupees = lines.reduce((s, l) => s + l.lineTotalRupees, 0);
 
   return {
     lines, totalQty, originalTotalRupees,
     discountRupees: originalTotalRupees - payableTotalRupees,
     payableTotalRupees,
     freeUnitsApplied: freeUnitIdsInOrder.length,
-    testOverride: testOverride && totalQty > 0,
   };
 }
