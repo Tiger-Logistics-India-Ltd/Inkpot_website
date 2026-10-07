@@ -3,15 +3,15 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { getSupabase } from "@/lib/supabase";
-import { getMenuItem, COFFEE_PROMO, CAPS, isSessionId, type CartLine } from "@/lib/sotsCoffee";
+import { getMenuItem, COFFEE_PROMO, CAPS, isActiveSession, type CartLine } from "@/lib/sotsCoffee";
 import { priceOrderServer, COFFEE_TEST_PROMO } from "@/lib/sotsCoffeeServer";
 
 export async function POST(req: Request) {
   try {
     const { name, phone, items, coupon_code, session } = await req.json();
 
-    if (!isSessionId(session)) {
-      return NextResponse.json({ error: "Please choose which session you're ordering for." }, { status: 400 });
+    if (!isActiveSession(session)) {
+      return NextResponse.json({ error: "Orders aren't open for that session yet." }, { status: 400 });
     }
     if (!name?.trim() || !phone?.trim()) {
       return NextResponse.json({ error: "Name and phone are required." }, { status: 400 });

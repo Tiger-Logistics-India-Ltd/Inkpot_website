@@ -21,8 +21,19 @@ export const SESSIONS: SessionInfo[] = [
   { id: "oct11-morning", label: "11th Morning", dateLabel: "11 October, 6 AM onwards" },
 ];
 
+/**
+ * Sessions actually orderable right now. 10th Evening goes first, so 11th
+ * Morning is held back until the night of the 10th — flip it back on here
+ * (just add "oct11-morning") when ready, no other code changes needed.
+ */
+export const ACTIVE_SESSIONS: SessionId[] = ["oct10-evening"];
+
 export function isSessionId(v: unknown): v is SessionId {
   return v === "oct10-evening" || v === "oct11-morning";
+}
+
+export function isActiveSession(v: unknown): v is SessionId {
+  return isSessionId(v) && ACTIVE_SESSIONS.includes(v);
 }
 
 export function getSession(id: SessionId): SessionInfo {

@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import {
-  SESSIONS, itemsForSession, COFFEE_PROMO, SOTS_EVENT,
+  SESSIONS, ACTIVE_SESSIONS, itemsForSession, COFFEE_PROMO, SOTS_EVENT,
   priceOrder, type CartLine, type SessionId,
 } from "@/lib/sotsCoffee";
 
@@ -106,7 +106,8 @@ function Field({ label, value, onChange, type, placeholder }: {
 }
 
 export default function SOTSCoffeePage() {
-  const [session, setSession] = useState<SessionId>(SESSIONS[0].id);
+  const activeSessions = useMemo(() => SESSIONS.filter(s => ACTIVE_SESSIONS.includes(s.id)), []);
+  const [session, setSession] = useState<SessionId>(ACTIVE_SESSIONS[0]);
   const [availability, setAvailability] = useState<Availability | null>(null);
   const [qtyById, setQtyById] = useState<Record<string, number>>({});
   const [coupon, setCoupon]   = useState("");
@@ -256,25 +257,31 @@ export default function SOTSCoffeePage() {
           </motion.div>
         </section>
 
-        {/* ── SESSION SELECTOR ── */}
-        <div style={{ display: "flex", justifyContent: "center", gap: "10px", padding: "0 20px clamp(28px, 4vw, 40px)", flexWrap: "wrap" }}>
-          {SESSIONS.map(s => (
-            <button
-              key={s.id}
-              onClick={() => changeSession(s.id)}
-              style={{
-                background: session === s.id ? BROWN : "#ffffff",
-                color: session === s.id ? "#ffffff" : "#1a1a1a",
-                border: `1px solid ${session === s.id ? BROWN : "rgba(0,0,0,0.15)"}`,
-                padding: "12px 22px", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.08em",
-                cursor: "pointer", textAlign: "left", minWidth: "170px",
-              }}
-            >
-              <span style={{ display: "block", fontSize: "12.5px", fontWeight: 600, marginBottom: "2px" }}>{s.label}</span>
-              <span style={{ display: "block", fontSize: "10px", opacity: 0.75 }}>{s.dateLabel}</span>
-            </button>
-          ))}
-        </div>
+        {/* ── SESSION SELECTOR — only shown when more than one session is open for ordering ── */}
+        {activeSessions.length > 1 ? (
+          <div style={{ display: "flex", justifyContent: "center", gap: "10px", padding: "0 20px clamp(28px, 4vw, 40px)", flexWrap: "wrap" }}>
+            {activeSessions.map(s => (
+              <button
+                key={s.id}
+                onClick={() => changeSession(s.id)}
+                style={{
+                  background: session === s.id ? BROWN : "#ffffff",
+                  color: session === s.id ? "#ffffff" : "#1a1a1a",
+                  border: `1px solid ${session === s.id ? BROWN : "rgba(0,0,0,0.15)"}`,
+                  padding: "12px 22px", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.08em",
+                  cursor: "pointer", textAlign: "left", minWidth: "170px",
+                }}
+              >
+                <span style={{ display: "block", fontSize: "12.5px", fontWeight: 600, marginBottom: "2px" }}>{s.label}</span>
+                <span style={{ display: "block", fontSize: "10px", opacity: 0.75 }}>{s.dateLabel}</span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p style={{ textAlign: "center", padding: "0 20px clamp(28px, 4vw, 40px)", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.08em", color: "rgba(0,0,0,0.4)" }}>
+            Ordering for {activeSessions[0]?.label} &middot; {activeSessions[0]?.dateLabel}
+          </p>
+        )}
 
         {/* ── MENU + ORDER ── */}
         <section style={{ padding: "clamp(24px, 4vw, 48px) clamp(20px, 5vw, 64px) clamp(48px, 7vw, 88px)", maxWidth: "1180px", margin: "0 auto" }}>
