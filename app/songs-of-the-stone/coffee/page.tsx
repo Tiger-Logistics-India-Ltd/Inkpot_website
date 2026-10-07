@@ -1,14 +1,23 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { COFFEE_ITEMS, COFFEE_PROMO, COFFEE_TEST_PROMO, SOTS_EVENT, priceOrder, type CartLine } from "@/lib/sotsCoffee";
+import {
+  SESSIONS, itemsForSession, COFFEE_PROMO, COFFEE_TEST_PROMO, SOTS_EVENT,
+  priceOrder, type CartLine, type SessionId,
+} from "@/lib/sotsCoffee";
 
 const BROWN = "#4B2E1E";
 const BROWN_DARK = "#3A2316";
 const CREAM = "#F4EFE6";
+const SWAN_LOGO = "/images/Songs of the stone/Pio Swan White.svg";
+
+interface Availability {
+  coffee: { sold: number; cap: number; available: number };
+  food: Record<string, { sold: number; cap: number; available: number }>;
+}
 
 type Flow = "browse" | "paying" | "confirmed";
 
@@ -50,6 +59,31 @@ function Fade({ children, delay = 0, y = 22 }: { children: React.ReactNode; dela
   );
 }
 
+function ItemCard({ item, qty, soldOut, atLimit, onQty }: {
+  item: { id: string; name: string; description: string; priceRupees: number };
+  qty: number; soldOut: boolean; atLimit: boolean;
+  onQty: (id: string, qty: number) => void;
+}) {
+  return (
+    <div style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.07)", padding: "22px 22px 20px", height: "100%", display: "flex", flexDirection: "column", opacity: soldOut ? 0.55 : 1 }}>
+      <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "19px", color: "#1a1a1a", margin: "0 0 6px" }}>{item.name}</p>
+      <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "rgba(0,0,0,0.5)", lineHeight: 1.6, margin: "0 0 16px", flex: 1 }}>{item.description}</p>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", color: "#1a1a1a", fontWeight: 600, margin: 0 }}>₹{item.priceRupees}</p>
+        {soldOut ? (
+          <span style={{ fontFamily: "var(--font-body)", fontSize: "9.5px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#901A1C" }}>Sold Out</span>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <button type="button" onClick={() => onQty(item.id, qty - 1)} disabled={qty <= 0} style={{ width: "28px", height: "28px", background: "transparent", border: "1px solid rgba(0,0,0,0.18)", cursor: qty <= 0 ? "default" : "pointer", fontSize: "15px", color: qty <= 0 ? "rgba(0,0,0,0.2)" : "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
+            <div style={{ width: "36px", height: "28px", borderTop: "1px solid rgba(0,0,0,0.18)", borderBottom: "1px solid rgba(0,0,0,0.18)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-heading)", fontSize: "15px", color: "#1a1a1a" }}>{qty}</div>
+            <button type="button" onClick={() => onQty(item.id, qty + 1)} disabled={atLimit} style={{ width: "28px", height: "28px", background: "transparent", border: "1px solid rgba(0,0,0,0.18)", cursor: atLimit ? "default" : "pointer", fontSize: "15px", color: atLimit ? "rgba(0,0,0,0.2)" : "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Field({ label, value, onChange, type, placeholder }: {
   label: string; value: string; onChange: (v: string) => void; type: string; placeholder: string;
 }) {
@@ -72,6 +106,8 @@ function Field({ label, value, onChange, type, placeholder }: {
 }
 
 export default function SOTSCoffeePage() {
+  const [session, setSession] = useState<SessionId>(SESSIONS[0].id);
+  const [availability, setAvailability] = useState<Availability | null>(null);
   const [qtyById, setQtyById] = useState<Record<string, number>>({});
   const [coupon, setCoupon]   = useState("");
   const [name, setName]       = useState("");
@@ -82,6 +118,19 @@ export default function SOTSCoffeePage() {
   const [error, setError]     = useState("");
   const [order, setOrder]     = useState<ConfirmedOrder | null>(null);
 
+  const menuItems = useMemo(() => itemsForSession(session), [session]);
+  const coffeeItems = menuItems.filter(i => i.category === "coffee");
+  const foodItems = menuItems.filter(i => i.category === "food");
+
+  const fetchAvailability = async (s: SessionId) => {
+    try {
+      const res = await fetch(`/api/coffee/availability?session=${s}`);
+      if (res.ok) setAvailability(await res.json());
+    } catch { /* non-fatal — steppers just won't gate on stock */ }
+  };
+
+  useEffect(() => { fetchAvailability(session); }, [session]);
+
   const cart: CartLine[] = useMemo(
     () => Object.entries(qtyById).filter(([, q]) => q > 0).map(([id, qty]) => ({ id, qty })),
     [qtyById]
@@ -91,7 +140,16 @@ export default function SOTSCoffeePage() {
   const testCodeValid = coupon.trim().toUpperCase() === COFFEE_TEST_PROMO.code;
   const hasItems = cart.length > 0;
 
+  const coffeeQtyInCart = coffeeItems.reduce((s, i) => s + (qtyById[i.id] ?? 0), 0);
+  const coffeeSoldOut = availability ? availability.coffee.available <= 0 : false;
+  const coffeeAtLimit = availability ? coffeeQtyInCart >= availability.coffee.available : false;
+
   const setQty = (id: string, qty: number) => setQtyById(prev => ({ ...prev, [id]: Math.max(0, qty) }));
+
+  const changeSession = (s: SessionId) => {
+    setSession(s);
+    setQtyById({});
+  };
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,7 +159,7 @@ export default function SOTSCoffeePage() {
       const res = await fetch("/api/coffee/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, items: cart, coupon_code: coupon.trim() || undefined }),
+        body: JSON.stringify({ name, phone, items: cart, coupon_code: coupon.trim() || undefined, session }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -111,6 +169,7 @@ export default function SOTSCoffeePage() {
         setFlow("confirmed");
         setShowModal(false);
         setLoading(false);
+        fetchAvailability(session);
         return;
       }
 
@@ -142,6 +201,7 @@ export default function SOTSCoffeePage() {
           if (!vr.ok) { setError(vd.error); setFlow("browse"); return; }
           setOrder({ orderNumber: vd.order.orderNumber, buyerName: vd.order.buyerName, items: vd.order.items, totalQty: vd.order.totalQty });
           setFlow("confirmed");
+          fetchAvailability(session);
         },
         prefill: { name, contact: phone },
         theme: { color: BROWN },
@@ -167,8 +227,9 @@ export default function SOTSCoffeePage() {
         `}</style>
 
         {/* ── TOP BANNER ── */}
-        <div style={{ background: BROWN, padding: "10px 16px", textAlign: "center" }}>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(10.5px, 2.4vw, 12px)", letterSpacing: "0.04em", color: CREAM, margin: 0 }}>
+        <div style={{ background: BROWN, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", flexWrap: "wrap" }}>
+          <img src={SWAN_LOGO} alt="" aria-hidden width={18} height={18} style={{ width: "18px", height: "18px", flexShrink: 0, opacity: 0.9 }} />
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "clamp(10.5px, 2.4vw, 12px)", letterSpacing: "0.04em", color: CREAM, margin: 0, textAlign: "center" }}>
             You can now pre-order your coffee for the venue — collect fresh at the counter.
           </p>
         </div>
@@ -194,13 +255,27 @@ export default function SOTSCoffeePage() {
             <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#ffffff", flexShrink: 0 }} />
             <span style={{ fontFamily: "var(--font-body)", fontSize: "9.5px", letterSpacing: "0.18em", textTransform: "uppercase" }}>Pre-Booking Available Now</span>
           </motion.div>
-          <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.3 }}
-            style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12.5px, 1.6vw, 14px)", color: "rgba(0,0,0,0.5)", maxWidth: "440px", lineHeight: 1.85, margin: "0 auto" }}
-          >
-            Pay online, skip the queue, and collect at the counter when it&rsquo;s ready.
-          </motion.p>
         </section>
+
+        {/* ── SESSION SELECTOR ── */}
+        <div style={{ display: "flex", justifyContent: "center", gap: "10px", padding: "0 20px clamp(28px, 4vw, 40px)", flexWrap: "wrap" }}>
+          {SESSIONS.map(s => (
+            <button
+              key={s.id}
+              onClick={() => changeSession(s.id)}
+              style={{
+                background: session === s.id ? BROWN : "#ffffff",
+                color: session === s.id ? "#ffffff" : "#1a1a1a",
+                border: `1px solid ${session === s.id ? BROWN : "rgba(0,0,0,0.15)"}`,
+                padding: "12px 22px", fontFamily: "var(--font-body)", fontSize: "11px", letterSpacing: "0.08em",
+                cursor: "pointer", textAlign: "left", minWidth: "170px",
+              }}
+            >
+              <span style={{ display: "block", fontSize: "12.5px", fontWeight: 600, marginBottom: "2px" }}>{s.label}</span>
+              <span style={{ display: "block", fontSize: "10px", opacity: 0.75 }}>{s.dateLabel}</span>
+            </button>
+          ))}
+        </div>
 
         {/* ── MENU + ORDER ── */}
         <section style={{ padding: "clamp(24px, 4vw, 48px) clamp(20px, 5vw, 64px) clamp(48px, 7vw, 88px)", maxWidth: "1180px", margin: "0 auto" }}>
@@ -250,26 +325,45 @@ export default function SOTSCoffeePage() {
 
                 <div className="sotsc-layout">
                   {/* Items */}
-                  <div className="sotsc-menu-grid">
-                    {COFFEE_ITEMS.map((item, i) => {
-                      const qty = qtyById[item.id] ?? 0;
-                      return (
+                  <div>
+                    <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "14px" }}>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase", color: BROWN, margin: 0 }}>Coffee</p>
+                      {availability && (
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "10.5px", color: coffeeSoldOut ? "#901A1C" : "rgba(0,0,0,0.4)", margin: 0 }}>
+                          {coffeeSoldOut ? "Sold out for this session" : `${availability.coffee.available} left this session`}
+                        </p>
+                      )}
+                    </div>
+                    <div className="sotsc-menu-grid" style={{ marginBottom: "32px" }}>
+                      {coffeeItems.map((item, i) => (
                         <Fade key={item.id} delay={i * 0.05}>
-                          <div style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.07)", padding: "22px 22px 20px", height: "100%", display: "flex", flexDirection: "column" }}>
-                            <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "19px", color: "#1a1a1a", margin: "0 0 6px" }}>{item.name}</p>
-                            <p style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "rgba(0,0,0,0.5)", lineHeight: 1.6, margin: "0 0 16px", flex: 1 }}>{item.description}</p>
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                              <p style={{ fontFamily: "var(--font-body)", fontSize: "15px", color: "#1a1a1a", fontWeight: 600, margin: 0 }}>₹{item.priceRupees}</p>
-                              <div style={{ display: "flex", alignItems: "center" }}>
-                                <button type="button" onClick={() => setQty(item.id, qty - 1)} disabled={qty <= 0} style={{ width: "28px", height: "28px", background: "transparent", border: "1px solid rgba(0,0,0,0.18)", cursor: qty <= 0 ? "default" : "pointer", fontSize: "15px", color: qty <= 0 ? "rgba(0,0,0,0.2)" : "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
-                                <div style={{ width: "36px", height: "28px", borderTop: "1px solid rgba(0,0,0,0.18)", borderBottom: "1px solid rgba(0,0,0,0.18)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-heading)", fontSize: "15px", color: "#1a1a1a" }}>{qty}</div>
-                                <button type="button" onClick={() => setQty(item.id, qty + 1)} style={{ width: "28px", height: "28px", background: "transparent", border: "1px solid rgba(0,0,0,0.18)", cursor: "pointer", fontSize: "15px", color: "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
-                              </div>
-                            </div>
-                          </div>
+                          <ItemCard
+                            item={item} qty={qtyById[item.id] ?? 0}
+                            soldOut={coffeeSoldOut} atLimit={coffeeAtLimit}
+                            onQty={setQty}
+                          />
                         </Fade>
-                      );
-                    })}
+                      ))}
+                    </div>
+
+                    {foodItems.length > 0 && (
+                      <>
+                        <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase", color: BROWN, margin: "0 0 14px" }}>Food</p>
+                        <div className="sotsc-menu-grid">
+                          {foodItems.map((item, i) => {
+                            const avail = availability?.food[item.id];
+                            const qty = qtyById[item.id] ?? 0;
+                            const soldOut = avail ? avail.available <= 0 : false;
+                            const atLimit = avail ? qty >= avail.available : false;
+                            return (
+                              <Fade key={item.id} delay={i * 0.05}>
+                                <ItemCard item={item} qty={qty} soldOut={soldOut} atLimit={atLimit} onQty={setQty} />
+                              </Fade>
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {/* Order summary */}

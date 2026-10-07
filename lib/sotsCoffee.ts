@@ -1,17 +1,32 @@
 /**
- * Songs of the Stone — Chapter Three — Coffee pre-order configuration.
+ * Songs of the Stone — Chapter Three — Coffee & food pre-order configuration.
  *
  * One small event-side stall (not the ticketed main event). Single source of
- * truth for the menu, the promo rule and the event details shown on the page
- * and used in emails/confirmations — same role as lib/editions.ts plays for
- * The Living Table. Edit prices/items here; no DB migration needed for that.
+ * truth for the menu, sessions, caps and the promo rules — same role as
+ * lib/editions.ts plays for The Living Table. Edit prices/items here; no DB
+ * migration needed for that (sessions/caps are a different story — see
+ * supabase/add_session_to_coffee_orders.sql).
  */
 
-export interface CoffeeItem {
-  id: string;
-  name: string;
-  description: string;
-  priceRupees: number;
+export type SessionId = "oct10-evening" | "oct11-morning";
+
+export interface SessionInfo {
+  id: SessionId;
+  label: string;      // short — used in toggles/badges
+  dateLabel: string;  // full — used in confirmations
+}
+
+export const SESSIONS: SessionInfo[] = [
+  { id: "oct10-evening", label: "10th Evening", dateLabel: "10 October, 7 PM onwards" },
+  { id: "oct11-morning", label: "11th Morning", dateLabel: "11 October, 6 AM onwards" },
+];
+
+export function isSessionId(v: unknown): v is SessionId {
+  return v === "oct10-evening" || v === "oct11-morning";
+}
+
+export function getSession(id: SessionId): SessionInfo {
+  return SESSIONS.find(s => s.id === id) ?? SESSIONS[0];
 }
 
 export const SOTS_EVENT = {
@@ -24,18 +39,38 @@ export const SOTS_EVENT = {
   supportedBy: "Delhi Tourism & Archaeological Survey of India",
 };
 
-export const COFFEE_ITEMS: CoffeeItem[] = [
-  { id: "espresso",      name: "Espresso",                     description: "A single shot, pulled strong and short.",                     priceRupees: 100 },
-  { id: "cappuccino",    name: "Cappuccino",                   description: "Espresso, steamed milk, a cap of foam.",                       priceRupees: 150 },
-  { id: "cafe-latte",    name: "Café Latte",                   description: "Smooth and milky, for the long hours till dawn.",              priceRupees: 160 },
-  { id: "cold-brew",     name: "Cold Brew",                    description: "Slow-steeped, served over ice.",                               priceRupees: 170 },
-  { id: "filter-coffee", name: "Filter Coffee / Masala Chai",  description: "South Indian filter coffee or spiced chai — pick at the counter.", priceRupees: 120 },
+export interface MenuItem {
+  id: string;
+  name: string;
+  description: string;
+  priceRupees: number;
+  category: "coffee" | "food";
+  /** Food items only exist for one session. Coffee has no session restriction (capped per-session instead). */
+  session?: SessionId;
+}
+
+export const MENU_ITEMS: MenuItem[] = [
+  { id: "hot-americano",  name: "Hot Americano",  description: "Espresso, hot water.",           priceRupees: 200, category: "coffee" },
+  { id: "hot-latte",      name: "Hot Latte",      description: "Espresso, steamed milk.",        priceRupees: 200, category: "coffee" },
+  { id: "iced-americano", name: "Iced Americano", description: "Espresso, water, served over ice.", priceRupees: 200, category: "coffee" },
+  { id: "iced-latte",     name: "Iced Latte",     description: "Espresso, cold milk, served over ice.", priceRupees: 200, category: "coffee" },
+  { id: "toast-cookie",   name: "Sourdough Guacamole Toast + Oat-Raisin Cookie", description: "Eggless.", priceRupees: 300, category: "food", session: "oct10-evening" },
+  { id: "toast-teacake",  name: "Sourdough Guacamole Toast + Almond Teacake",    description: "Eggless.", priceRupees: 300, category: "food", session: "oct11-morning" },
 ];
 
-/** Placeholder prices — adjust here before the event; no code changes needed elsewhere. */
+/** Caps — coffee is one shared pool across all 4 drinks per session; each food item has its own pool. */
+export const CAPS = {
+  coffeePerSession: 380,
+  foodPerItem: 200,
+};
 
-export function getCoffeeItem(id: string): CoffeeItem | undefined {
-  return COFFEE_ITEMS.find(i => i.id === id);
+export function getMenuItem(id: string): MenuItem | undefined {
+  return MENU_ITEMS.find(i => i.id === id);
+}
+
+/** Items orderable for a given session — all coffee + that session's one food item. */
+export function itemsForSession(session: SessionId): MenuItem[] {
+  return MENU_ITEMS.filter(i => i.category === "coffee" || i.session === session);
 }
 
 export const COFFEE_PROMO = {
@@ -62,6 +97,7 @@ export interface CartLine {
 
 export interface PricedLine extends CartLine {
   name: string;
+  category: "coffee" | "food";
   unitPriceRupees: number;
   freeQty: number;
   payableQty: number;
@@ -80,17 +116,20 @@ export interface PricedOrder {
 
 /**
  * Server-authoritative pricing. Never trust a client-sent total.
- * Promo rule: the N (= COFFEE_PROMO.freeUnits) CHEAPEST individual cups across
+ * Promo rule: the N (= COFFEE_PROMO.freeUnits) CHEAPEST individual units across
  * the whole cart are free — deterministic regardless of cart/add order, and
  * resolves in the customer's favour (avoids counter disputes at the event).
+ * Session eligibility (does this food item belong to this session?) and
+ * capacity caps are NOT checked here — that needs a DB read, so it happens
+ * in the create-order route, which also owns the authoritative item lookup.
  */
 export function priceOrder(cart: CartLine[], couponCode?: string): PricedOrder {
   const resolved = cart
     .map(line => {
-      const item = getCoffeeItem(line.id);
-      return item ? { id: item.id, name: item.name, unitPriceRupees: item.priceRupees, qty: Math.max(1, Math.floor(line.qty)) } : null;
+      const item = getMenuItem(line.id);
+      return item ? { id: item.id, name: item.name, category: item.category, unitPriceRupees: item.priceRupees, qty: Math.max(1, Math.floor(line.qty)) } : null;
     })
-    .filter((l): l is { id: string; name: string; unitPriceRupees: number; qty: number } => l !== null);
+    .filter((l): l is { id: string; name: string; category: "coffee" | "food"; unitPriceRupees: number; qty: number } => l !== null);
 
   const normalizedCode = couponCode?.trim().toUpperCase();
   const testOverride = normalizedCode === COFFEE_TEST_PROMO.code;
@@ -109,7 +148,7 @@ export function priceOrder(cart: CartLine[], couponCode?: string): PricedOrder {
     const freeQty = Math.min(l.qty, freeCountByItem.get(l.id) ?? 0);
     const payableQty = l.qty - freeQty;
     return {
-      id: l.id, qty: l.qty, name: l.name, unitPriceRupees: l.unitPriceRupees,
+      id: l.id, qty: l.qty, name: l.name, category: l.category, unitPriceRupees: l.unitPriceRupees,
       freeQty, payableQty, lineTotalRupees: payableQty * l.unitPriceRupees,
     };
   });

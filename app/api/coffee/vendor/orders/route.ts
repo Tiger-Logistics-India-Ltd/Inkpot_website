@@ -22,7 +22,7 @@ export async function GET(req: Request) {
   const supabase = getSupabase();
   const { data: orders, error } = await supabase
     .from("sots_coffee_orders")
-    .select("id, order_number, buyer_name, buyer_phone, items, total_qty, amount_paise, coupon_code, served, served_at, created_at")
+    .select("id, order_number, buyer_name, buyer_phone, session, items, total_qty, amount_paise, coupon_code, served, served_at, created_at")
     .eq("payment_status", "paid")
     .order("order_number", { ascending: true });
 

@@ -2,12 +2,16 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
-import { priceOrder, COFFEE_PROMO, COFFEE_TEST_PROMO, type CartLine } from "@/lib/sotsCoffee";
+import { getSupabase } from "@/lib/supabase";
+import { priceOrder, getMenuItem, COFFEE_PROMO, COFFEE_TEST_PROMO, CAPS, isSessionId, type CartLine } from "@/lib/sotsCoffee";
 
 export async function POST(req: Request) {
   try {
-    const { name, phone, items, coupon_code } = await req.json();
+    const { name, phone, items, coupon_code, session } = await req.json();
 
+    if (!isSessionId(session)) {
+      return NextResponse.json({ error: "Please choose which session you're ordering for." }, { status: 400 });
+    }
     if (!name?.trim() || !phone?.trim()) {
       return NextResponse.json({ error: "Name and phone are required." }, { status: 400 });
     }
@@ -26,10 +30,60 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Your cart is empty." }, { status: 400 });
     }
 
+    // Every item must exist AND (if food) belong to this session.
+    for (const line of cart) {
+      const item = getMenuItem(line.id);
+      if (!item) {
+        return NextResponse.json({ error: "Unknown item in cart." }, { status: 400 });
+      }
+      if (item.category === "food" && item.session !== session) {
+        return NextResponse.json({ error: `${item.name} isn't on the menu for this session.` }, { status: 400 });
+      }
+    }
+
     // Server-authoritative pricing — never trust a client-sent total.
     const priced = priceOrder(cart, coupon_code);
     if (priced.lines.length === 0) {
       return NextResponse.json({ error: "Unknown item in cart." }, { status: 400 });
+    }
+
+    const dbEnabled = !!(process.env.SUPABASE_URL?.trim() && process.env.SUPABASE_SERVICE_ROLE_KEY?.trim());
+    if (!dbEnabled) {
+      return NextResponse.json({ error: "Ordering is temporarily unavailable. Please try again shortly." }, { status: 503 });
+    }
+    const supabase = getSupabase();
+
+    // ── Capacity check — coffee is one shared pool per session, each food
+    //    item has its own pool. Counts paid + pending (same tradeoff as the
+    //    Living Table ticketing system's capacity check). ────────────────
+    const { data: sessionOrders, error: availError } = await supabase
+      .from("sots_coffee_orders")
+      .select("items")
+      .eq("session", session)
+      .in("payment_status", ["paid", "pending"]);
+    if (availError) throw availError;
+
+    const soldByItem: Record<string, number> = {};
+    for (const o of sessionOrders ?? []) {
+      for (const it of (o.items as { id: string; qty: number }[]) ?? []) {
+        soldByItem[it.id] = (soldByItem[it.id] ?? 0) + it.qty;
+      }
+    }
+
+    const coffeeQtyInCart = priced.lines.filter(l => l.category === "coffee").reduce((s, l) => s + l.qty, 0);
+    if (coffeeQtyInCart > 0) {
+      const coffeeIds = ["hot-americano", "hot-latte", "iced-americano", "iced-latte"];
+      const coffeeSold = coffeeIds.reduce((s, id) => s + (soldByItem[id] ?? 0), 0);
+      if (coffeeSold + coffeeQtyInCart > CAPS.coffeePerSession) {
+        return NextResponse.json({ error: "Coffee is sold out for this session." }, { status: 400 });
+      }
+    }
+    for (const line of priced.lines) {
+      if (line.category !== "food") continue;
+      const sold = soldByItem[line.id] ?? 0;
+      if (sold + line.qty > CAPS.foodPerItem) {
+        return NextResponse.json({ error: `${line.name} is sold out for this session.` }, { status: 400 });
+      }
     }
 
     const normalizedCode = coupon_code?.trim().toUpperCase();
@@ -44,13 +98,6 @@ export async function POST(req: Request) {
       id: l.id, name: l.name, qty: l.qty, unit_price_paise: l.unitPriceRupees * 100, free_qty: l.freeQty,
     }));
 
-    const dbEnabled = !!(process.env.SUPABASE_URL?.trim() && process.env.SUPABASE_SERVICE_ROLE_KEY?.trim());
-    if (!dbEnabled) {
-      return NextResponse.json({ error: "Ordering is temporarily unavailable. Please try again shortly." }, { status: 503 });
-    }
-    const { getSupabase } = await import("@/lib/supabase");
-    const supabase = getSupabase();
-
     // ── FREE ORDER (promo covers the full cart) — skip Razorpay entirely ──
     if (payablePaise === 0) {
       const { data: order, error: insertError } = await supabase
@@ -58,6 +105,7 @@ export async function POST(req: Request) {
         .insert({
           buyer_name: name.trim(),
           buyer_phone: phone.trim(),
+          session,
           items: itemsSnapshot,
           total_qty: priced.totalQty,
           amount_paise: 0,
@@ -95,7 +143,7 @@ export async function POST(req: Request) {
       amount: payablePaise,
       currency: "INR",
       receipt: `sots_coffee_${Date.now()}`,
-      notes: { event: "songs-of-the-stone-coffee" },
+      notes: { event: "songs-of-the-stone-coffee", session },
     });
 
     const { data: order, error: insertError } = await supabase
@@ -103,6 +151,7 @@ export async function POST(req: Request) {
       .insert({
         buyer_name: name.trim(),
         buyer_phone: phone.trim(),
+        session,
         items: itemsSnapshot,
         total_qty: priced.totalQty,
         amount_paise: payablePaise,
