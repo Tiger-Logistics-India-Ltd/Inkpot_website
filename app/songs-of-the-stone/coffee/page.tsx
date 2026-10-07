@@ -5,9 +5,24 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import {
-  SESSIONS, ACTIVE_SESSIONS, itemsForSession, COFFEE_PROMO, SOTS_EVENT,
-  priceOrder, type CartLine, type SessionId,
+  SESSIONS, ACTIVE_SESSIONS, itemsForSession, SOTS_EVENT,
+  type CartLine, type SessionId,
 } from "@/lib/sotsCoffee";
+
+interface PricedLinePreview {
+  id: string; qty: number; name: string; category: "coffee" | "food";
+  unitPriceRupees: number; freeQty: number; payableQty: number; lineTotalRupees: number;
+}
+interface PricedPreview {
+  lines: PricedLinePreview[];
+  totalQty: number;
+  originalTotalRupees: number;
+  discountRupees: number;
+  payableTotalRupees: number;
+  codeState: "none" | "valid" | "invalid";
+  codeMessage: string | null;
+}
+const EMPTY_PRICED: PricedPreview = { lines: [], totalQty: 0, originalTotalRupees: 0, discountRupees: 0, payableTotalRupees: 0, codeState: "none", codeMessage: null };
 
 const BROWN = "#4B2E1E";
 const BROWN_DARK = "#3A2316";
@@ -136,9 +151,29 @@ export default function SOTSCoffeePage() {
     () => Object.entries(qtyById).filter(([, q]) => q > 0).map(([id, qty]) => ({ id, qty })),
     [qtyById]
   );
-  const priced = useMemo(() => priceOrder(cart, coupon), [cart, coupon]);
-  const promoValid = coupon.trim().toUpperCase() === COFFEE_PROMO.code;
+  const [priced, setPriced] = useState<PricedPreview>(EMPTY_PRICED);
   const hasItems = cart.length > 0;
+
+  // Server-computed preview — never done locally, so internal codes (like the
+  // RUPEE1 test code) can affect the real price without their logic ever
+  // shipping to the browser. Debounced so every keystroke/qty click doesn't
+  // fire a request.
+  useEffect(() => {
+    if (cart.length === 0) { setPriced(EMPTY_PRICED); return; }
+    const controller = new AbortController();
+    const t = setTimeout(() => {
+      fetch("/api/coffee/price-preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: cart, coupon_code: coupon.trim() || undefined }),
+        signal: controller.signal,
+      })
+        .then(r => (r.ok ? r.json() : null))
+        .then(data => { if (data) setPriced(data); })
+        .catch(() => {});
+    }, 250);
+    return () => { clearTimeout(t); controller.abort(); };
+  }, [cart, coupon]);
 
   const coffeeQtyInCart = coffeeItems.reduce((s, i) => s + (qtyById[i.id] ?? 0), 0);
   const coffeeSoldOut = availability ? availability.coffee.available <= 0 : false;
@@ -405,8 +440,8 @@ export default function SOTSCoffeePage() {
                               style={{ width: "100%", border: "none", borderBottom: "1px solid rgba(0,0,0,0.18)", padding: "8px 0", fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.1em", color: "#1a1a1a", outline: "none", background: "transparent", boxSizing: "border-box" }}
                             />
                             {coupon.trim() && (
-                              <p style={{ fontFamily: "var(--font-body)", fontSize: "10.5px", color: promoValid ? "#166534" : "#901A1C", margin: "6px 0 0" }}>
-                                {promoValid ? COFFEE_PROMO.description : "Invalid code."}
+                              <p style={{ fontFamily: "var(--font-body)", fontSize: "10.5px", color: priced.codeState === "valid" ? "#166534" : "#901A1C", margin: "6px 0 0" }}>
+                                {priced.codeMessage}
                               </p>
                             )}
                           </div>
