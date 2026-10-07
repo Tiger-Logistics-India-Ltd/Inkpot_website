@@ -54,6 +54,19 @@ export async function POST(req: Request) {
     }
     const supabase = getSupabase();
 
+    // ── Hard cap on the internal RUPEE1 test code (global, not per-session) ──
+    if (priced.testOverride) {
+      const { count: testUses, error: testCountError } = await supabase
+        .from("sots_coffee_orders")
+        .select("id", { count: "exact", head: true })
+        .eq("coupon_code", COFFEE_TEST_PROMO.code)
+        .in("payment_status", ["paid", "pending"]);
+      if (testCountError) throw testCountError;
+      if ((testUses ?? 0) >= COFFEE_TEST_PROMO.maxUses) {
+        return NextResponse.json({ error: "Test code limit reached." }, { status: 400 });
+      }
+    }
+
     // ── Capacity check — coffee is one shared pool per session, each food
     //    item has its own pool. Counts paid + pending (same tradeoff as the
     //    Living Table ticketing system's capacity check). ────────────────

@@ -17,6 +17,7 @@ import { priceOrder, type CartLine, type PricedOrder } from "./sotsCoffee";
 export const COFFEE_TEST_PROMO = {
   code: "RUPEE1",
   flatRupees: 1,
+  maxUses: 5, // hard cap, counted across paid + pending — enforced in create-order (needs a DB read)
 };
 
 export interface PricedOrderServer extends PricedOrder {
