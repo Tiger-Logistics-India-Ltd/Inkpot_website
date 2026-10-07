@@ -243,7 +243,7 @@ export default function SOTSCoffeeVendorPage() {
         )}
         <div className="vendor-grid">
           {filtered.map(o => (
-            <div key={o.id} style={{ background: "#ffffff", borderRadius: "12px", boxShadow: "0 1px 10px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.05)", opacity: o.served ? 0.6 : 1, display: "flex", flexDirection: "column" }}>
+            <div key={o.id} style={{ background: "#ffffff", borderRadius: "12px", boxShadow: "0 1px 10px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.05)", display: "flex", flexDirection: "column" }}>
               <div style={{ padding: "18px 18px 12px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px" }}>
                 <div>
                   <p style={{ fontFamily: "var(--font-body)", fontWeight: 800, fontSize: "26px", color: "#1a1a1a", margin: 0, lineHeight: 1 }}>#{String(o.order_number).padStart(3, "0")}</p>
