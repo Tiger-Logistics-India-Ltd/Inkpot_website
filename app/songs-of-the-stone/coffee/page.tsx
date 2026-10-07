@@ -216,13 +216,17 @@ export default function SOTSCoffeePage() {
   return (
     <>
       <Navbar />
-      <main style={{ background: CREAM, overflowX: "hidden" }}>
+      <main className="sotsc-main" style={{ background: CREAM, overflowX: "hidden" }}>
         <style>{`
+          .sotsc-main      { padding-top: 64px; }
           .sotsc-menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
           .sotsc-layout    { display: grid; grid-template-columns: 1fr 380px; gap: clamp(28px, 4vw, 56px); align-items: start; }
           @media (max-width: 860px) {
             .sotsc-menu-grid { grid-template-columns: 1fr; }
             .sotsc-layout    { grid-template-columns: 1fr; }
+          }
+          @media (min-width: 1024px) {
+            .sotsc-main { padding-top: 96px; }
           }
         `}</style>
 
