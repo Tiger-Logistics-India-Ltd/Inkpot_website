@@ -1,6 +1,7 @@
 'use client';
 
 import Navbar from "@/components/Navbar";
+import RescheduleNoticeModal from "@/components/RescheduleNoticeModal";
 import Hero from "@/components/Hero";
 import AboutBelief from "@/components/AboutBelief";
 import FeaturedEvent from "@/components/FeaturedEvent";
@@ -14,6 +15,7 @@ import SectionWrapper from "@/components/SectionWrapper";
 export default function Home() {
   return (
     <>
+      <RescheduleNoticeModal />
       <Navbar />
       <main className="w-full bg-white">
         <Hero />

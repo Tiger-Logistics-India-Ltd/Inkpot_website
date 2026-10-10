@@ -22,11 +22,12 @@ export const SESSIONS: SessionInfo[] = [
 ];
 
 /**
- * Sessions actually orderable right now. 10th Evening goes first, so 11th
- * Morning is held back until the night of the 10th — flip it back on here
- * (just add "oct11-morning") when ready, no other code changes needed.
+ * Sessions actually orderable right now. EMPTY — the coffee stall was taken
+ * down 2026-10-10 ("not moving forward" per the user) after the 10th Evening
+ * concert was rescheduled to the 11th. This blocks create-order server-side
+ * too (not just the UI, which was replaced with a static notice page).
  */
-export const ACTIVE_SESSIONS: SessionId[] = ["oct10-evening"];
+export const ACTIVE_SESSIONS: SessionId[] = [];
 
 export function isSessionId(v: unknown): v is SessionId {
   return v === "oct10-evening" || v === "oct11-morning";
