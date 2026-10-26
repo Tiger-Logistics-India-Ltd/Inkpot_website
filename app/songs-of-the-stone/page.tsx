@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AutoplayVideo from "@/components/AutoplayVideo";
 
 const RED = "#901A1C";
 const GOLD = "#C9A84C";
@@ -57,7 +58,7 @@ const CHAPTERS: Chapter[] = [
     subtitle: "Rakesh Chaurasia & Friends — The Legend Ensemble",
     date: "8 March 2026",
     venue: "Qutub Minar, New Delhi",
-    image: "/images/Songs of the stone/ch2-stage-dusk.png",
+    image: "/images/Songs of the stone/ch2-poster.png",
     paragraphs: [
       "Songs of the Stone by Inkpot India and HSBC 'Live The Legacy' presented an immersive musical experience at the Qutub Minar. The evening featured two-time Grammy Award–winning flautist Rakesh Chaurasia, accompanied by Gino Banks, Satyajit Talwalkar, Sheldon D'Silva, Sanjoy Das and Sangeet Haldipur — a collective of some of India's finest contemporary classical musicians.",
       "As dusk yielded to night, the monument's illuminated silhouette became both stage and muse, while the serenity of the bansuri and the ensemble's virtuosity created a confluence of sound, history and architectural splendour.",
@@ -78,15 +79,34 @@ const CHAPTERS: Chapter[] = [
   },
 ];
 
-const GALLERY = [
-  { src: "/images/Songs of the stone/gallery/ch1-sitar-qutub.jpg", alt: "Mehtab Ali Niazi performing beneath the Qutub Minar, Chapter One" },
-  { src: "/images/Songs of the stone/ch3-dusk.png", alt: "The Purana Qila stage at dusk, Chapter Three" },
-  { src: "/images/Songs of the stone/gallery/ch2-drummer.png", alt: "The Legend Ensemble in performance, Chapter Two" },
-  { src: "/images/Songs of the stone/gallery/ch3-portrait-1.png", alt: "Amrita Kaur in performance, Chapter Three" },
-  { src: "/images/Songs of the stone/gallery/ch3-landscape-1.png", alt: "Chapter Three, Purana Qila" },
-  { src: "/images/Songs of the stone/gallery/ch3-portrait-2.png", alt: "A word before the song, Chapter Three" },
-  { src: "/images/Songs of the stone/ch3-dawn.png", alt: "The Purana Qila stage at dawn, Chapter Three" },
-  { src: "/images/Songs of the stone/gallery/ch3-landscape-2.png", alt: "An evening unfolds, Chapter Three" },
+const GALLERY: { chapter: string; images: { src: string; alt: string }[] }[] = [
+  {
+    chapter: "Chapter One — The Mehtab Ali Niazi Experience",
+    images: [
+      { src: "/images/Songs of the stone/gallery/ch1-sitar-qutub.jpg", alt: "Mehtab Ali Niazi performing beneath the Qutub Minar, Chapter One" },
+      { src: "/images/Songs of the stone/gallery/ch1-portrait-1.png", alt: "The Qutub Minar lit for Songs of the Stone, Chapter One" },
+      { src: "/images/Songs of the stone/gallery/ch1-portrait-2.jpg", alt: "Chapter One, at the Qutub Minar" },
+      { src: "/images/Songs of the stone/gallery/ch1-portrait-3.jpg", alt: "Chapter One, at the Qutub Minar" },
+    ],
+  },
+  {
+    chapter: "Chapter Two — Live The Legacy",
+    images: [
+      { src: "/images/Songs of the stone/gallery/ch2-portrait-1.png", alt: "Rakesh Chaurasia in performance, Chapter Two" },
+      { src: "/images/Songs of the stone/gallery/ch2-portrait-2.png", alt: "The Qutub Minar at twilight, Chapter Two" },
+      { src: "/images/Songs of the stone/gallery/ch2-portrait-3.png", alt: "Chapter Two, at the Qutub Minar" },
+      { src: "/images/Songs of the stone/gallery/ch2-portrait-4.png", alt: "Chapter Two, at the Qutub Minar" },
+    ],
+  },
+  {
+    chapter: "Chapter Three — From Dusk to Dawn",
+    images: [
+      { src: "/images/Songs of the stone/gallery/ch3-portrait-1.png", alt: "Amrita Kaur in performance, Chapter Three" },
+      { src: "/images/Songs of the stone/gallery/ch3-portrait-2.png", alt: "A word before the song, Chapter Three" },
+      { src: "/images/Songs of the stone/gallery/ch3-portrait-3.png", alt: "Chapter Three, at Purana Qila" },
+      { src: "/images/Songs of the stone/gallery/ch3-portrait-4.png", alt: "Welcome to the stage, Chapter Three" },
+    ],
+  },
 ];
 
 const PRESS = [
@@ -95,26 +115,31 @@ const PRESS = [
   { publication: "The Wire", title: "A Saga of Sound, Space and Story Brings the Qutub Minar into a New Cultural Conversation", image: "/images/Songs of the stone/press/the-wire.png", url: "https://thewire.in/ptiprnews/songs-of-the-stone-a-saga-of-sound-space-and-story-brings-the-qutub-minar-into-a-new-cultural-conversation" },
 ];
 
-const PARTNERS = [
-  { name: "Max Estates", src: "/images/Songs of the stone/partners/max.svg" },
+/* Headline sponsors — shown larger, one line, above the rest. */
+const MAIN_PARTNERS = [
   { name: "HSBC", src: "/images/Songs of the stone/partners/hsbc.png" },
-  { name: "Delhi Tourism", src: "/images/Songs of the stone/partners/delhi-tourism.svg" },
+  { name: "Max Estates", src: "/images/Songs of the stone/partners/max.svg" },
   { name: "Archaeological Survey of India", src: "/images/Songs of the stone/partners/arc.svg" },
+  { name: "Vedica", src: "/images/Songs of the stone/partners/vedica.png" },
+  { name: "Aava", src: "/images/Songs of the stone/partners/aava.svg" },
+];
+
+const PARTNERS = [
+  { name: "Delhi Tourism", src: "/images/Songs of the stone/partners/delhi-tourism.svg" },
   { name: "Stanford", src: "/images/Songs of the stone/partners/stanford.svg" },
   { name: "Jaipur Rugs", src: "/images/Songs of the stone/partners/jaipur-rugs.svg" },
-  { name: "Aava", src: "/images/Songs of the stone/partners/aava.svg" },
   { name: "Aanyna", src: "/images/Songs of the stone/partners/aanyna.svg" },
   { name: "Hyder", src: "/images/Songs of the stone/partners/hyder.svg" },
   { name: "Alegro", src: "/images/Songs of the stone/partners/alegro.svg" },
   { name: "Olaf", src: "/images/Songs of the stone/partners/olaf.svg" },
   { name: "Berger", src: "/images/Songs of the stone/partners/berger.png" },
-  { name: "Vedica", src: "/images/Songs of the stone/partners/vedica.png" },
   { name: "Cohoma", src: "/images/Songs of the stone/partners/cohoma.png" },
   { name: "Iraado", src: "/images/Songs of the stone/partners/iraado.png" },
   { name: "Kian Falcon", src: "/images/Songs of the stone/partners/kian-falcon.png" },
   { name: "Dialogues by Nirmals", src: "/images/Songs of the stone/partners/dialogues-by-nirmals.png" },
   { name: "Handicraft Haveli Jaipur", src: "/images/Songs of the stone/partners/handicraft-haveli.png" },
   { name: "Maioya", src: "/images/Songs of the stone/partners/maioya.png" },
+  { name: "Pio", src: "/images/Songs of the stone/partners/pio.svg" },
 ];
 
 function AboutBlock({ eyebrow, children, image, alt, reverse, delay = 0 }: {
@@ -145,27 +170,28 @@ export default function SongsOfTheStonePage() {
         <style>{`
           .sots-about-grid { display: flex; align-items: center; gap: clamp(32px, 5vw, 72px); margin-bottom: clamp(56px, 8vw, 96px); }
           .sots-chapter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
-          .sots-gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-          .sots-press-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+          .sots-gallery-rail { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity; padding: 0 clamp(24px, 6vw, 110px) 8px; -webkit-overflow-scrolling: touch; }
+          .sots-gallery-tile { position: relative; flex: 0 0 auto; width: clamp(200px, 32vw, 300px); aspect-ratio: 3 / 4; overflow: hidden; background: #111; scroll-snap-align: start; }
+          .sots-press-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
+          .sots-main-partner-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(8px, 1.5vw, 20px); }
           .sots-partner-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: rgba(0,0,0,0.08); }
           @media (max-width: 860px) {
             .sots-about-grid, .sots-chapter-grid { grid-template-columns: 1fr; flex-direction: column !important; }
-            .sots-gallery-grid { grid-template-columns: repeat(2, 1fr); }
             .sots-press-grid { grid-template-columns: 1fr; }
+            .sots-main-partner-row { grid-template-columns: repeat(3, 1fr); }
             .sots-partner-grid { grid-template-columns: repeat(3, 1fr); }
           }
         `}</style>
 
         {/* ── HERO ── */}
         <section style={{ position: "relative", height: "100dvh", minHeight: "560px", overflow: "hidden", display: "flex" }}>
-          <Image
-            src="/images/Songs of the stone/ch3-dusk.png"
-            alt="Songs of the Stone — a live performance staged within Delhi's heritage monuments"
-            fill
-            priority
-            sizes="100vw"
-            style={{ objectFit: "cover", objectPosition: "center 30%" }}
-          />
+          <AutoplayVideo
+            poster="/images/Songs of the stone/ch3-dusk.png"
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%" }}
+          >
+            <source src="/images/Songs of the stone/hero-video.mp4" type="video/mp4" />
+            <track kind="captions" src="/empty.vtt" srcLang="en" label="No dialogue" />
+          </AutoplayVideo>
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,8,6,0.35) 0%, rgba(10,8,6,0.55) 55%, rgba(10,8,6,0.92) 100%)" }} />
 
           <div style={{ position: "relative", zIndex: 2, flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "clamp(88px, 12vh, 112px) 24px clamp(48px, 8vh, 80px)" }}>
@@ -186,12 +212,6 @@ export default function SongsOfTheStonePage() {
               style={{ fontFamily: "var(--font-body)", fontSize: "clamp(12px, 2vw, 15px)", letterSpacing: "0.1em", color: GOLD, textTransform: "uppercase", margin: "0 0 28px" }}
             >
               Art. Architecture. Performance.
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, delay: 0.85 }}
-              style={{ fontFamily: "var(--font-body)", fontSize: "clamp(13px, 1.6vw, 15px)", color: "rgba(244,239,230,0.65)", maxWidth: "480px", lineHeight: 1.9 }}
-            >
-              After-hours cultural evenings at Delhi&rsquo;s heritage monuments — where space becomes stage, arches become resonance, and stone becomes story.
             </motion.p>
           </div>
         </section>
@@ -216,33 +236,6 @@ export default function SongsOfTheStonePage() {
               Each Songs of the Stone evening is intimate by design — an invitation to share in something rare and real: a moment of connection between music, history, and each other.
             </p>
           </AboutBlock>
-
-          <AboutBlock eyebrow="Inkpot" image="/images/Songs of the stone/SOTS-71.jpg" alt="The stage and audience at a Songs of the Stone evening" reverse delay={0.05}>
-            <p style={{ margin: "0 0 18px" }}>
-              India stands at an inflection point in its relationship with its own cultural wealth. For too long, external narratives dictated what was valued, what was preserved, and what slipped into silence.
-            </p>
-            <p style={{ margin: "0 0 18px" }}>
-              Inkpot exists to change that — to bring our music, literature, architecture, and performance back into the light, not as relics of the past, but as living forces of beauty and imagination. Our task is not only to preserve, but to reframe — to make our traditions aspirational and relevant in the contemporary global imagination.
-            </p>
-            <p style={{ margin: 0 }}>
-              Through intimate, thoughtfully crafted experiences, each event is an invitation to pause, listen, and rediscover the pulse of Indian artistry in a new light.
-            </p>
-          </AboutBlock>
-
-          <AboutBlock eyebrow="About the Founder" image="/images/Songs of the stone/about-founder.svg" alt="Simar Malhotra, Founder of Inkpot India" delay={0.1}>
-            <p style={{ margin: "0 0 18px" }}>
-              Art has always been essential. From cave paintings and resistance poetry to the music of the freedom movement, creative expression has shaped our identity and resilience.
-            </p>
-            <p style={{ margin: "0 0 18px" }}>
-              Today, reconnecting with that instinct is not nostalgia. It is power. Inkpot produces experiences that are at once scholarly and sensorial, rooted yet experimental. Through new experiences like Songs of the Stone, we aim to build a cultural ecosystem where India&rsquo;s traditions are remembered not as archives, but reimagined as living art.
-            </p>
-            <p style={{ margin: 0, fontFamily: "var(--font-heading)", fontStyle: "italic", color: "#1a1a1a", fontSize: "16px" }}>
-              Simar Malhotra<br />
-              <span style={{ fontFamily: "var(--font-body)", fontStyle: "normal", fontSize: "12px", color: "rgba(0,0,0,0.5)" }}>
-                Author &amp; Founder, Inkpot India — Alumnus, Stanford University &amp; Columbia University
-              </span>
-            </p>
-          </AboutBlock>
         </section>
 
         {/* ── THREE CHAPTERS ── */}
@@ -264,7 +257,6 @@ export default function SongsOfTheStonePage() {
                 </Fade>
                 <Fade delay={0.12}>
                   <div>
-                    <p style={{ fontFamily: "var(--font-heading)", fontSize: "72px", fontWeight: 400, color: "rgba(244,239,230,0.1)", lineHeight: 1, margin: "0 0 4px" }}>{ch.num}</p>
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase", color: RED, margin: "0 0 14px" }}>{ch.label}</p>
                     <h3 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(24px, 3vw, 32px)", color: CREAM, margin: "0 0 8px", lineHeight: 1.2 }}>{ch.title}</h3>
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: GOLD, letterSpacing: "0.02em", margin: "0 0 18px" }}>{ch.subtitle}</p>
@@ -279,23 +271,30 @@ export default function SongsOfTheStonePage() {
           ))}
         </section>
 
-        {/* ── GALLERY ── */}
-        <section style={{ padding: "clamp(56px, 8vw, 96px) clamp(24px, 6vw, 110px) 0", maxWidth: "1280px", margin: "0 auto" }}>
+        {/* ── GALLERY — portrait only, grouped per chapter, horizontal scroll ── */}
+        <section style={{ padding: "clamp(56px, 8vw, 96px) 0 0" }}>
           <Fade>
             <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: RED, textAlign: "center", margin: "0 0 16px" }}>Explore</p>
             <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(28px, 4vw, 44px)", color: "#1a1a1a", textAlign: "center", margin: "0 0 clamp(40px, 6vw, 64px)", lineHeight: 1.2 }}>
               Gallery
             </h2>
           </Fade>
-          <div className="sots-gallery-grid">
-            {GALLERY.map((g, i) => (
-              <Fade key={g.src} delay={(i % 4) * 0.05}>
-                <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 4", overflow: "hidden", background: "#111" }}>
-                  <Image src={g.src} alt={g.alt} fill sizes="(max-width: 860px) 50vw, 25vw" style={{ objectFit: "cover" }} loading="lazy" />
-                </div>
+          {GALLERY.map((g, gi) => (
+            <div key={g.chapter} style={{ marginBottom: gi < GALLERY.length - 1 ? "clamp(36px, 5vw, 56px)" : 0 }}>
+              <Fade>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(0,0,0,0.45)", margin: "0 0 16px", padding: "0 clamp(24px, 6vw, 110px)" }}>
+                  {g.chapter}
+                </p>
               </Fade>
-            ))}
-          </div>
+              <div className="sots-gallery-rail">
+                {g.images.map((img) => (
+                  <div key={img.src} className="sots-gallery-tile">
+                    <Image src={img.src} alt={img.alt} fill sizes="38vw" style={{ objectFit: "cover" }} loading="lazy" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </section>
 
         {/* ── PRESS ── */}
@@ -309,11 +308,11 @@ export default function SongsOfTheStonePage() {
           <div className="sots-press-grid">
             {PRESS.map((p, i) => (
               <Fade key={p.url} delay={i * 0.08}>
-                <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: "block", textDecoration: "none", background: "#ffffff", border: "1px solid rgba(0,0,0,0.07)" }}>
-                  <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10", overflow: "hidden" }}>
+                <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", flexDirection: "column", height: "100%", textDecoration: "none", background: "#ffffff", border: "1px solid rgba(0,0,0,0.07)" }}>
+                  <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 10", overflow: "hidden", flexShrink: 0 }}>
                     <Image src={p.image} alt={p.title} fill sizes="(max-width: 860px) 100vw, 33vw" style={{ objectFit: "cover" }} loading="lazy" />
                   </div>
-                  <div style={{ padding: "20px 22px 24px" }}>
+                  <div style={{ padding: "20px 22px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
                     <p style={{ fontFamily: "var(--font-body)", fontSize: "9.5px", letterSpacing: "0.18em", textTransform: "uppercase", color: RED, margin: "0 0 10px" }}>{p.publication}</p>
                     <p style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontSize: "15.5px", color: "#1a1a1a", lineHeight: 1.45, margin: 0 }}>{p.title}</p>
                   </div>
@@ -326,10 +325,23 @@ export default function SongsOfTheStonePage() {
         {/* ── PARTNERS ── */}
         <section style={{ background: "#ffffff", padding: "clamp(56px, 8vw, 96px) clamp(24px, 6vw, 110px)" }}>
           <Fade>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: RED, textAlign: "center", margin: "0 0 clamp(40px, 6vw, 56px)" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: RED, textAlign: "center", margin: "0 0 clamp(28px, 4vw, 36px)" }}>
               In Association With
             </p>
           </Fade>
+
+          <div className="sots-main-partner-row" style={{ maxWidth: "1180px", margin: "0 auto clamp(48px, 6vw, 68px)" }}>
+            {MAIN_PARTNERS.map((p) => (
+              <div key={p.name} style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "clamp(16px, 2.4vw, 26px)", aspectRatio: "3 / 2" }}>
+                <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                  <Image src={p.src} alt={p.name} fill sizes="260px" unoptimized={p.src.endsWith(".svg")} style={{ objectFit: "contain", mixBlendMode: "multiply" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ maxWidth: "1180px", margin: "0 auto clamp(24px, 3vw, 32px)", height: "1px", background: "rgba(0,0,0,0.08)" }} />
+
           <div className="sots-partner-grid" style={{ maxWidth: "1180px", margin: "0 auto" }}>
             {PARTNERS.map((p) => (
               <div key={p.name} style={{ background: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", padding: "clamp(20px, 3vw, 32px)", aspectRatio: "3 / 2" }}>
