@@ -84,7 +84,7 @@ const GALLERY: { chapter: string; images: { src: string; alt: string }[] }[] = [
     chapter: "Chapter One — The Mehtab Ali Niazi Experience",
     images: [
       { src: "/images/Songs of the stone/gallery/ch1-sitar-qutub.jpg", alt: "Mehtab Ali Niazi performing beneath the Qutub Minar, Chapter One" },
-      { src: "/images/Songs of the stone/gallery/ch1-portrait-1.png", alt: "The Qutub Minar lit for Songs of the Stone, Chapter One" },
+      { src: "/images/Songs of the stone/gallery/ch1-portrait-1.jpg", alt: "A guest at Chapter One, Songs of the Stone" },
       { src: "/images/Songs of the stone/gallery/ch1-portrait-2.jpg", alt: "Chapter One, at the Qutub Minar" },
       { src: "/images/Songs of the stone/gallery/ch1-portrait-3.jpg", alt: "Chapter One, at the Qutub Minar" },
     ],
@@ -93,8 +93,8 @@ const GALLERY: { chapter: string; images: { src: string; alt: string }[] }[] = [
     chapter: "Chapter Two — Live The Legacy",
     images: [
       { src: "/images/Songs of the stone/gallery/ch2-portrait-1.png", alt: "Rakesh Chaurasia in performance, Chapter Two" },
-      { src: "/images/Songs of the stone/gallery/ch2-portrait-2.png", alt: "The Qutub Minar at twilight, Chapter Two" },
-      { src: "/images/Songs of the stone/gallery/ch2-portrait-3.png", alt: "Chapter Two, at the Qutub Minar" },
+      { src: "/images/Songs of the stone/gallery/ch2-portrait-2.png", alt: "The Legend Ensemble's drummer in performance, Chapter Two" },
+      { src: "/images/Songs of the stone/gallery/ch2-portrait-3.png", alt: "The ensemble performing beneath the Qutub Minar, Chapter Two" },
       { src: "/images/Songs of the stone/gallery/ch2-portrait-4.png", alt: "Chapter Two, at the Qutub Minar" },
     ],
   },
@@ -102,8 +102,8 @@ const GALLERY: { chapter: string; images: { src: string; alt: string }[] }[] = [
     chapter: "Chapter Three — From Dusk to Dawn",
     images: [
       { src: "/images/Songs of the stone/gallery/ch3-portrait-1.png", alt: "Amrita Kaur in performance, Chapter Three" },
-      { src: "/images/Songs of the stone/gallery/ch3-portrait-2.png", alt: "A word before the song, Chapter Three" },
-      { src: "/images/Songs of the stone/gallery/ch3-portrait-3.png", alt: "Chapter Three, at Purana Qila" },
+      { src: "/images/Songs of the stone/gallery/ch3-portrait-2.png", alt: "The morning performance, Live The Legacy, Chapter Three" },
+      { src: "/images/Songs of the stone/gallery/ch3-portrait-3.png", alt: "Lanterns at dusk, Chapter Three" },
       { src: "/images/Songs of the stone/gallery/ch3-portrait-4.png", alt: "Welcome to the stage, Chapter Three" },
     ],
   },
