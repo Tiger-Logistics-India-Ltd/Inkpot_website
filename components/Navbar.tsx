@@ -8,9 +8,9 @@ import Image from "next/image";
 const experiences = [
   {
     label: "Songs of the Stone",
-    href: "https://www.songsofthestone.com/",
+    href: "/songs-of-the-stone",
     image: "/images/Songs of the stone/SOTS-71.jpg",
-    links: [{ label: "Learn More", href: "https://www.songsofthestone.com/" }],
+    links: [{ label: "Learn More", href: "/songs-of-the-stone" }],
   },
   {
     label: "The Living Table",

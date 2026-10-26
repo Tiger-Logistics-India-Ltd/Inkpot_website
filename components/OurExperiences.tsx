@@ -49,7 +49,7 @@ function PanelSOTS({ isMobile }: { isMobile: boolean }) {
             </svg>
             <span style={{ fontFamily: "var(--font-body)", fontSize: "9px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.08em" }}>Heritage Monuments, Delhi</span>
           </div>
-          <a href="https://www.songsofthestone.com/" target="_blank" rel="noopener noreferrer"
+          <a href="/songs-of-the-stone"
             style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.9)", textDecoration: "none", fontWeight: 700 }}>
             Explore Experience
             <svg width="12" height="8" viewBox="0 0 16 10" fill="none">
@@ -94,7 +94,7 @@ function PanelSOTS({ isMobile }: { isMobile: boolean }) {
           </svg>
           <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", color: "rgba(255,255,255,0.78)", letterSpacing: "0.08em" }}>Heritage Monuments, Delhi</span>
         </div>
-        <a href="https://www.songsofthestone.com/" target="_blank" rel="noopener noreferrer"
+        <a href="/songs-of-the-stone"
           style={{ display: "inline-flex", alignItems: "center", gap: "10px", fontFamily: "var(--font-body)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.9)", textDecoration: "none", transition: "color 0.25s" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.9)")}
