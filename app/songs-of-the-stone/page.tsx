@@ -325,9 +325,12 @@ export default function SongsOfTheStonePage() {
         {/* ── PARTNERS ── */}
         <section style={{ background: "#ffffff", padding: "clamp(56px, 8vw, 96px) clamp(24px, 6vw, 110px)" }}>
           <Fade>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: RED, textAlign: "center", margin: "0 0 clamp(28px, 4vw, 36px)" }}>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "9px", letterSpacing: "0.34em", textTransform: "uppercase", color: RED, textAlign: "center", margin: "0 0 16px" }}>
               In Association With
             </p>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(28px, 4vw, 44px)", color: "#1a1a1a", textAlign: "center", margin: "0 0 clamp(40px, 6vw, 56px)", lineHeight: 1.2 }}>
+              Partners
+            </h2>
           </Fade>
 
           <div className="sots-main-partner-row" style={{ maxWidth: "1180px", margin: "0 auto clamp(48px, 6vw, 68px)" }}>
