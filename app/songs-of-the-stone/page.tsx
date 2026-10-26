@@ -227,7 +227,7 @@ export default function SongsOfTheStonePage() {
 
           <AboutBlock eyebrow="Songs of the Stone" image="/images/Songs of the stone/SOTS-165.jpg" alt="A Songs of the Stone evening in performance">
             <p style={{ margin: "0 0 18px" }}>
-              <strong>Songs of the Stone</strong> is Inkpot&rsquo;s series of after-hours cultural evenings at Delhi&rsquo;s heritage monuments. Here, space becomes stage, arches become resonance, and stone becomes story.
+              <strong>Songs of the Stone</strong> is Inkpot&rsquo;s series of cultural evenings at Delhi&rsquo;s heritage monuments. Here, space becomes stage, arches become resonance, and stone becomes story.
             </p>
             <p style={{ margin: "0 0 18px" }}>
               The debut edition unfolded at the Qutub Minar, a UNESCO World Heritage Site, transforming the monument into a living arena of music and memory. Presented in association with the Delhi Government and the Archaeological Survey of India, each evening celebrates the dialogue between heritage and contemporary expression.
