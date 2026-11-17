@@ -458,10 +458,10 @@ export default function HeritageCleanlinessPage() {
               </h2>
               
               <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "14px" : "15.5px", lineHeight: 1.8, color: "rgba(0,0,0,0.6)", margin: "0 0 14px" }}>
-                Join us on Sunday, 30th August at 4:00 PM for Heritage, Culture &amp; Cleanliness: an evening of community action, heritage storytelling and conversations with people who share a love for heritage.
+                Join us on Sunday, 29th November at 10:00 AM at Mehrauli Archaeological Park for a morning of cleanliness, storytelling and great conversations. This month we move deeper into the park, to the areas that still need our attention.
               </p>
               <p style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? "14px" : "15.5px", lineHeight: 1.8, color: "rgba(0,0,0,0.6)", margin: "0 0 12px" }}>
-                Whether you&rsquo;ve joined us before or this is your first time, we&rsquo;d love to have you with us. Bring a friend, wear comfortable clothes, and spend the evening connecting with a wonderful community while giving back to the spaces that bring us together.
+                Whether you&rsquo;ve joined us before or this is your first time, we&rsquo;d love to have you with us. Bring a friend, wear comfortable clothes, contribute through Shramdaan, and be part of the collective effort to care for our shared heritage.
               </p>
               {/* Montserrat is this site's --font-body */}
               <p style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: isMobile ? "15px" : "18px", letterSpacing: "0.06em", color: OXBLOOD, margin: "18px 0 26px" }}>
@@ -470,9 +470,9 @@ export default function HeritageCleanlinessPage() {
 
               <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: isMobile ? "32px" : "58px" }}>
                 {[
-                  { icon: "📍", text: "Sultan Garhi Tomb, Vasant Kunj" },
-                  { icon: "🗓️", text: "Sunday, 30 August 2026" },
-                  { icon: "🕖", text: "4:00 PM onwards" },
+                  { icon: "📍", text: "Mehrauli Archaeological Park, New Delhi" },
+                  { icon: "🗓️", text: "Sunday, 29 November 2026" },
+                  { icon: "🕙", text: "10:00 AM onwards" },
                 ].map((d) => (
                   <div key={d.text} style={{ display: "flex", alignItems: "center", gap: "7px", border: "1px solid rgba(139,30,32,0.3)", borderRadius: "999px", padding: "8px 15px", fontFamily: "var(--font-body)", fontSize: "12px", letterSpacing: "0.02em", color: "rgba(0,0,0,0.7)" }}>
                     <span aria-hidden="true">{d.icon}</span>{d.text}
@@ -494,7 +494,7 @@ export default function HeritageCleanlinessPage() {
                     You&rsquo;re in, changemaker
                   </h3>
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "14px", color: "rgba(0,0,0,0.5)", lineHeight: 1.8 }}>
-                    We&rsquo;ll be in touch with the details for the 30th August drive. See you at the site.
+                    We&rsquo;ll be in touch with the details for the 29th November drive. See you at the site.
                   </p>
                 </div>
               ) : (

@@ -19,36 +19,14 @@ interface EventItem {
 const events: EventItem[] = [
   {
     num: "01",
-    tag: "Food · Culture · Memory",
-    title: "The Living Table",
-    chapter: "Chapter Two",
-    body: "A conversation on India's food history, fusion music, a little mystery, and a table where the past finds a new expression.",
-    image: "/images/thelivingtable/TLT_Chapter_2/new_hero_poster.png",
-    status: "active",
-    location: "Greenr Cafe, GK1, New Delhi",
-    cta: { label: "Sold Out", href: "/the-living-table/lost-grains-of-india" },
-  },
-  {
-    num: "02",
     tag: "Community Initiative",
     title: "The Heritage Cleanliness Project",
-    chapter: null,
-    body: "Every last Sunday, we gather at a heritage site — not just to clean, but to listen. To the stories that stone remembers.",
-    image: "/images/heritage cleaning/THCP_Aug_new.png",
+    chapter: "November Drive",
+    body: "Returning to Mehrauli Archaeological Park, moving deeper into the park to the areas that still need our attention. Join us as a changemaker on Sunday, 29th Nov at 10:00 AM for a morning of cleanliness, storytelling and great conversations. Show up and contribute through Shramdaan.",
+    image: "/images/heritage cleaning/THCP_Nov_drive.jpeg",
     status: "active",
-    location: "Sultan Garhi Tomb, Vasant Kunj",
+    location: "Mehrauli Archaeological Park · Sun, 29 Nov, 10 AM",
     cta: { label: "Volunteer Now", href: "/events/heritage-cleanliness" },
-  },
-  {
-    num: "03",
-    tag: "Music & Heritage",
-    title: "Songs of the Stone",
-    chapter: "Chapter Three",
-    body: "Internationally acclaimed music sensation Amrita Kaur came to Delhi for Chapter 3 of Songs of the Stone by Inkpot India — From Dusk to Dawn at Purana Qila.",
-    image: "/images/Songs of the stone/hero_new.jpeg",
-    status: "active",
-    location: "New Delhi",
-    cta: { label: "Explore Songs of the Stone", href: "/songs-of-the-stone" },
   },
 ];
 
@@ -141,7 +119,7 @@ export default function FeaturedEvent() {
               </AnimatePresence>
             </div>
             {/* Dot indicators */}
-            <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "20px" }}>
+            <div style={{ display: events.length > 1 ? "flex" : "none", justifyContent: "center", gap: "8px", marginTop: "20px" }}>
               {events.map((_, i) => (
                 <button
                   key={i}
@@ -158,7 +136,7 @@ export default function FeaturedEvent() {
             </div>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.18fr 1fr", gap: "20px", alignItems: "end" }}>
+          <div style={{ display: "grid", gridTemplateColumns: events.length === 1 ? "minmax(0, 448px)" : "1fr 1.18fr 1fr", justifyContent: events.length === 1 ? "center" : undefined, gap: "20px", alignItems: "end" }}>
             {events.map((ev, i) => (
               <EventCard key={ev.num} ev={ev} index={i} />
             ))}
@@ -174,7 +152,7 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
   const [hovered, setHovered] = useState(false);
   const isActive = ev.status === "active";
 
-  const cardH  = 500;
+  const cardH  = 560;
   const panelD = 116;
   const panelE = 320;
 

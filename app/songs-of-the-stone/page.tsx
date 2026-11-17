@@ -54,8 +54,8 @@ const CHAPTERS: Chapter[] = [
   {
     num: "02",
     label: "The Second Chapter",
-    title: "Live The Legacy",
-    subtitle: "Rakesh Chaurasia & Friends — The Legend Ensemble",
+    title: "Rakesh Chaurasia & Friends — The Legend Ensemble",
+    subtitle: "Live The Legacy",
     date: "8 March 2026",
     venue: "Qutub Minar, New Delhi",
     image: "/images/Songs of the stone/ch2-poster.png",
@@ -133,14 +133,16 @@ const PARTNERS = [
   { name: "Alegro", src: "/images/Songs of the stone/partners/alegro.svg" },
   { name: "Olaf", src: "/images/Songs of the stone/partners/olaf.svg" },
   { name: "Berger", src: "/images/Songs of the stone/partners/berger.png" },
-  { name: "Cohoma", src: "/images/Songs of the stone/partners/cohoma.png" },
+  { name: "Cohoma", src: "/images/Songs of the stone/partners/cohoma.png", scale: 1.45 },
   { name: "Iraado", src: "/images/Songs of the stone/partners/iraado.png" },
   { name: "Kian Falcon", src: "/images/Songs of the stone/partners/kian-falcon.png" },
   { name: "Dialogues by Nirmals", src: "/images/Songs of the stone/partners/dialogues-by-nirmals.png" },
-  { name: "Handicraft Haveli Jaipur", src: "/images/Songs of the stone/partners/handicraft-haveli.png" },
+  { name: "Handicraft Haveli Jaipur", src: "/images/Songs of the stone/partners/handicraft-haveli.png", scale: 1.45 },
   { name: "Maioya", src: "/images/Songs of the stone/partners/maioya.png" },
   { name: "Pio", src: "/images/Songs of the stone/partners/pio.svg" },
 ];
+
+const ALL_PARTNERS = [...MAIN_PARTNERS, ...PARTNERS];
 
 function AboutBlock({ eyebrow, children, image, alt, reverse, delay = 0 }: {
   eyebrow: string; children: ReactNode; image: string; alt: string; reverse?: boolean; delay?: number;
@@ -173,12 +175,10 @@ export default function SongsOfTheStonePage() {
           .sots-gallery-rail { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity; padding: 0 clamp(24px, 6vw, 110px) 8px; -webkit-overflow-scrolling: touch; }
           .sots-gallery-tile { position: relative; flex: 0 0 auto; width: clamp(200px, 32vw, 300px); aspect-ratio: 3 / 4; overflow: hidden; background: #111; scroll-snap-align: start; }
           .sots-press-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
-          .sots-main-partner-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(8px, 1.5vw, 20px); }
-          .sots-partner-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: rgba(0,0,0,0.08); }
+          .sots-partner-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
           @media (max-width: 860px) {
             .sots-about-grid, .sots-chapter-grid { grid-template-columns: 1fr; flex-direction: column !important; }
             .sots-press-grid { grid-template-columns: 1fr; }
-            .sots-main-partner-row { grid-template-columns: repeat(3, 1fr); }
             .sots-partner-grid { grid-template-columns: repeat(3, 1fr); }
           }
         `}</style>
@@ -333,23 +333,11 @@ export default function SongsOfTheStonePage() {
             </h2>
           </Fade>
 
-          <div className="sots-main-partner-row" style={{ maxWidth: "1180px", margin: "0 auto clamp(48px, 6vw, 68px)" }}>
-            {MAIN_PARTNERS.map((p) => (
-              <div key={p.name} style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "clamp(16px, 2.4vw, 26px)", aspectRatio: "3 / 2" }}>
-                <div style={{ position: "relative", width: "100%", height: "100%" }}>
-                  <Image src={p.src} alt={p.name} fill sizes="260px" unoptimized={p.src.endsWith(".svg")} style={{ objectFit: "contain", mixBlendMode: "multiply" }} />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ maxWidth: "1180px", margin: "0 auto clamp(24px, 3vw, 32px)", height: "1px", background: "rgba(0,0,0,0.08)" }} />
-
           <div className="sots-partner-grid" style={{ maxWidth: "1180px", margin: "0 auto" }}>
-            {PARTNERS.map((p) => (
-              <div key={p.name} style={{ background: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", padding: "clamp(20px, 3vw, 32px)", aspectRatio: "3 / 2" }}>
+            {ALL_PARTNERS.map((p) => (
+              <div key={p.name} style={{ background: "#ffffff", boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,0.1)", display: "flex", alignItems: "center", justifyContent: "center", padding: "clamp(8px, 1.4vw, 14px)", aspectRatio: "3 / 2" }}>
                 <div style={{ position: "relative", width: "100%", height: "100%" }}>
-                  <Image src={p.src} alt={p.name} fill sizes="200px" unoptimized={p.src.endsWith(".svg")} style={{ objectFit: "contain", mixBlendMode: "multiply" }} />
+                  <Image src={p.src} alt={p.name} fill sizes="240px" unoptimized={p.src.endsWith(".svg")} style={{ objectFit: "contain", mixBlendMode: "multiply", transform: "scale" in p ? `scale(${p.scale})` : undefined }} />
                 </div>
               </div>
             ))}

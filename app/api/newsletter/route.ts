@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { autoReplyHtml } from "@/lib/autoReply";
 import { getSupabase } from "@/lib/supabase";
 import { verifyTurnstile, isHoneypotFilled, clientIp, BOT_CHECK_MESSAGE } from "@/lib/turnstile";
 
@@ -70,6 +71,27 @@ export async function POST(req: Request) {
 <p style="margin:0;font-size:11px;color:#999;">Also saved to the Subscribers tab in your admin dashboard.</p>
 </td></tr></table></td></tr></table></body></html>`,
     });
+
+    // Thank-you to the subscriber. Best-effort: the signup is already saved and
+    // the team notified, so a failure here must not fail the request.
+    try {
+      await new Resend(process.env.RESEND_API_KEY).emails.send({
+        from: "Inkpot India <tickets@tickets.inkpotindia.com>",
+        to: email,
+        replyTo: "info@inkpotindia.com",
+        subject: "Thank you for subscribing to Inkpot India",
+        html: autoReplyHtml({
+          title: "Thank you for subscribing",
+          greeting: "Hello,",
+          paragraphs: [
+            "Thank you for joining us. We will notify you about our upcoming events.",
+            "If you ever want to get in touch, you can reach us here:",
+          ],
+        }),
+      });
+    } catch (e) {
+      console.error("[newsletter:autoreply]", e);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {

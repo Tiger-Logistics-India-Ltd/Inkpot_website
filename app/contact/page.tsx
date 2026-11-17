@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import emailjs from "@emailjs/browser";
+import Turnstile, { HoneypotField } from "@/components/Turnstile";
 import { motion } from "framer-motion";
 
 const EMAILJS_SERVICE  = "service_kc85ggl";
@@ -82,6 +83,8 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isMobile, setIsMobile] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
+  const [botToken, setBotToken] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -96,6 +99,36 @@ export default function ContactPage() {
     setLoading(true);
     setError("");
     try {
+      // Honeypot tripped: pretend success so a bot gets no signal.
+      if (honeypot.trim()) {
+        setSubmitted(true);
+        return;
+      }
+
+      // Bot check + auto-reply first. A 400 means Turnstile rejected us, so the
+      // enquiry is not sent. Any other failure must not block a real visitor.
+      const fd = new FormData(formRef.current!);
+      let botRejected = false;
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: fd.get("from_email"),
+            name: fd.get("first_name"),
+            turnstileToken: botToken ?? "",
+          }),
+        });
+        if (res.status === 400) {
+          const data = await res.json().catch(() => ({}));
+          setError(data.error || "We couldn't verify your browser. Please refresh the page and try again.");
+          botRejected = true;
+        }
+      } catch {
+        /* network hiccup on the auto-reply — carry on with the enquiry */
+      }
+      if (botRejected) return;
+
       await emailjs.sendForm(
         EMAILJS_SERVICE,
         EMAILJS_TEMPLATE,
@@ -254,6 +287,11 @@ export default function ContactPage() {
                 <Field label="Phone Number" name="phone" type="tel" placeholder="+91 98765 43210" />
                 <Field label="Comment" name="subject" placeholder="Write your comment here..." />
                 <Field label="Message" name="message" as="textarea" placeholder="Your message…" />
+
+                <HoneypotField value={honeypot} onChange={setHoneypot} />
+                <div style={{ marginBottom: "20px" }}>
+                  <Turnstile onVerify={setBotToken} theme="light" />
+                </div>
 
                 {error && (
                   <p style={{ fontFamily: "var(--font-body)", fontSize: "13px", color: "var(--primary-red)", marginBottom: "20px" }}>
